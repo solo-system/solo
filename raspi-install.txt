@@ -1,3 +1,6 @@
+TODO: add a bit to remove the /etc/profile.d/raspi-config crap from system
+      should probably go in provision.sh
+
 To build an image:
 ------------------
 > get new raspbian

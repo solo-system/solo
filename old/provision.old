@@ -1,0 +1,104 @@
+#!/bin/bash
+
+# TODO:
+# numbers on /etc/fstab entry for fsck
+# hostname exists in the /etc/hosts file too!
+
+echo
+echo "------------------------------------------------"
+echo " Welcome to the provisioner."
+echo " This is run by hand on a freshly installed SBC"
+echo " to add recorder functionality."
+echo " See accompanying raspi-install.txt for more"
+echo "------------------------------------------------"
+echo 
+
+if [ "$USER" != "root" ] ; then
+    echo
+    echo "Error: must be root - use \"sudo su\"."
+    exit -1
+fi
+
+echo " *** Press return to continue ..."
+read a
+
+### This is only run if kernel doesn't see a p3 partition
+if ! grep mmcblk0p3 /proc/partitions > /dev/null ; then
+  echo "  Making small partition p3 on /dev/mmcblk0 ..."
+  fcmd="n\np\n3\n6400000\n+100M\nw"
+  echo -e $fcmd | fdisk /dev/mmcblk0
+  echo
+  echo "rebooting..."
+  # reboot
+  echo
+  # exit 0
+else 
+  echo "p3 is already there - great, lets get on with it."
+fi
+
+echo dropping you temporarily to a shell to try next commands
+echo kpartx
+echo or dparted
+exit 0
+
+
+
+
+echo
+echo "Making partition on small p3 partition"
+mkfs.vfat -v -n AUDIODATA /dev/mmcblk0p3
+echo "Done making partition."
+echo "Adding p3 to /etc/fstab..."
+fstabtxt="/dev/mmcblk0p3 /mnt/sdcard vfat defaults,noatime,umask=111,dmask=000  0  2"
+echo $fstabtxt >> /etc/fstab
+echo "Done adding p3 to /etc/fstab..."
+echo "Remounting ..."
+mkdir -p /mnt/sdcard
+mount -a
+echo "Mounting done"
+echo
+
+
+exit 0
+
+
+
+### Do things raspi-config would normally do: (timezone, hostname, i2c)
+echo
+echo "Doing raspi-config things..."
+echo "  setting hostname..."
+echo "recorder" > /etc/hostname
+echo "  setting timezone"
+echo "Europe/London" > /etc/timezone
+dpkg-reconfigure -f noninteractive tzdata
+echo "Done doing raspi-config things."
+echo 
+
+### Download and Install our code:
+echo 
+echo "Downloading our software"
+scp -pr jdmc2@jdmc2.com:recorder/"{firstboot.sh,switchoff.py,bootcommands.sh}" /root/
+chmod +x /root/firstboot.sh /root/switchoff.py /root/bootcommands.sh
+echo "Done downloading our software"
+echo
+
+### Users:
+echo
+echo "Adding user amon..."
+echo 
+echo "Done adding user amon"
+echo
+
+
+### Remove unwanted packages, files and cleanup.
+sync
+sync
+
+echo
+echo "----------------------------------------------------------"
+echo " provision.sh finished successfully."
+echo " now shutdown, and take this image as the new install image"
+echo "----------------------------------------------------------"
+echo 
+
+exit 0

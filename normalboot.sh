@@ -39,7 +39,7 @@ fi
 ### do normal setup required for deployed recorders
 echo 
 echo "starting: switchoff, tvservice, volume"
-/root/switchoff.py &
+/root/recorder/switchoff.py &
 /opt/vc/bin/tvservice -off
 # amixer -q -c 1 set "Mic" 15dB
 echo "Done starting 3 services."

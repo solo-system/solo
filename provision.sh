@@ -55,11 +55,13 @@ echo
 ### Download and Install our code:
 echo 
 echo "Downloading our config scripts ..."
-scp -pr jdmc2@jdmc2.com:recorder/"{normalboot.sh,switchoff.py}" /root/
-chmod +x /root/normalboot.sh /root/switchoff.py 
+#scp -pr jdmc2@jdmc2.com:recorder/"{normalboot.sh,switchoff.py}" /root/
+chmod +x /root/recorder/normalboot.sh /root/recorder/switchoff.py 
 echo "Downloading and Installing amon ..."
-scp -pr jdmc2@jdmc2.com:code/amon/ /home/amon
+#scp -pr jdmc2@jdmc2.com:code/amon/ /home/amon
+( cd /home/amon/ ; git clone jdmc2@jdmc2.com:git/recorder )
 chown -R amon.amon /home/amon
+chmod +x /home/amon/amon/amon #gosh - that's silly
 echo "PATH=$PATH:/home/amon/amon/" > /home/amon/.bashrc
 echo "Done downloading our software"
 echo
@@ -74,7 +76,8 @@ apt-get install i2c-tools #bootlogd
 
 echo
 echo "Adding normalboot.sh to rc.local"
-sed -i 's:^exit 0$:/root/normalboot.sh >> /root/normalboot.log 2>\&1\n\n&:' /etc/rc.local
+sed -i 's:^exit 0$:/root/recorder/normalboot.sh >> /root/recorder/normalboot.log 2>\&1\n\n&:' /etc/rc.local
+chmod +x /root/recorder/normalboot.sh
 echo "Done updating rc.local"
 echo
 

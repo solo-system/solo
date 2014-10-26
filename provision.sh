@@ -35,7 +35,8 @@ echo "Adding user amon..."
 useradd -m amon
 usermod -a -G adm,dialout,cdrom,kmem,sudo,audio,video,plugdev,games,users,netdev,input,gpio amon 
 passwd amon
-echo "Done adding user amon"
+echo "amon ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+echo "Done adding user amon (with groups and sudo powers)"
 echo
 
 

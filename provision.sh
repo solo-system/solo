@@ -59,7 +59,7 @@ echo "Downloading our config scripts ..."
 chmod +x /root/recorder/normalboot.sh /root/recorder/switchoff.py 
 echo "Downloading and Installing amon ..."
 #scp -pr jdmc2@jdmc2.com:code/amon/ /home/amon
-( cd /home/amon/ ; git clone jdmc2@jdmc2.com:git/recorder )
+( cd /home/amon/ ; git clone jdmc2@jdmc2.com:git/amon )
 chown -R amon.amon /home/amon
 chmod +x /home/amon/amon/amon #gosh - that's silly
 echo "PATH=$PATH:/home/amon/amon/" > /home/amon/.bashrc
@@ -99,7 +99,7 @@ echo
 echo "----------------------------------------------------------"
 echo " provision.sh finished successfully."
 echo " now poweroff, and take this image as the new install image"
-echo " sudo dd bs=512 count=6400000 if=/dev/sdc of=recorder-`fdate`.img ; sync"
+echo " sudo dd bs=512 count=6400000 if=/dev/sdc of=recorder-fdate.img ; sync"
 echo " where the count=XXX you can get from fdisk -l"
 echo "----------------------------------------------------------"
 echo 

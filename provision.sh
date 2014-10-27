@@ -70,9 +70,10 @@ echo
 #apt-get update
 apt-get -y purge fake-hwclock # wolfram-engine put it back
 #apt-get -y upgrade
-apt-get install i2c-tools #bootlogd
-# apt-get install emacs23-nox # while we are developing nano 
+apt-get install i2c-tools bootlogd
+ apt-get install emacs23-nox # while we are developing
 #rpi-update
+
 
 echo
 echo "Adding normalboot.sh to rc.local"

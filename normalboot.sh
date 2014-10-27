@@ -52,13 +52,14 @@ echo
 echo "Setting up the clock at `date`"
 echo "... detected raspi revision $REV"
 echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-${IICBUS}/new_device
-echo "... added informed the kernel of new_device at `date`"
+echo "... informed the kernel of new_device at `date`"
 sleep 1 # let is settle.
 ls -l /dev/rtc0
 /sbin/hwclock -r  # read it 
-/sbin/hwclock -s  # set system time from it 
-
-echo "Done setting up the clock at `date`"
+echo "... setting system time from rtc at `date`"
+/sbin/hwclock -s  # set system time from it
+echo "ZOOM into the future..." 
+echo "Done setting up the clock. New time is : `date`"
 echo
 
 

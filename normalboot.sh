@@ -8,6 +8,10 @@ echo "Welcome to normalboot.sh"
 echo "------------------------"
 echo
 
+echo "date is:"
+date
+echo "that's the date"
+
 REV=`grep Revision /proc/cpuinfo  | awk '{print $3}'`
 if [ "$REV" = 0002 ] ; then
     IICBUS=0
@@ -36,6 +40,7 @@ else
   echo "NOTE: p3 is already there - great, lets get on with it."
 fi
 
+date
 ### do normal setup required for deployed recorders
 echo 
 echo "starting: switchoff, tvservice, volume"
@@ -44,12 +49,15 @@ echo "starting: switchoff, tvservice, volume"
 # amixer -q -c 1 set "Mic" 15dB
 echo "Done starting 3 services."
 echo
+date
 
 echo
 echo "Setting up the clock..."
-echo "   detected raspi revision $REV"
+echo "... detected raspi revision $REV"
 echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-${IICBUS}/new_device
+echo "... added informed the kernel of new_device at `date`"
 sleep 1 # let is settle.
+date
 ls -l /dev/rtc0
 /sbin/hwclock -r  # read it 
 /sbin/hwclock -s  # set system time from it 

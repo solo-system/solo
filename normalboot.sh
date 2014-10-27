@@ -8,9 +8,7 @@ echo "Welcome to normalboot.sh"
 echo "------------------------"
 echo
 
-echo "date is:"
-date
-echo "that's the date"
+echo "Started at: `date`"
 
 REV=`grep Revision /proc/cpuinfo  | awk '{print $3}'`
 if [ "$REV" = 0002 ] ; then
@@ -22,47 +20,45 @@ echo "detected raspi hardware version $REV"
 
 # if p3 doesn't exist, make it, mount it.
 if ! grep mmcblk0p3 /proc/partitions > /dev/null ; then
-  echo "  Making partition p3 on /dev/mmcblk0 ..."
+  echo "First-boot: making new partition at `date`"
+  echo "... Making partition p3 on /dev/mmcblk0 ..."
   fcmd="n\np\n3\n6400000\n\nw"
   echo -e $fcmd | fdisk /dev/mmcblk0 > /root/fdisk.log
-  echo "  running partprobe..."
+  echo "... running partprobe..."
   partprobe
-  echo "  running mkfs.vfat"
+  echo "... running mkfs.vfat"
   mkfs.vfat -v -n AUDIODATA /dev/mmcblk0p3 > /root/mkfs.vfat.log
   fstabtxt="/dev/mmcblk0p3  /mnt/sdcard     vfat    defaults,noatime,umask=111,dmask=000  0  2"
   echo $fstabtxt >> /etc/fstab
   mkdir -p /mnt/sdcard
-  echo "  remounting.."
+  echo "... remounting.."
   mount -a
   mkdir /mnt/sdcard/amondata
   # chown amon.amon /mnt/sdcard/amondata
+  echo "First-boot: finished at `fdate`"
 else 
   echo "NOTE: p3 is already there - great, lets get on with it."
 fi
 
-date
 ### do normal setup required for deployed recorders
 echo 
-echo "starting: switchoff, tvservice, volume"
+echo "starting: switchoff, tvservice, volume at `date`"
 /root/recorder/switchoff.py &
 /opt/vc/bin/tvservice -off
 # amixer -q -c 1 set "Mic" 15dB
-echo "Done starting 3 services."
+echo "Done starting 3 services at `date`"
 echo
-date
 
-echo
-echo "Setting up the clock..."
+echo "Setting up the clock at `date`"
 echo "... detected raspi revision $REV"
 echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-${IICBUS}/new_device
 echo "... added informed the kernel of new_device at `date`"
 sleep 1 # let is settle.
-date
 ls -l /dev/rtc0
 /sbin/hwclock -r  # read it 
 /sbin/hwclock -s  # set system time from it 
-date
-echo "Done setting up the clock"
+
+echo "Done setting up the clock at `date`"
 echo
 
 
@@ -75,7 +71,7 @@ echo "59 23 * * * /sbin/reboot" | crontab -
 echo "Done with crontabs."
 
 echo
-echo "Exiting happy from normalboot.sh"
+echo "Exiting happy from normalboot.sh at `date`"
 echo 
 
 exit 0

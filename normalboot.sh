@@ -35,7 +35,7 @@ if ! grep mmcblk0p3 /proc/partitions > /dev/null ; then
   mount -a
   mkdir /mnt/sdcard/amondata
   # chown amon.amon /mnt/sdcard/amondata
-  echo "First-boot: finished at `fdate`"
+  echo "First-boot: finished at `date`"
 else 
   echo "NOTE: p3 is already there - great, lets get on with it."
 fi

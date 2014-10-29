@@ -27,7 +27,7 @@ if [ "$USER" != "root" ] ; then
 fi
 
 
-[ $PWD != '/opt'] && (echo "must be in /opt, not $PWD. Stopping."; exit -1)
+[ $PWD != '/opt/recorder' ] && { echo "must be in /opt, not $PWD. Stopping."; exit -1; }
 
 echo " *** Press return to continue ..."
 read a
@@ -72,7 +72,7 @@ echo
 apt-get -y purge fake-hwclock # wolfram-engine put it back
 #apt-get -y upgrade
 apt-get install i2c-tools bootlogd
- apt-get install emacs23-nox # while we are developing
+ apt-get -y install emacs23-nox # while we are developing
 #rpi-update
 
 

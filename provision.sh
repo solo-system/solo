@@ -26,6 +26,9 @@ if [ "$USER" != "root" ] ; then
     exit -1
 fi
 
+
+[ $PWD != '/opt'] && (echo "must be in /opt, not $PWD. Stopping."; exit -1)
+
 echo " *** Press return to continue ..."
 read a
 
@@ -54,11 +57,9 @@ echo
 
 ### Download and Install our code:
 echo 
-echo "Downloading our config scripts ..."
-#scp -pr jdmc2@jdmc2.com:recorder/"{normalboot.sh,switchoff.py}" /root/
-chmod +x /root/recorder/normalboot.sh /root/recorder/switchoff.py 
+echo "Preparing our config scripts"
+chmod +x /opt/recorder/normalboot.sh /opt/recorder/switchoff.py 
 echo "Downloading and Installing amon ..."
-#scp -pr jdmc2@jdmc2.com:code/amon/ /home/amon
 ( cd /home/amon/ ; git clone jdmc2@jdmc2.com:git/amon )
 chown -R amon.amon /home/amon
 chmod +x /home/amon/amon/amon #gosh - that's silly
@@ -77,8 +78,8 @@ apt-get install i2c-tools bootlogd
 
 echo
 echo "Adding normalboot.sh to rc.local"
-sed -i 's:^exit 0$:/root/recorder/normalboot.sh >> /root/recorder/normalboot.log 2>\&1\n\n&:' /etc/rc.local
-chmod +x /root/recorder/normalboot.sh
+sed -i 's:^exit 0$:/opt/recorder/normalboot.sh >> /opt/recorder/normalboot.log 2>\&1\n\n&:' /etc/rc.local
+chmod +x /opt/recorder/normalboot.sh
 echo "Done updating rc.local"
 echo
 

@@ -87,7 +87,16 @@ echo "setting up RTC"
 echo "  un-blacklisting i2c-bcm2708"
 sed -i 's:^blacklist i2c-bcm2708$:#&1:' /etc/modprobe.d/raspi-blacklist.conf
 echo "  adding i2c-dev to /etc/modules"
+echo "WARNING - I don't actually do this, which is wierd - perhaps I should???"
 echo "Done setting up RTC"
+
+
+echo 
+echo "Adding heartbeat module..."
+echo "... updating /etc/modules with modprobe ledtrig_heartbeat"
+echo "ledtrig_heartbeat" >> /etc/modules
+echo "Done adding heartbeat module."
+
 
 ### Remove clutter, sync and exit.
 rm -f /home/amon/pistore.desktop

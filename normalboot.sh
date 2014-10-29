@@ -42,11 +42,12 @@ fi
 
 ### do normal setup required for deployed recorders
 echo 
-echo "starting: switchoff, tvservice, volume at `date`"
+echo "starting: switchoff, tvservice, and heartbeat at `date`"
 /root/recorder/switchoff.py &
 /opt/vc/bin/tvservice -off
+echo heartbeat > /sys/class/leds/led0/trigger
 # amixer -q -c 1 set "Mic" 15dB
-echo "Done starting 3 services at `date`"
+echo "Done starting switchoff, tvservice, and heartbeat at `date`"
 echo
 
 echo "Setting up the clock at `date`"

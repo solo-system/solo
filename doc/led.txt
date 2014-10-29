@@ -1,0 +1,26 @@
+flashing the led
+-----------------
+
+initially implemented 29 Oct 2014
+
+The red led is hard wired to the power supply - if there is power, red led is on.
+
+On B models, there are 3 others, but they are all ethernet things, and
+can only(?) be controlled through that driver.
+
+Activity led on pi can be controlled through kernel module accessible
+through /class/sys/led/led0.  Setting trigger to various settings
+makes it flash according to different strategies.  Currently, at boot
+time, (from normalboot) we have
+
+modprobe ledtrig_heartbeat
+echo heartbeat > /sys/class/leds/led0/trigger
+
+This gives a permanent heartbeat, dependent on system load - shows kernel is runnning.
+
+It doesn't differenciate between amon being on or off.
+
+refs and info:
+ACTivty LED is GPIO 16
+
+

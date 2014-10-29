@@ -10,10 +10,10 @@ sync
 
 > plug it in a raspi, boot and log in as root: ssh raspberrypi -l pi
 sudo su
-cd /root
+cd /opt
 git clone jdmc2@jdmc2.com:git/recorder
 cd recorder
-chmod +x /root/recorder/provision.sh
+chmod +x /opt/recorder/provision.sh
 ./provision.sh
 
 > run this script.

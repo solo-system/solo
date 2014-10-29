@@ -40,6 +40,13 @@ else
   echo "NOTE: p3 is already there - great, lets get on with it."
 fi
 
+###
+echo "Checking disk free info:"
+df -h
+echo "--------------"
+mount
+echo "Done checking disk free info."
+
 ### do normal setup required for deployed recorders
 echo 
 echo "starting: switchoff, tvservice, and heartbeat at `date`"

@@ -10,6 +10,7 @@ echo
 
 echo "Started at: `date`"
 
+# just got 2 raspi A's that report rev as 0008!
 REV=`grep Revision /proc/cpuinfo  | awk '{print $3}'`
 if [ "$REV" = 0002 ] ; then
     IICBUS=0

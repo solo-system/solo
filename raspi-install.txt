@@ -371,3 +371,11 @@ PROBLEM3: fsck does not run? or doesnt appear to work right.
 timestamp log file: add date to arecord output:
 
 tail -f /mnt/sdcard/amondata/wavs/arecord.log | while read line ; do date=`date +"%Y-%m-%d %H-%M-%S"` ; uptime=`uptime`; echo $date $uptime $line ; done
+----
+
+to set system time from internet, do :
+
+sudo ntpdate -s time.nist.gov
+(needs sudo apt-get install ntpdate)
+then set hwclock from system:
+/sbin/hwclock -w

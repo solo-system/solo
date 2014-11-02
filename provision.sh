@@ -71,7 +71,7 @@ echo
 #apt-get update
 apt-get -y purge fake-hwclock # wolfram-engine put it back
 #apt-get -y upgrade
-apt-get install i2c-tools bootlogd
+apt-get install i2c-tools bootlogd ntpdate
  apt-get -y install emacs23-nox # while we are developing
 #rpi-update
 

@@ -1,0 +1,71 @@
+Properly started 10 Nov 2014
+A current install gives you:
+pi@raspberrypi ~ $ df -h 
+Filesystem      Size  Used Avail Use% Mounted on
+rootfs          2.9G  2.3G  469M  84% /
+/dev/root       2.9G  2.3G  469M  84% /
+devtmpfs         88M     0   88M   0% /dev
+tmpfs            19M  208K   19M   2% /run
+tmpfs           5.0M     0  5.0M   0% /run/lock
+tmpfs            37M     0   37M   0% /run/shm
+/dev/mmcblk0p1   56M  9.7M   47M  18% /boot
+
+So a 2.9G slash partition is 2.3Gb used, leaving 500M for users.  This is raspbian's default.
+
+
+
+
+-------------------------------------------
+Packages:
+
+# This is mostly X stuff:
+sudo apt-get --yes purge xserver.* x11-.* xarchiver xauth xkb-data console-setup xinit lightdm lxde.* python-tk python3-tk scratch gtk.* libgtk.* openbox libxt.* lxpanel gnome.* libqt.* gvfs.* xdg-.* desktop.*
+
+sudo apt-get --yes autoremove
+sudo apt-get --yes autoclean
+sudo apt-get --yes clean
+
+
+
+--------------------------------------------
+Files:
+
+can also remove: all files in /var/log 
+should also remove any stale amon.log
+
+# documentation:
+sudo rm -rf /usr/share/doc/* /opt/vc/src/hello_pi/hello_video/test.h264
+
+# other locales (perhaps not good?)
+find /usr/share/locale/* -maxdepth 0 -type d |grep -v en |xargs sudo rm -rf
+find /usr/share/man/* -maxdepth 0 -type d |grep -Pv 'man\d' |xargs sudo rm -rf
+
+
+----------------------------------------------
+Regigging filesystem size and then partition:
+
+then shrink partition by mounting sd card on laptop and doing:
+fsck to clean it
+
+sudo resize2fs -P /dev/sdb2 500000
+to find out Minimum allowable size (in 4k blocks for some reason)
+sudo resize2fs -p /dev/sdb2 500000 (for 2 Gig)
+
+then use parted to resize the partitions:
+sudo parted /dev/sdb
+> unit s (for normal "block / sector" units)
+> p
+ to print
+resizepart 2 blah blah
+unfortunately, it doesn't offer guesses, 
+end is the END ADDRESS, not the size
+q
+ to quit
+
+
+====================================================================
+can also remove:
+sudo apt-get purge cifs-utils samba-common smbclient
+cups-client
+sonic-pi
+supercollider

@@ -68,8 +68,13 @@ echo "Done downloading our software"
 echo
 
 #### Packages:
-apt-get update
+
+#remove stuff we don't want:
 apt-get -y purge fake-hwclock wolfram-engine
+apt-get -y purge sudo apt-get --yes purge xserver.* x11-.* xarchiver xauth xkb-data console-setup xinit lightdm lxde.* python-tk python3-tk scratch gtk.* libgtk.* openbox libxt.* lxpanel gnome.* libqt.* gvfs.* xdg-.* desktop.*
+
+# update and install things we need
+apt-get update
 apt-get -y upgrade
 apt-get install i2c-tools bootlogd ntpdate
 apt-get -y install emacs23-nox

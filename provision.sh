@@ -76,7 +76,7 @@ apt-get -y purge sudo apt-get --yes purge xserver.* x11-.* xarchiver xauth xkb-d
 # update and install things we need
 apt-get update
 apt-get -y upgrade
-apt-get install i2c-tools bootlogd ntpdate
+apt-get -y install i2c-tools bootlogd ntpdate
 apt-get -y install emacs23-nox
 rpi-update
 

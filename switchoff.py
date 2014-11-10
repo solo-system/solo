@@ -13,6 +13,7 @@ while (GPIO.input(POWERPIN) == True):
     time.sleep(1)
 
 print "switchoff.py: detected pin is high - so rebooting... "
+os.system("echo mmc0 > /sys/class/leds/led0/trigger")
 os.system("sudo shutdown -h now&")
 
 while True:

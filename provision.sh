@@ -68,12 +68,12 @@ echo "Done downloading our software"
 echo
 
 #### Packages:
-#apt-get update
-apt-get -y purge fake-hwclock # wolfram-engine put it back
-#apt-get -y upgrade
+apt-get update
+apt-get -y purge fake-hwclock wolfram-engine
+apt-get -y upgrade
 apt-get install i2c-tools bootlogd ntpdate
- apt-get -y install emacs23-nox # while we are developing
-#rpi-update
+apt-get -y install emacs23-nox
+rpi-update
 
 
 echo

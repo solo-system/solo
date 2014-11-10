@@ -76,9 +76,11 @@ echo
 echo
 echo "Now adding watchdog to amon's crontab:"
 echo "* * * * * /home/amon/amon/amon watchdog >> /home/amon/amon/cron.log 2>&1" | crontab -u amon -
-echo "Now adding roots crontab with midnight reboot"
-echo "59 23 * * * /sbin/reboot" | crontab -
-echo "Done with crontabs."
+
+# this didn't work and caused a reboot at 22:59:01 every evening (eh?)
+#echo "Now adding roots crontab with midnight reboot"
+#echo "59 23 * * * /sbin/reboot" | crontab -
+#echo "Done with crontabs."
 
 echo
 echo "Exiting happy from normalboot.sh at `date`"

@@ -379,3 +379,7 @@ sudo ntpdate -s time.nist.gov
 (needs sudo apt-get install ntpdate)
 then set hwclock from system:
 /sbin/hwclock -w
+
+--------------------
+sudo apt-get --compile source alsa-utils
+installs and compiles source.  BUT you need to add lots of dependentpackages

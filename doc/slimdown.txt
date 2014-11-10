@@ -13,6 +13,9 @@ tmpfs            37M     0   37M   0% /run/shm
 So a 2.9G slash partition is 2.3Gb used, leaving 500M for users.  This is raspbian's default.
 
 
+now, with lots of removal 
+Filesystem     1K-blocks    Used Available Use% Mounted on
+/dev/root        3023728 1011612   1838804  36% /
 
 
 -------------------------------------------

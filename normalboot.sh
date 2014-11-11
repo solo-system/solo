@@ -28,6 +28,7 @@ if ! grep mmcblk0p3 /proc/partitions > /dev/null ; then
   endlast=`fdisk -l /dev/mmcblk0 | grep /dev/mmcblk0p2 | awk '{print $3}'`
   startnew=$((endlast+1))
   fcmd="n\np\n3\n$startnew\n\nw"
+  echo "running $fcmd > fdisk"
   echo -e $fcmd | fdisk /dev/mmcblk0 > /opt/recorder/fdisk.log
   echo "... running partprobe..."
   partprobe

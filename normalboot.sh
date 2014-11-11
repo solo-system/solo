@@ -23,7 +23,12 @@ echo "detected raspi hardware version $REV"
 if ! grep mmcblk0p3 /proc/partitions > /dev/null ; then
   echo "First-boot: making new partition at `date`"
   echo "... Making partition p3 on /dev/mmcblk0 ..."
-  fcmd="n\np\n3\n6400000\n\nw"
+
+  echo "finding last partition of p2..."
+  fdisk -l | grep mmcblk0p2 | cut -f
+  endlast=`fdisk -l /dev/mmcblk0 | grep /dev/mmcblk0p2 | awk '{print $3}'`
+  startnew=$((endlast+1))
+  fcmd="n\np\n3\n$startnew\n\nw"
   echo -e $fcmd | fdisk /dev/mmcblk0 > /opt/recorder/fdisk.log
   echo "... running partprobe..."
   partprobe

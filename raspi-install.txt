@@ -16,8 +16,40 @@ cd recorder
 chmod +x /opt/recorder/provision.sh
 ./provision.sh
 
-> run this script.
-> follow instructions, and you'll have a 
+once it's back in your PC: 
+sudo e2fsck -f /dev/sdc2
+Resize the ext filesystem:
+find min allowable size:
+sudo resize2fs -P /dev/sdb2
+(answer is in 4k slices).  Add 200M (50,000 units)
+sudo resize2fs -p /dev/sdc2 329240
+
+> now resize it's containing partition /dev/sdc2:
+sudo fdisk -l /dev/sdc
+d
+2
+n
+p
+2
+122880 ( or whatever ORIGINAL START position was)
++1316960K  (where that is 4 times what resize2fs was ordered to do)
+w
+> and that's it.  fdisk -l (on PC) now looks like:
+
+Disk /dev/sdc: 31.9 GB, 31914983424 bytes
+64 heads, 32 sectors/track, 30436 cylinders, total 62333952 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk identifier: 0x00090806
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sdc1            8192      122879       57344    c  W95 FAT32 (LBA)
+/dev/sdc2          122880     2756799     1316960   83  Linux
+
+
+============================================
+
 
 HOW ABOUT sudo touch /forcefsck somewhere?
 

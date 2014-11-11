@@ -25,7 +25,6 @@ if ! grep mmcblk0p3 /proc/partitions > /dev/null ; then
   echo "... Making partition p3 on /dev/mmcblk0 ..."
 
   echo "finding last partition of p2..."
-  fdisk -l | grep mmcblk0p2 | cut -f
   endlast=`fdisk -l /dev/mmcblk0 | grep /dev/mmcblk0p2 | awk '{print $3}'`
   startnew=$((endlast+1))
   fcmd="n\np\n3\n$startnew\n\nw"

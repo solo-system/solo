@@ -1,12 +1,13 @@
 TODO: add a bit to remove the /etc/profile.d/raspi-config crap from system
       should probably go in provision.sh
+      /usr/bin/raspi-config (need to delete the line from /etc/inittab, and uncomment the other?)
+
 
 To build an image:
 ------------------
 > get new raspbian
 > dd it to a card: 
-sudo dd bs=4M if=~/raspi/images/2014-09-09-wheezy-raspbian.img of=/dev/sdc
-sync
+sudo dd bs=4M if=~/raspi/images/2014-09-09-wheezy-raspbian.img of=/dev/sdc ; sync ; sync
 
 > plug it in a raspi, boot and log in as root: ssh raspberrypi -l pi
 sudo su
@@ -16,16 +17,17 @@ cd recorder
 chmod +x /opt/recorder/provision.sh
 ./provision.sh
 
-once it's back in your PC: 
+========= THIS NEEDS A SCRIPT ==============
+> once it's back in your PC: 
 sudo e2fsck -f /dev/sdc2
-Resize the ext filesystem:
-find min allowable size:
-sudo resize2fs -P /dev/sdb2
-(answer is in 4k slices).  Add 200M (50,000 units)
-sudo resize2fs -p /dev/sdc2 329240
+sudo resize2fs -P /dev/sdc2
+
+# Estimated minimum size of the filesystem: 279248
+# (answer is in 4k slices).  Add 200M (50,000 units)
+sudo resize2fs -p /dev/sdc2 329248
 
 > now resize it's containing partition /dev/sdc2:
-sudo fdisk -l /dev/sdc
+sudo fdisk /dev/sdc
 d
 2
 n
@@ -48,7 +50,15 @@ Disk identifier: 0x00090806
 /dev/sdc2          122880     2756799     1316960   83  Linux
 
 
-============================================
+finally - copy from SDcard to HDD:
+How big is it?
+use last line of fdisk -l above to see END column +1
+sudo dd bs=512 count=2756864 if=/dev/sdc of=/home/jdmc2/raspi/images/solo-`fdate`.img ; sync ; sync
+
+> and zip it
+zip -r /home/jdmc2/raspi/images/solo-`fdate`.zip /home/jdmc2/raspi/images/solo-`fdate`.img
+
+================ END OF MAKING A RELEASE ============================
 
 
 HOW ABOUT sudo touch /forcefsck somewhere?

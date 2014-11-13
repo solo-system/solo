@@ -72,3 +72,16 @@ sudo apt-get purge cifs-utils samba-common smbclient
 cups-client
 sonic-pi
 supercollider
+=============================================
+purge out unwated stuff
+=======================
+
+(list installed pachages with 
+dpkg --get-selections
+
+sudo apt-get purge wolfram-engine
+sudo apt-get autoremove
+----------------------------------------
+mounting img files with offset:
+fdisk -l 2014-06-20-wheezy-raspbian.img
+sudo mount -o loop,offset=$((122880*512)) 2014-06-20-wheezy-raspbian.img mnt/

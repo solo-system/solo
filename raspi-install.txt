@@ -2,11 +2,9 @@ TODO: add a bit to remove the /etc/profile.d/raspi-config crap from system
       should probably go in provision.sh
       /usr/bin/raspi-config (need to delete the line from /etc/inittab, and uncomment the other?)
 
-
-To build an image:
-------------------
-> get new raspbian
-> dd it to a card: 
+To build a image:
+-----------------
+> flash a card with BASE raspbian:
 sudo dd bs=4M if=~/raspi/images/2014-09-09-wheezy-raspbian.img of=/dev/sdc ; sync ; sync
 
 > plug it in a raspi, boot and log in as root: ssh raspberrypi -l pi
@@ -17,83 +15,36 @@ cd recorder
 chmod +x /opt/recorder/provision.sh
 ./provision.sh
 
-========= THIS NEEDS A SCRIPT ==============
-> to shrink a img: 
+sudo poweroff
+
+### Move card back to pc, and copy to HDD.  This image is bootable.
+> if you want to shrink the / partition:
 sudo losetup -v -o $((122880*512)) /dev/loop0 recorder-2014-11-12.img
 sudo e2fsck -f /dev/loop0
 sudo resize2fs -M /dev/loop0  (again and again if you like!)
 sudo resize2fs -p /dev/loop0 400000 (this is 1.6G.  blocks are 4k for some reason) 
 sudo losetup -d /dev/loop0
-> note the size of the new filesystem - use this later to resize the partition table.
+sudo sync; 
+
+> shring the containing partition in the partition table: (if you want)
 then delete and resize the partition using fdisk XXX.img
 delete partition 2, new start=same, end=+1600000K
-CHECK - writing to SD card and booting...
 
-Then check truncating the img file itself using truncate.
+> Then check truncating the img file itself.
+> fdisk says end of p2 is 3322880, and blocks are 512bytes, so truncate:
+truncate -s $((3322880*512)) dd.img
+[ it works!]
 Then compress.zip
 done
 
-
-----------------
-> now resize it's containing partition /dev/sdc2:
-sudo fdisk /dev/sdc
-d
-2
-n
-p
-2
-122880 ( or whatever ORIGINAL START position was)
-+1316960K  (where that is 4 times what resize2fs was ordered to do)
-w
-> and that's it.  fdisk -l (on PC) now looks like:
-
-Disk /dev/sdc: 31.9 GB, 31914983424 bytes
-64 heads, 32 sectors/track, 30436 cylinders, total 62333952 sectors
-Units = sectors of 1 * 512 = 512 bytes
-Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disk identifier: 0x00090806
-
-   Device Boot      Start         End      Blocks   Id  System
-/dev/sdc1            8192      122879       57344    c  W95 FAT32 (LBA)
-/dev/sdc2          122880     2756799     1316960   83  Linux
-
-
-finally - copy from SDcard to HDD:
-How big is it?
-use last line of fdisk -l above to see END column +1
-sudo dd bs=512 count=2756864 if=/dev/sdc of=/home/jdmc2/raspi/images/solo-`fdate`.img ; sync ; sync
-
-> and zip it
-zip -r /home/jdmc2/raspi/images/solo-`fdate`.zip /home/jdmc2/raspi/images/solo-`fdate`.img
-
-================ END OF MAKING A RELEASE ============================
-loop mounting:
-sudo  losetup -v -o $((122880*512))  /dev/loop0 systemImage-2014-10-22.img
-> mounts the second (ext2) partition within the systemImage image on device /dev/loop0
-> can now 
-sudo e2fsck /dev/loop0
-> and then delete the loop
-sudo losetup -d /dev/loop0
-brilliant!
-
-
-
-HOW ABOUT sudo touch /forcefsck somewhere?
-
----------------------------
-the resulting image can be dd'd (same command line, different image) to a sd card, and It'll run on a raspi.
-can be done from windows now, though.
-
-
-=======================================
+==============================================================
 
 
 TODO: add these to this build procedure, AND to flash-card.sh
 # remove all files in /var/log
 find mnt-root/var/log -type f -delete
 
-#remove any stray amon.log's
+# remove any stray amon.log's
 rm -f home/jdmc2/amon/amon.log
 
 add: amixer -q -c 1 set 'Mic' 15dB (done - see flash-card.sh)
@@ -101,54 +52,10 @@ add: amixer -q -c 1 set 'Mic' 15dB (done - see flash-card.sh)
 Need to add a section about GPU_split=32 or whatever.
 
 --------------------------------------------
-META of below:
---------------
-change /etc/hostname
-set timezone somehow
-add line to /etc/fstab to mount data partition
-make a mount point for sd card
-add network config
-add jdmc2 user with groups
-change root password
-add to /etc/rc.local for rtc and setting amixer default volume
-reconfigure tzdata
-general apt-get update upgrade ; rpi-update  and then purge of wolfram HERE do system slimdown
-install amon from jdmc2.com
-add to bashrc
-add to crontab
 
-
-Installing raspbian in a raspberry pi.
-===============================================================
-# get raspbian: from http://downloads.rasbperrypi.org
-# unzip and check it with sha1sum
-
-Flash SD card:
---------------
-umount /dev/sdX #ensure it's unmounted
-sudo dd bs=4M if=~/raspi/2014-06-20-wheezy-raspbian.img of=/dev/sdX
-sync
-
-# Add, Primary, 3, BEWARE first block, end is default, w to write to disk. (THIS SHOULD BE DONE LATER)
-#sudo fdisk /dev/sdX
-#sudo mkfs.ext4 /dev/sdc3
-
-#mkdir slash ; sudo mount /dev/sdc2 slash  # to mount / 
-#sudo emacs -nw slash/etc/hostname (and set new hostname)
-#sudo emacs -nw slash/etc/timezone (Europe/London) (do this later)
-
-### now transfer to a raspi (with ethernet), and do the following:
-
-sudo nano /etc/hostname  (change to recorder)
-
-
-
-sudo bash <<EOF
- echo "aug11" > slash/etc/hostname
- echo "Europe/London" > slash/etc/timezone
- echo "/dev/mmcblk0p3  /mnt/sdcard     ext4    defaults,noatime  0       2" >> slash/etc/fstab
- sudo mkdir slash/mnt/sdcard
- sudo echo "
+Networking - wirelessly:
+==========
+sudo echo "
 network={
     ssid=\"BTHomeHub2-5QCP\"
     psk=\"d6346cbcb2\"
@@ -157,34 +64,6 @@ network={
 " >> slash/etc/wpa_supplicant/wpa_supplicant.conf 
 EOF
 
-# TODO: run sync in cron every minute
-
-sudo umount slash
-sync
-
-============================================================
-To configure a system to become a bootable image:
-
-----------
-ssh raspberrypi -l pi 
-#sudo passwd root
-sudo adduser jdmc2
-sudo adduser amon
-
-sudo usermod -a -G adm,dialout,cdrom,kmem,sudo,audio,video,plugdev,games,users,netdev,input,gpio jdmc2
-sudo usermod -a -G adm,dialout,cdrom,kmem,sudo,audio,video,plugdev,games,users,netdev,input,gpio amon
-
-sudo nano /etc/sudoers to add jdmc2 and amon
-su amon to continue...
-sudo nano /etc/rc.local  [ add /opt/vc/bin/tvservice -off ]
-     	  		 [ add amixer -q -c 1 set 'Mic' 15dB ]
-sudo dpkg-reconfigure tzdata
-sudo raspi-config  (for hostname and nothing else really)
-sudo apt-get purge wolfram-engine
-sudo apt-get update && sudo apt-get -y upgrade
-sudo rpi-update
-
-sudo reboot
 
 ================================================================
 RTC (make sure rtc is plugged in)
@@ -206,6 +85,7 @@ sudo reboot (if you want to test / set the rtc)
 # sudo i2cdetect -y 0 (or 0)
 # sudo hwclock -r
 ================================================================
+
 reboot-switch  ( this should really live in /home/amon/bin/)
 -------------
 SERVER=jdmc2.com
@@ -216,30 +96,8 @@ sudo nano /etc/rc.local
 add: /home/amon/switchoff.py &
 
 ================================================================
-amon
-----
-scp -pr jdmc2@jdmc2.com:code/amon .
-nano .bashrc  #  -- add at end: PATH=$PATH:$HOME/amon/
-#sudo mkdir /mnt/sdcard/amondata
-#sudo chown -R jdmc2.jdmc2 /mnt/sdcard/amondata
-# test with:
-bash # to reload PATH
-amon ping
-amon off (so it doesnt costantly try to run during install).
-
-crontab -e
-*/2 * * * *       /home/jdmc2/amon/amon watchdog >> /home/jdmc2/amon/cron.log 2>&1
-
-===================================================================
-firstboot
----------
-sudo scp -pr jdmc2@jdmc2.com:recorder/firstboot.sh /root/
-sudo chmod +x /root/firstboot.sh
-### add to crontab/rc.s but NOT YET (only when we know WE won't reboot).
-
-===============================================================================
 vmon
-----
+====
 sudo emacs -nw /boot/config.txt [disable_camera_led=1]
 # reboot if you care about the light now.
 mkdir /mnt/sdcard/vmondata/
@@ -254,7 +112,7 @@ ssh-copy-id jdmc2.com
 
 ==============================================================================
 webserver
----------
+=========
 sudo apt-get install apache2 libapache2-mod-suphp
 sudo a2enmod userdir 
 
@@ -282,8 +140,6 @@ edit it so that
 sudo service apache2 restart
 wget localhost
 
-=======================================================================
-
 to get suphp going:
 http://www.debiantutorials.com/installing-suphp/
 
@@ -291,44 +147,18 @@ apt-get install libapache2-mod-suphp
 a2dismod php5
 /etc/init.d/apache2 restart
 
+==================================================
 
-==============================================================================
-==============================================================================
-==============================================================================
-==============================================================================
-==============================================================================
-
-TODO:
-	need a memory checker to ensure we dont fill up the disk, and turn off when its full.
-	remove the bail out in reboot-handler.
-	sort out how to controll the boot-state of alsamixer.  There is probably alsamixer-save and alsamixer-store 
-	run it outside a few times, unplugging and see that its good.
-	Deal with batteries and connectors, and give to Robbie.	
-	move the mnt directory to /mnt - permissions should hold.
-Later:
-	straighten out logic in amoncleanup, with its no-ops and stuff.  think we need a are-we-running 
-  	function which returns yes/no.  if yes, its cos everything is running well, if NO its because 
-	were not running.  If there is an error, it should clear out the error and leave things NOT running.  I think.
-	sort out fake-hw clock, which saves / restores estimated times over reboots.  Is this worth trying ?  Surely...
-	clarify use of local.settings - warn about defaults, how about amon config to show what it will do.
+Compression
+===========
 
 Just tested lame.  on 1 minute.  lame -f is 5x realtime, and lame (default) is 3.38 realtime.  
 lame	3.38RT	9.0%			
 lame -f 4.96RT  9.0% (sizes are exactly the same since CBR of 64Kbps)
 lame process size is less than 5MB of ram running.
 
-arecord --mmap -D hw:1,0 -v --file-type wav -f S16_LE -c1 -r44100 --max-file-time 60  --process-id-file ./pidfile --use-strftime ./audio-pi8-%Y-%m-%d-%H-%M-%S.wav
 
-
-to mke a fat partition need:   
-   > sudo apt-get install dosfstools
-   > sudo mkfs.vfat /dev/mmcblk0p3
-   > sudo mkdir /mnt/amondata
-   > sudo nano /etc/fstab
-   /dev/mmcblk0p3  /mnt/amondata   vfat    rw,uid=1001,gid=1002,flush  0  0
-   > sudo mount -a
-
---------------------------------
+------------------------------
 
 # disable camera led 
 sudo nano /boot/config.txt
@@ -356,22 +186,16 @@ record video
 pir sensor?
 durie camera (still camera is fine).
 
----------------------------------------------
-purge out unwated stuff
-=======================
-
-(list installed pachages with 
-dpkg --get-selections
-
-sudo apt-get purge wolfram-engine
-sudo apt-get autoremove
-----------------------------------------
-mounting img files with offset:
-fdisk -l 2014-06-20-wheezy-raspbian.img
-sudo mount -o loop,offset=$((122880*512)) 2014-06-20-wheezy-raspbian.img mnt/
-
-------------------------------------
-
+TODO:
+	
+straighten out logic in amoncleanup, with its no-ops and stuff.  think
+we need a are-we-running function which returns yes/no.  if yes, its
+cos everything is running well, if NO its because were not running.
+If there is an error, it should clear out the error and leave things
+NOT running.  I think.  sort out fake-hw clock, which saves / restores
+estimated times over reboots.  Is this worth trying ?  Surely...
+clarify use of local.settings - warn about defaults, how about amon
+config to show what it will do.
 
 --------------------
 serial console cable
@@ -397,7 +221,7 @@ hmmm - ppp not easy...
 fast flash:
 -----------
 
-#To clone a working amon machine, put card into memorycard reader then
+# To clone a working amon machine, put card into memorycard reader then
 # I did this:
 sudo fsck.fat  -a -V -v /dev/sdc1  # to check the filesystems on the memcard.
 sudo fsck -f -p -v /dev/sdc2       # to check the filesystems on the memcard.
@@ -405,27 +229,6 @@ sudo fsck -f -p -v /dev/sdc2       # to check the filesystems on the memcard.
 #finally, copy the card to local hard drive
 sudo dd bs=512 count=5785600 if=/dev/sdc of=amonruns.img
 sync
-
-this "count" number matches from the fdisk -l end+1 of p2.
-new one (sept 2014) is a 3276800000byte image, so count is 6400000 (which agrees with fdisk -l /dev/sdc
-
-
-# now try writing it to a new card.
-sudo dd bs=4M if=amonruns.img of=/dev/sdc
-# check partition table:
-sudo fdisk -l /dev/sdc
-# and rebuild ext2fs on p3
-sudo mkfs.ext4 /dev/sdc3
-sync
-# now move it to a pi and run it.
-
-PROBLEM - need a directory owned by jdmc2.jdmc2 on SD card.
-could do it here , but id's don't match so its messy.
-could make it part of the amon code (no directory - making it now) but that needs root access.  Perhaps if it were 
-
-PROBLEM2: hostname is the same. Is this a problem?s
-
-PROBLEM3: fsck does not run? or doesnt appear to work right.
 
 -------
 timestamp log file: add date to arecord output:

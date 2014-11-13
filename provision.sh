@@ -26,7 +26,6 @@ if [ "$USER" != "root" ] ; then
     exit -1
 fi
 
-
 [ $PWD != '/opt/recorder' ] && { echo "must be in /opt, not $PWD. Stopping."; exit -1; }
 
 echo " *** Press return to continue ..."
@@ -43,18 +42,6 @@ echo "Done adding user amon (with groups and sudo powers)"
 echo
 
 
-### Do things raspi-config would normally do: (timezone, hostname, i2c)
-echo
-echo "Doing raspi-config things..."
-echo "  setting hostname..."
-echo "recorder" > /etc/hostname
-echo "  setting timezone"
-echo "Europe/London" > /etc/timezone
-dpkg-reconfigure -f noninteractive tzdata
-echo "Done doing raspi-config-like things."
-echo 
-
-
 ### Download and Install our code:
 echo 
 echo "Preparing our config scripts"
@@ -66,6 +53,22 @@ chmod +x /home/amon/amon/amon #gosh - that's silly
 echo "PATH=$PATH:/home/amon/amon/" > /home/amon/.bashrc
 echo "Done downloading our software"
 echo
+
+echo " --------------------------------- "
+echo " GO AWAY - I can do the rest myself"
+echo " ----------------------------------"
+
+
+### Do things raspi-config would normally do: (timezone, hostname, i2c)
+echo
+echo "Doing raspi-config things..."
+echo "  setting hostname..."
+echo "recorder" > /etc/hostname
+echo "  setting timezone"
+echo "Europe/London" > /etc/timezone
+dpkg-reconfigure -f noninteractive tzdata
+echo "Done doing raspi-config-like things."
+echo 
 
 #### Packages:
 

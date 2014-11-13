@@ -18,14 +18,23 @@ chmod +x /opt/recorder/provision.sh
 ./provision.sh
 
 ========= THIS NEEDS A SCRIPT ==============
-> once it's back in your PC: 
-sudo e2fsck -f /dev/sdc2
-sudo resize2fs -P /dev/sdc2
+> to shrink a img: 
+sudo losetup -v -o $((122880*512)) /dev/loop0 recorder-2014-11-12.img
+sudo e2fsck -f /dev/loop0
+sudo resize2fs -M /dev/loop0  (again and again if you like!)
+sudo resize2fs -p /dev/loop0 400000 (this is 1.6G.  blocks are 4k for some reason) 
+sudo losetup -d /dev/loop0
+> note the size of the new filesystem - use this later to resize the partition table.
+then delete and resize the partition using fdisk XXX.img
+delete partition 2, new start=same, end=+1600000K
+CHECK - writing to SD card and booting...
 
-# Estimated minimum size of the filesystem: 279248
-# (answer is in 4k slices).  Add 200M (50,000 units)
-sudo resize2fs -p /dev/sdc2 329248
+Then check truncating the img file itself using truncate.
+Then compress.zip
+done
 
+
+----------------
 > now resize it's containing partition /dev/sdc2:
 sudo fdisk /dev/sdc
 d
@@ -59,6 +68,15 @@ sudo dd bs=512 count=2756864 if=/dev/sdc of=/home/jdmc2/raspi/images/solo-`fdate
 zip -r /home/jdmc2/raspi/images/solo-`fdate`.zip /home/jdmc2/raspi/images/solo-`fdate`.img
 
 ================ END OF MAKING A RELEASE ============================
+loop mounting:
+sudo  losetup -v -o $((122880*512))  /dev/loop0 systemImage-2014-10-22.img
+> mounts the second (ext2) partition within the systemImage image on device /dev/loop0
+> can now 
+sudo e2fsck /dev/loop0
+> and then delete the loop
+sudo losetup -d /dev/loop0
+brilliant!
+
 
 
 HOW ABOUT sudo touch /forcefsck somewhere?

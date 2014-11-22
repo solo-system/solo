@@ -81,7 +81,7 @@ apt-get --yes clean
 # update and install things we need
 apt-get update
 apt-get -y upgrade
-apt-get -y install i2c-tools bootlogd ntpdate
+apt-get -y install i2c-tools bootlogd ntpdate rdate
 apt-get -y install emacs23-nox # ARGH this costs 60Mb.
 rpi-update
 apt-get --yes autoremove

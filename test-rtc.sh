@@ -11,6 +11,7 @@ echo "Looking for RTC... ( checking /dev/rtc0)"
 
 if [ ! -f /dev/rtc0 ] ; then
     echo "No such file - /dev/rtc0"
+    echo "exiting..."
 fi
 
 rdate -s time.nist.gov

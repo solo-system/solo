@@ -79,8 +79,8 @@ echo
 
 # add crontabs ...
 echo
-echo "Now adding watchdog to amon's crontab:"
-echo "* * * * * /home/amon/amon/amon watchdog >> /home/amon/amon/cron.log 2>&1" | crontab -u amon -
+echo "Now adding watchdog and playback to amon's crontab:"
+echo -e "* * * * * /home/amon/amon/amon watchdog >> /home/amon/amon/cron.log 2>&1\n* * * * * /home/amon/amon/playback.sh >> /home/amon/amon/playback.log 2>&1" | crontab -u amon -
 
 # this didn't work and caused a reboot at 22:59:01 every evening (eh?)
 #echo "Now adding roots crontab with midnight reboot"

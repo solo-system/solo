@@ -25,14 +25,14 @@ echo "netdate: $netdate"
 
 echo "Run with net2sys or sys2rtc (or both) if desired"
 
-if [ $1 == "net2sys" ] ; then
+if [ "$1" = "net2sys" ] ; then
     echo "setting system time from net ..."
     rdate time.nist.gov
     echo "Done - time is now `date`"
     shift
 fi
 
-if [ $1 == "sys2rtc" ] ; then
+if [ "$1" = "sys2rtc" ] ; then
     echo "setting rtc from system time ..."
     hwclock --systohc
     echo "Done."

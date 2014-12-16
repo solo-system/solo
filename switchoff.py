@@ -3,12 +3,26 @@
 import time, os
 import RPi.GPIO as GPIO
 
-POWERPIN = 11
+# how shall we address the pins?
 GPIO.setmode(GPIO.BCM)
+
+# the shutdown button:
+POWERPIN = 11
 GPIO.setup(POWERPIN, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+
+# the playback button
+PLAYPIN = 25
+GPIO.setup(PLAYPINPIN, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+
+
 
 print "Starting shutdown GPIO monitor"
 while (GPIO.input(POWERPIN) == True):
+
+    # check the playback pin
+    if (GPIO.input(PLAYPIN) == True):
+        print "detected press on playback pin"
+    
     time.sleep(1)
 
 # if we fall through the above, the pin has been pushed!

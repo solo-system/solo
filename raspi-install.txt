@@ -1,24 +1,25 @@
-TODO: add a bit to remove the /etc/profile.d/raspi-config crap from system
-      should probably go in provision.sh
-      /usr/bin/raspi-config (need to delete the line from /etc/inittab, and uncomment the other?)
-
 To build a image:
 -----------------
-> flash a card with BASE raspbian:
+# flash a card with BASE raspbian:
 sudo dd bs=4M if=~/raspi/images/2014-09-09-wheezy-raspbian.img of=/dev/sdc ; sync ; sync
 
-> plug it in a raspi, boot and log in as root: ssh raspberrypi -l pi
+## Move to raspi:
+ssh raspberrypi -l pi
 sudo su
 cd /opt
 git clone jdmc2@jdmc2.com:git/recorder
 cd recorder
 chmod +x /opt/recorder/provision.sh
-./provision.sh
-
+./provision.sh   # this does a lot
 sudo poweroff
 
-### Move card back to pc, and copy to HDD.  This image is bootable.
-> if you want to shrink the / partition:
+## Move card back to pc, and copy image to HDD.  This image is bootable.
+sudo dd bs=512 count=6400000 if=/dev/sdX of=~/raspi/images/recorder-`fdate`.img ; sync
+
+## DONE - this is usable. 
+
+
+> if you want to shrink the / partition: (make this a script).
 img=/home/jdmc2/raspi/images/recorder-X.img
 sudo chown jdmc2.jdmc2 $img
 sudo losetup -v -o $((122880*512)) /dev/loop0 recorder-2014-11-12.img
@@ -43,6 +44,9 @@ zip -r image.zip image.img
 done
 
 ==============================================================
+TODO: add a bit to remove the /etc/profile.d/raspi-config crap from system
+      should probably go in provision.sh
+      /usr/bin/raspi-config (need to delete the line from /etc/inittab, and uncomment the other?)
 
 
 TODO: add these to this build procedure, AND to flash-card.sh

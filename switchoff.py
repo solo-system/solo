@@ -12,7 +12,7 @@ GPIO.setup(POWERPIN, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
 # the playback button
 PLAYPIN = 25
-GPIO.setup(PLAYPINPIN, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+GPIO.setup(PLAYPIN, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
 
 

@@ -41,6 +41,13 @@ if ! grep mmcblk0p3 /proc/partitions > /dev/null ; then
   mount -a
   mkdir /mnt/sdcard/amondata
   # chown amon.amon /mnt/sdcard/amondata
+  # now build the crontab:
+  # add crontabs ... (these should NOT be here - since they overwrite with each boot).
+  echo
+  echo "Now adding watchdog and playback to amon's crontab:"
+  echo -e "* * * * * /home/amon/amon/amon watchdog >> /home/amon/amon/cron.log 2>&1\n#* * * * * /home/amon/amon/playback.sh >> /home/amon/amon/playback.log 2>&1" | crontab -u amon -
+  echo "Done building crontab"
+
   echo "First-boot: finished at `date`"
 else 
   echo "NOTE: p3 is already there - great, lets get on with it."
@@ -77,10 +84,6 @@ echo "Done setting up the clock. New time is : `date`"
 echo
 
 
-# add crontabs ... (these should NOT be here - since they overwrite with each boot).
-echo
-echo "Now adding watchdog and playback to amon's crontab:"
-echo -e "* * * * * /home/amon/amon/amon watchdog >> /home/amon/amon/cron.log 2>&1\n#* * * * * /home/amon/amon/playback.sh >> /home/amon/amon/playback.log 2>&1" | crontab -u amon -
 
 # this didn't work and caused a reboot at 22:59:01 every evening (eh?)
 #echo "Now adding roots crontab with midnight reboot"

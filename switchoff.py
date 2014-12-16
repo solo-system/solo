@@ -14,13 +14,11 @@ GPIO.setup(POWERPIN, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 PLAYPIN = 25
 GPIO.setup(PLAYPIN, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
-
-
 print "Starting shutdown GPIO monitor"
 while (GPIO.input(POWERPIN) == True):
 
     # check the playback pin
-    if (GPIO.input(PLAYPIN) == True):
+    if (GPIO.input(PLAYPIN) == False):
         print "detected press on playback pin"
     
     time.sleep(1)

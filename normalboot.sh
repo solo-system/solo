@@ -45,7 +45,7 @@ if ! grep mmcblk0p3 /proc/partitions > /dev/null ; then
   # add crontabs ... (these should NOT be here - since they overwrite with each boot).
   echo
   echo "Now adding watchdog and playback to amon's crontab:"
-  echo -e "* * * * * /home/amon/amon/amon watchdog >> /home/amon/amon/cron.log 2>&1\n#* * * * * /home/amon/amon/playback.sh >> /home/amon/amon/playback.log 2>&1" | crontab -u amon -
+  echo -e "* * * * * /home/amon/amon/amon watchdog >> /home/amon/amon/cron.log 2>&1\n#0 */2 * * * /home/amon/amon/playback.sh >> /home/amon/amon/playback.log 2>&1" | crontab -u amon -
   echo "Done building crontab"
 
   echo "First-boot: finished at `date`"

@@ -20,7 +20,8 @@ while (GPIO.input(POWERPIN) == True):
     # check the playback pin
     if (GPIO.input(PLAYPIN) == False):
         print "detected press on playback pin"
-    
+        os.system("/home/amon/amon/playback.sh")
+
     time.sleep(1)
 
 # if we fall through the above, the pin has been pushed!

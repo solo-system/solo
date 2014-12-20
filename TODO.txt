@@ -231,3 +231,35 @@ then set hwclock from system:
 --------------------
 sudo apt-get --compile source alsa-utils
 installs and compiles source.  BUT you need to add lots of dependentpackages
+
+
+================
+
+I got bluetooth tethering working between my laptop and andriod phone
+(pc gets internet through phone) via bluetooth by enableing tethering
+on the phone, and then using the gui bluetooth thing in ubuntu to
+conect to the android's network service.
+
+bluetooth:
+sudo apt-get install bluetooth bluez-utils bluez-compat 
+hciconfig dev       # can we see local device
+hciconfig up        # bring up local device
+hciconfig status    # to check
+hcitool scan        # scan for devices with
+sudo bluez-simple-agent hci0 00:1F:E1:E5:C5:A5 # pair with him (pins ensue)
+sudo bluez-test-device list  # list paired devices.
+
+
+sdptool browse local # list services offered by "local" sevice
+
+Then make the master (my pc) listen for 
+
+
+sudo l2ping 00:1F:81:00:08:30 # run me on laptop
+
+sudo l2ping  00:1F:E1:E5:C5:A5 # run me on pi
+
+# connect from pi:
+sudo pand -c 00:1F:E1:E5:C5:A5 --role PANU --persist 30
+
+# setup PC to listen for connections

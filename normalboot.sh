@@ -29,11 +29,11 @@ if ! grep mmcblk0p3 /proc/partitions > /dev/null ; then
   startnew=$((endlast+1))
   fcmd="n\np\n3\n$startnew\n\nw"
   echo "running $fcmd > fdisk"
-  echo -e $fcmd | fdisk /dev/mmcblk0 > /opt/recorder/fdisk.log
+  echo -e $fcmd | fdisk /dev/mmcblk0 > /opt/solo/fdisk.log
   echo "... running partprobe..."
   partprobe
   echo "... running mkfs.vfat"
-  mkfs.vfat -v -n AUDIO /dev/mmcblk0p3 > /opt/recorder/mkfs.vfat.log
+  mkfs.vfat -v -n AUDIO /dev/mmcblk0p3 > /opt/solo/mkfs.vfat.log
   fstabtxt="/dev/mmcblk0p3  /mnt/sdcard     vfat    defaults,noatime,umask=111,dmask=000  0  2"
   echo $fstabtxt >> /etc/fstab
   mkdir -p /mnt/sdcard
@@ -60,10 +60,10 @@ echo "--------------"
 mount
 echo "Done checking disk free info."
 
-### do normal setup required for deployed recorders
+### do normal setup required for deployed solos
 echo 
 echo "starting: switchoff, tvservice, and heartbeat at `date`"
-/opt/recorder/switchoff.py &
+/opt/solo/switchoff.py &
 /opt/vc/bin/tvservice -off
 echo heartbeat > /sys/class/leds/led0/trigger
 # amixer -q -c 1 set "Mic" 15dB

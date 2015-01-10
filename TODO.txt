@@ -1,5 +1,10 @@
 TODO:  Tidy this file up.
 
+# numbers on /etc/fstab entry for fsck
+# hostname exists in the /etc/hosts file too!
+# still get NOTICE: the software on this Raspberry Pi has not been fully configured
+# we should turn off swap Adding 102396k swap on /var/swap                           
+
 Make script shrinkImg - take source from raspi-install.txt.
      It should take a img file and output an img file with smaller / partition.
      and zip it (or print instructions).
@@ -70,15 +75,6 @@ sudo reboot (if you want to test / set the rtc)
 # sudo i2cdetect -y 0 (or 0)
 # sudo hwclock -r
 ================================================================
-
-reboot-switch  ( this should really live in /home/amon/bin/)
--------------
-SERVER=jdmc2.com
-scp jdmc2.com:recorder/switchoff.py ~
-chmod +x switchoff.py
-
-sudo nano /etc/rc.local
-add: /home/amon/switchoff.py &
 
 ================================================================
 vmon

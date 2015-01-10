@@ -9,40 +9,30 @@ Make script shrinkImg - take source from raspi-install.txt.
      It should take a img file and output an img file with smaller / partition.
      and zip it (or print instructions).
 
-does the wolfson board work with the pi?
-
-mounting brackets / spacers etc. Instead of cases?
 
 Support all microphones (USB) - set volume in a device independent
 way.  What are the sample rates?
 
-get bluetooth connection to laptop working (serial with ppp)  - perhaps get pppd working with USB cable first?
+get bluetooth connection working.  all that BNEP stuff. 
 
 Then (after netwrokgin above...) get web interface going.
 
-Design a playback system with nice interface.
+Clacker: it was fragile but did work.  How to do more complex
+playbacks in the field?  Hardware is the difficult bit.
+  Design a
+playback system with nice interface.
 
 Refactor switchoff.sh script as GPIOhandler.py/sh and make it interrupt driven so we can have better responsiveness.
 
 
-TODO: add a bit to remove the /etc/profile.d/raspi-config crap from system
-      should probably go in provision.sh
+silence the /etc/profile.d/raspi-config crap from system (should probably go in provision.sh)
       /usr/bin/raspi-config (need to delete the line from /etc/inittab, and uncomment the other?)
 
 
-
-TODO: add these to this build procedure, AND to flash-card.sh
-# remove all files in /var/log
-find mnt-root/var/log -type f -delete
-
-# remove any stray amon.log's
-rm -f home/jdmc2/amon/amon.log
-
-add: amixer -q -c 1 set 'Mic' 15dB (done - see flash-card.sh)
-
 Need to add a section about GPU_split=32 or whatever.
+turn off swap
 
-
+=========================================================
 Networking - wirelessly:
 ==========
 sudo echo "
@@ -53,7 +43,6 @@ network={
 }
 " >> slash/etc/wpa_supplicant/wpa_supplicant.conf 
 EOF
-
 
 ================================================================
 RTC (make sure rtc is plugged in)
@@ -138,7 +127,6 @@ lame	3.38RT	9.0%
 lame -f 4.96RT  9.0% (sizes are exactly the same since CBR of 64Kbps)
 lame process size is less than 5MB of ram running.
 
-
 ------------------------------
 
 # disable camera led 
@@ -147,21 +135,14 @@ sudo nano /boot/config.txt
 
 -----------------------------
 
-==========================================================================
-TODO:
------
-
 audio input dongle
-wireless dongles
 
 deployments:
 mount on arcticCat
 mount in car (in cabin or elsewhere?)
-Robbie - record with 
 bats
 
 develop:
-solar?
 compress audio
 record video
 pir sensor?
@@ -199,13 +180,13 @@ sudo apt-get install pppd
 hmmm - ppp not easy...
 
 ===========================================
-fast flash:
------------
-
+fsck:
 # To clone a working amon machine, put card into memorycard reader then
 # I did this:
 sudo fsck.fat  -a -V -v /dev/sdc1  # to check the filesystems on the memcard.
 sudo fsck -f -p -v /dev/sdc2       # to check the filesystems on the memcard.
+
+=============================================
 
 #finally, copy the card to local hard drive
 sudo dd bs=512 count=5785600 if=/dev/sdc of=amonruns.img
@@ -217,17 +198,9 @@ timestamp log file: add date to arecord output:
 tail -f /mnt/sdcard/amondata/wavs/arecord.log | while read line ; do date=`date +"%Y-%m-%d %H-%M-%S"` ; uptime=`uptime`; echo $date $uptime $line ; done
 ----
 
-to set system time from internet, do :
-
-sudo ntpdate -s time.nist.gov
-(needs sudo apt-get install ntpdate)
-then set hwclock from system:
-/sbin/hwclock -w
-
 --------------------
 sudo apt-get --compile source alsa-utils
 installs and compiles source.  BUT you need to add lots of dependentpackages
-
 
 ================
 
@@ -249,7 +222,6 @@ sudo bluez-test-device list  # list paired devices.
 sdptool browse local # list services offered by "local" sevice
 
 Then make the master (my pc) listen for 
-
 
 sudo l2ping 00:1F:81:00:08:30 # run me on laptop
 

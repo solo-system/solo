@@ -109,6 +109,10 @@ echo
 
 ### Remove clutter, sync and exit.
 rm -f /home/amon/pistore.desktop
+#find  /var/log -type f -delete
+rm -f home/jdmc2/amon/amon.log                                                                                                                       
+
+
 sync
 sync
 

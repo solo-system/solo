@@ -1,4 +1,4 @@
-TODO:  Tidy this file up.
+TODO:  for SOLOs (and probably some amon stuff too)
 
 # numbers on /etc/fstab entry for fsck
 # hostname exists in the /etc/hosts file too!
@@ -231,3 +231,6 @@ sudo l2ping  00:1F:E1:E5:C5:A5 # run me on pi
 sudo pand -c 00:1F:E1:E5:C5:A5 --role PANU --persist 30
 
 # setup PC to listen for connections
+
+==============================
+

@@ -1,0 +1,58 @@
+How to make the rpi bulletproof by making / read only (and /boot)
+==================================================================
+
+This is a really nice summary of what to do.  the ramfs lines are really good.  It's taken from:
+http://raspberrypi.stackexchange.com/questions/7978/how-can-i-prevent-my-pis-sd-card-from-getting-corrupted-so-often?newsletter=1&nlcode=364684|2ecd
+
+
+I suggest that I
+  1) move /home/amon to the new partition.  
+  2) reconsider things that write to /opt/solo
+  3) should there be a "solo" user (NO)
+  4) periodically copy dmesg to p3?
+  5) ... /var/log/kernel /var/log/whatever copy to p3
+  *) should look through a normal /var/log and /var/run to see what is useful, and either copy periodically, or symlink them (is that possible?)
+  7) what about netowkring ? how do we do it for /etc/hosts, /etc/resolv.conf etc???
+  8) look at mount optons for p3 - "sync?" noatime etc, to maximise performance.
+  9) write a "shutdown-solo" script, called before shutdown (on the button press), that copies interesting files from /var/log or /var/run into p3.
+  10) need a special directory on p3 that receives these things.  It should be called "solo-system", or just "solo". (chmod so all can read it).
+  11 the guy below mounts p3 on /home which is very very tempting, however we make p3 at the point of installation, since we don't know how big it will be.  so we can't do it.
+
+
+I'm not going to write about checking your HW and compatible SD card lists, because you most probably have already checked all these. What I'm about to write is the permanent solution, that allows to nip the problem in the bud, and permanently fix the issue.
+
+If you don't want your SD card to get broken when you flip the power switch, you have to use it in a read-only mode. If there's nothing being written to your SD card, it won't get damaged no matter what you do.
+
+Obvious (but non-working) solution would be an attempt to flip "read-only" switch on the side of the SD card, unfortunately this does not work because the schematics shows this switch is routed nowhere and its position is generally ignored.
+
+Another, more subtle (but working) approach would be modifying your /etc/fstab to mount all your partitions read-only. The drawback of this approach is your logs have to be written somewhere else (USB stick, RAM drive?) and in case of RAM drive the logs won't persist during reboot. To do this:
+
+    Copy an RPi image to your SD card using any method you like.
+    Boot from SD and raspi-config will start automatically. Do not "Expand filesystem", just set up your time zone and international settings.
+
+    Run sudo fdisk /dev/mmcblk0, press 'p' to print the current partition table. Then enter the following commands:
+
+    n        Create a new partition
+    [enter]  Make a primary partition
+    [enter]  Use the default number
+    [#]      1 greater than the end of mmcblk0p2
+    [enter]  Expand to the end of the SD card
+    w        Write the partition table and exit
+
+    Edit /etc/fstab. It should look something like the following:
+
+    proc            /proc     proc    defaults 0 0
+    /dev/mmcblk0p1  /boot     vfat    ro       0 0
+    /dev/mmcblk0p2  /         ext4    ro       0 0
+    /dev/mmcblk0p3  /home     ext4    defaults,errors=remount-ro  0  1
+    none            /var/run  ramfs   size=1M  0 0
+    none            /var/log  ramfs   size=1M  0 0
+
+    Run sudo partprobe to recognize the new partition.
+    Format your new partition with sudo mkfs --type ext4 /dev/mmcblk0p3.
+    Reboot.
+
+If for some reason you need to make changes to your system, you can remount the read-only partitions with write access:
+
+sudo mount -o remount,rw /dev/mmcblk0p2
+

@@ -32,6 +32,9 @@ silence the /etc/profile.d/raspi-config crap from system (should probably go in 
 Need to add a section about GPU_split=32 or whatever.
 turn off swap
 
+# TODO: should be cleverer in reading hwclock. If < 2014, don't set sys time.
+# also - if `date` is already >=2014, then must be networked - so SET rtc from sys 
+
 =========================================================
 Networking - wirelessly:
 ==========

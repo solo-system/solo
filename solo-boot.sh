@@ -1,10 +1,9 @@
 #!/bin/bash
 
-echo "------------------------"
-echo "Welcome to normalboot.sh"
-echo "------------------------"
+echo "-----------------------"
+echo "Welcome to solo-boot.sh"
+echo "-----------------------"
 echo
-
 echo "Started at: `date`"
 
 # just got 2 raspi A's that report rev as 0008!
@@ -18,6 +17,8 @@ echo "detected raspi hardware version $REV"
 
 # if p3 doesn't exist, make it, mount it.
 if ! grep mmcblk0p3 /proc/partitions > /dev/null ; then
+  echo "No partition p3 on mmc: assuming first boot"
+  # TODO: should refactor first boot() into a function
   echo "First-boot: making new partition at `date`"
   echo "... Making partition p3 on /dev/mmcblk0 ..."
 
@@ -88,7 +89,7 @@ echo
 #echo "Done with crontabs."
 
 echo
-echo "Exiting happy from normalboot.sh at `date`"
+echo "Exiting happy from solo-boot.sh at `date`"
 echo 
 
 exit 0

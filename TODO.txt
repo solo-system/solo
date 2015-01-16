@@ -1,5 +1,13 @@
 TODO:  for SOLOs (and probably some amon stuff too)
 
+switchoff.py is a "service / daemon" and should be interrupt driven (I think).
+
+ISSUE: where do we fill out the crontab with amon watchdog?
+solo-boot:  No - this means user changes are lost at every reboot
+first-boot:  OK (current implementation).  But lacks flexibility of enabling/disabling packages later.
+provision: No - far too early - don't want crontabs running during install process.
+best is a service based management of all this - using updstar/systemd etc... but leave for now since in flux.
+
 # numbers on /etc/fstab entry for fsck
 # hostname exists in the /etc/hosts file too!
 # still get NOTICE: the software on this Raspberry Pi has not been fully configured

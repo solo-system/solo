@@ -1,5 +1,6 @@
 To build a image:
 -----------------
+
 # flash a card with BASE raspbian:
 sudo dd bs=4M if=~/raspi/images/2014-09-09-wheezy-raspbian.img of=/dev/sdc ; sync ; sync
 
@@ -8,7 +9,8 @@ ssh raspberrypi -l pi
 sudo su
 cd /opt
 git clone jdmc2@jdmc2.com:git/solo
-cd solochmod +x /opt/solo/provision.sh
+cd solo
+chmod +x /opt/solo/provision.sh
 ./provision.sh   # this does a lot
 sudo poweroff
 
@@ -16,6 +18,7 @@ sudo poweroff
 sudo dd bs=512 count=6400000 if=/dev/sdX of=~/raspi/images/solo-`fdate`.img ; sync
 
 
+# get new images from "http://www.raspberrypi.org/downloads/"
 
 ## The below works to shring the img (through resize2fs)
 ########################################################

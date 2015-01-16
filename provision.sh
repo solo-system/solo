@@ -85,8 +85,8 @@ apt-get --yes clean
 echo "APT: done all the apt stuff and cleaned up"
 
 echo
-echo "Adding solo-lboot.sh to rc.local"
-sed -i 's:^exit 0$:/opt/solo/solo-lboot.sh >> /opt/solo/solo-boot.log 2>\&1\n\n&:' /etc/rc.local
+echo "Adding solo-boot.sh to rc.local"
+sed -i 's:^exit 0$:/opt/solo/solo-boot.sh >> /opt/solo/solo-boot.log 2>\&1\n\n&:' /etc/rc.local
 chmod +x /opt/solo/solo-boot.sh
 echo "Done updating rc.local"
 echo

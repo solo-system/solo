@@ -15,6 +15,16 @@ else
 fi
 echo "detected raspi hardware version $REV"
 
+### TODO - this doesn't catch the situation where the partition is
+### made, but the fs isn't (or the FS is corrupt).  Instead, we should
+### check for the presence of the FS. somehow.  I just saw this on a
+### PI which had a power fail during initial boot (presumably AFTER
+### fdisk made the partition, but before the FS was written (and added
+### to fstab).  Perhaps we should check here for the existence of p3
+### in /etc/fstab (the last bit of the below).  We should also "sync"
+### after making the fs and sync after changing fstab.  The fstab on
+### the pi in question was corrupt with lots of ^0^0^0 in it.
+
 # if p3 doesn't exist, make it, mount it.
 if ! grep mmcblk0p3 /proc/partitions > /dev/null ; then
   echo "No partition p3 on mmc: assuming first boot"

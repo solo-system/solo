@@ -24,6 +24,7 @@ echo "detected raspi hardware version $REV"
 ### in /etc/fstab (the last bit of the below).  We should also "sync"
 ### after making the fs and sync after changing fstab.  The fstab on
 ### the pi in question was corrupt with lots of ^0^0^0 in it.
+## I've added 2 lines below tagged TRYTHIS:
 
 # if p3 doesn't exist, make it, mount it.
 if ! grep mmcblk0p3 /proc/partitions > /dev/null ; then
@@ -44,7 +45,16 @@ if ! grep mmcblk0p3 /proc/partitions > /dev/null ; then
   mkfs.vfat -v -n AUDIO /dev/mmcblk0p3 > /opt/solo/mkfs.vfat.log
   fstabtxt="/dev/mmcblk0p3  /mnt/sdcard     vfat    defaults,noatime,umask=111,dmask=000  0  2"
   echo $fstabtxt >> /etc/fstab
+
+  ### TRYTHIS - add a sync to ensure the mkfs and fstab work sticks.
+  echo "syncing disks..."
+  sync
+
   mkdir -p /mnt/sdcard
+
+  ### TRYTHIS - add a second sync to ensure the mkdir sticks - whynot ???
+  sync
+
   echo "... remounting.."
   mount -a
   mkdir /mnt/sdcard/amondata

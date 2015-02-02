@@ -27,8 +27,9 @@ echo "detected raspi hardware version $REV"
 ## I've added 2 lines below tagged TRYTHIS:
 
 # if p3 doesn't exist, make it, mount it.
-if ! grep mmcblk0p3 /proc/partitions > /dev/null ; then
-  echo "No partition p3 on mmc: assuming first boot"
+#if ! grep mmcblk0p3 /proc/partitions > /dev/null ; then
+if ! grep mmcblk0p3 /proc/mounts > /dev/null ; then
+  echo "No mount associated with p3 on mmc: assuming first boot - building..."
   # TODO: should refactor first boot() into a function
   echo "First-boot: making new partition at `date`"
   echo "... Making partition p3 on /dev/mmcblk0 ..."

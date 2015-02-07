@@ -1,5 +1,8 @@
 TODO:  for SOLOs (and probably some amon stuff too)
 
+change label on slash partition to something meaningful (it comes up as c432434232-23fbs43-4-23423 on linux, and I don't know what on Windows).
+
+
 switchoff.py is a "service / daemon" and should be interrupt driven (I think).
 
 ISSUE: where do we fill out the crontab with amon watchdog?

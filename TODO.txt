@@ -1,5 +1,16 @@
 TODO:  for SOLOs (and probably some amon stuff too)
 
+change label on slash partition to something meaningful (it comes up as c432434232-23fbs43-4-23423 on linux, and I don't know what on Windows).
+
+
+switchoff.py is a "service / daemon" and should be interrupt driven (I think).
+
+ISSUE: where do we fill out the crontab with amon watchdog?
+solo-boot:  No - this means user changes are lost at every reboot
+first-boot:  OK (current implementation).  But lacks flexibility of enabling/disabling packages later.
+provision: No - far too early - don't want crontabs running during install process.
+best is a service based management of all this - using updstar/systemd etc... but leave for now since in flux.
+
 # numbers on /etc/fstab entry for fsck
 # hostname exists in the /etc/hosts file too!
 # still get NOTICE: the software on this Raspberry Pi has not been fully configured
@@ -31,6 +42,9 @@ silence the /etc/profile.d/raspi-config crap from system (should probably go in 
 
 Need to add a section about GPU_split=32 or whatever.
 turn off swap
+
+# TODO: should be cleverer in reading hwclock. If < 2014, don't set sys time.
+# also - if `date` is already >=2014, then must be networked - so SET rtc from sys 
 
 =========================================================
 Networking - wirelessly:

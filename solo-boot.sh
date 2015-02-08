@@ -1,13 +1,9 @@
 #!/bin/bash
 
-# TODO: should be cleverer in reading hwclock. If < 2014, don't set sys time.
-#       also - if `date` is already >=2014, then must be networked - so SET rtc from sys ?
-
-echo "------------------------"
-echo "Welcome to normalboot.sh"
-echo "------------------------"
+echo "-----------------------"
+echo "Welcome to solo-boot.sh"
+echo "-----------------------"
 echo
-
 echo "Started at: `date`"
 
 # just got 2 raspi A's that report rev as 0008!
@@ -19,8 +15,22 @@ else
 fi
 echo "detected raspi hardware version $REV"
 
+### TODO - this doesn't catch the situation where the partition is
+### made, but the fs isn't (or the FS is corrupt).  Instead, we should
+### check for the presence of the FS. somehow.  I just saw this on a
+### PI which had a power fail during initial boot (presumably AFTER
+### fdisk made the partition, but before the FS was written (and added
+### to fstab).  Perhaps we should check here for the existence of p3
+### in /etc/fstab (the last bit of the below).  We should also "sync"
+### after making the fs and sync after changing fstab.  The fstab on
+### the pi in question was corrupt with lots of ^0^0^0 in it.
+## I've added 2 lines below tagged TRYTHIS:
+
 # if p3 doesn't exist, make it, mount it.
-if ! grep mmcblk0p3 /proc/partitions > /dev/null ; then
+#if ! grep mmcblk0p3 /proc/partitions > /dev/null ; then
+if ! grep mmcblk0p3 /proc/mounts > /dev/null ; then
+  echo "No mount associated with p3 on mmc: assuming first boot - building..."
+  # TODO: should refactor first boot() into a function
   echo "First-boot: making new partition at `date`"
   echo "... Making partition p3 on /dev/mmcblk0 ..."
 
@@ -36,7 +46,16 @@ if ! grep mmcblk0p3 /proc/partitions > /dev/null ; then
   mkfs.vfat -v -n AUDIO /dev/mmcblk0p3 > /opt/solo/mkfs.vfat.log
   fstabtxt="/dev/mmcblk0p3  /mnt/sdcard     vfat    defaults,noatime,umask=111,dmask=000  0  2"
   echo $fstabtxt >> /etc/fstab
+
+  ### TRYTHIS - add a sync to ensure the mkfs and fstab work sticks.
+  echo "syncing disks..."
+  sync
+
   mkdir -p /mnt/sdcard
+
+  ### TRYTHIS - add a second sync to ensure the mkdir sticks - whynot ???
+  sync
+
   echo "... remounting.."
   mount -a
   mkdir /mnt/sdcard/amondata
@@ -91,7 +110,7 @@ echo
 #echo "Done with crontabs."
 
 echo
-echo "Exiting happy from normalboot.sh at `date`"
+echo "Exiting happy from solo-boot.sh at `date`"
 echo 
 
 exit 0

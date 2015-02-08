@@ -39,7 +39,7 @@ echo
 ### Download and Install our code:
 echo 
 echo "Preparing our boot scripts"
-chmod +x /opt/solo/normalboot.sh /opt/solo/switchoff.py 
+chmod +x /opt/solo/solo-boot.sh /opt/solo/switchoff.py 
 echo "Downloading and Installing amon ..."
 ( cd /home/amon/ ; git clone jdmc2@jdmc2.com:git/amon )
 chown -R amon.amon /home/amon
@@ -85,9 +85,9 @@ apt-get --yes clean
 echo "APT: done all the apt stuff and cleaned up"
 
 echo
-echo "Adding normalboot.sh to rc.local"
-sed -i 's:^exit 0$:/opt/solo/normalboot.sh >> /opt/solo/normalboot.log 2>\&1\n\n&:' /etc/rc.local
-chmod +x /opt/solo/normalboot.sh
+echo "Adding solo-boot.sh to rc.local"
+sed -i 's:^exit 0$:/opt/solo/solo-boot.sh >> /opt/solo/solo-boot.log 2>\&1\n\n&:' /etc/rc.local
+chmod +x /opt/solo/solo-boot.sh
 echo "Done updating rc.local"
 echo
 

@@ -84,7 +84,10 @@ echo
 echo "starting: switchoff, tvservice, and heartbeat at `date`"
 /opt/solo/switchoff.py &
 /opt/vc/bin/tvservice -off
-echo heartbeat > /sys/class/leds/led0/trigger
+
+#echo heartbeat > /sys/class/leds/led0/trigger
+echo heartbeat > /sys/class/leds/ACT/trigger
+
 # amixer -q -c 1 set "Mic" 15dB
 echo "Done starting switchoff, tvservice, and heartbeat at `date`"
 echo

@@ -63,7 +63,7 @@ echo $NEW_HOSTNAME > /etc/hostname
 sed -i "s/127.0.1.1.*$CURRENT_HOSTNAME/127.0.1.1\t$NEW_HOSTNAME/g" /etc/hosts
 
 
-echo "  setting timezone"
+echo "Setting timezone ..."
 echo "Europe/London" > /etc/timezone
 dpkg-reconfigure -f noninteractive tzdata
 echo "Done doing raspi-config-like things."
@@ -97,22 +97,25 @@ echo "Done updating rc.local"
 echo
 
 echo
-echo "Enabling i2c (for rtc) (see raspi-config for more details"
+echo "Enabling i2c (for rtc) (see raspi-config for more details)"
 printf "dtparam=i2c_arm=on\n" >> /boot/config.txt
 # there used to be stuff about un-blacklisting, but not needed any more 
 echo "Done enabling i2c"
 
-echo
-echo "Adding heartbeat module..."
-echo "... updating /etc/modules with modprobe ledtrig_heartbeat"
-echo "ledtrig_heartbeat" >> /etc/modules
-echo "Done adding heartbeat module."
-echo
+#echo
+#echo "Adding heartbeat module..."
+#echo "... updating /etc/modules with modprobe ledtrig_heartbeat"
+#echo "ledtrig_heartbeat" >> /etc/modules
+#echo "Done adding heartbeat module."
+#echo
 
 ### Remove clutter, sync and exit.
 rm -f /home/amon/pistore.desktop
 #find  /var/log -type f -delete
 rm -f home/jdmc2/amon/amon.log
+
+### Experimental removes - added 2015-02-10 by jdmc2.
+rm -rf /usr/share/{icons,doc,share,scratch,midi,fonts}
 
 sync
 sync

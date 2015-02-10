@@ -6,14 +6,15 @@ echo "-----------------------"
 echo
 echo "Started at: `date`"
 
-# just got 2 raspi A's that report rev as 0008!
+# on raspi model A get: 0008 from /proc/cpuinfo
 REV=`grep Revision /proc/cpuinfo  | awk '{print $3}'`
 if [ "$REV" = 0002 ] ; then
     IICBUS=0
 else
     IICBUS=1
 fi
-echo "detected raspi hardware version $REV"
+
+echo "detected raspi hardware version $REV so using i2c bus $IICBUS"
 
 ### TODO - this doesn't catch the situation where the partition is
 ### made, but the fs isn't (or the FS is corrupt).  Instead, we should
@@ -85,15 +86,14 @@ echo "starting: switchoff, tvservice, and heartbeat at `date`"
 /opt/solo/switchoff.py &
 /opt/vc/bin/tvservice -off
 
-#echo heartbeat > /sys/class/leds/led0/trigger
-echo heartbeat > /sys/class/leds/ACT/trigger
-
-# amixer -q -c 1 set "Mic" 15dB
+LED=/sys/class/leds/ACT/trigger
+[ -f $LED ] && echo heartbeat > $LED
 echo "Done starting switchoff, tvservice, and heartbeat at `date`"
 echo
 
 echo "Setting up the clock at `date`"
 echo "... detected raspi revision $REV"
+
 echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-${IICBUS}/new_device
 echo "... informed the kernel of new_device at `date`"
 sleep 1 # let is settle.
@@ -104,13 +104,6 @@ echo "... setting system time from rtc at `date`"
 echo "ZOOM into the future..." 
 echo "Done setting up the clock. New time is : `date`"
 echo
-
-
-
-# this didn't work and caused a reboot at 22:59:01 every evening (eh?)
-#echo "Now adding roots crontab with midnight reboot"
-#echo "59 23 * * * /sbin/reboot" | crontab -
-#echo "Done with crontabs."
 
 echo
 echo "Exiting happy from solo-boot.sh at `date`"

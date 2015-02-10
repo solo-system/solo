@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # There should be NO mention of p3 here. It doesn't exist
-# It should only do things that need internet access. 
+# It should only do things that need internet access.
 # [ or are slow - I supose ]
-# hostname = solo, user=amon, software = amon 
+# hostname = solo, user=amon, software = amon
 # directory = /opt/solo/
 
 echo
@@ -21,7 +21,7 @@ if [ "$USER" != "root" ] ; then
     exit -1
 fi
 
-[ $PWD != '/opt/solo' ] && { echo "must be in /opt, not $PWD. Stopping."; exit -1; }
+[ $PWD != '/opt/solo' ] && { echo "must be in /opt/solo, not $PWD. Stopping."; exit -1; }
 
 echo " *** Press return to continue ..."
 read a
@@ -39,7 +39,7 @@ echo
 ### Download and Install our code:
 echo 
 echo "Preparing our boot scripts"
-chmod +x /opt/solo/solo-boot.sh /opt/solo/switchoff.py 
+chmod +x /opt/solo/solo-boot.sh /opt/solo/switchoff.py
 echo "Downloading and Installing amon ..."
 ( cd /home/amon/ ; git clone jdmc2@jdmc2.com:git/amon )
 chown -R amon.amon /home/amon
@@ -57,7 +57,12 @@ echo " ----------------------------------"
 echo
 echo "Doing raspi-config things..."
 echo "  setting hostname..."
-echo "solo" > /etc/hostname
+CURRENT_HOSTNAME=`cat /etc/hostname | tr -d " \t\n\r"`
+NEW_HOSTNAME="solo"
+echo $NEW_HOSTNAME > /etc/hostname
+sed -i "s/127.0.1.1.*$CURRENT_HOSTNAME/127.0.1.1\t$NEW_HOSTNAME/g" /etc/hosts
+
+
 echo "  setting timezone"
 echo "Europe/London" > /etc/timezone
 dpkg-reconfigure -f noninteractive tzdata
@@ -91,7 +96,7 @@ chmod +x /opt/solo/solo-boot.sh
 echo "Done updating rc.local"
 echo
 
-echo 
+echo
 echo "setting up RTC"
 echo "  un-blacklisting i2c-bcm2708"
 sed -i 's:^blacklist i2c-bcm2708$:#&1:' /etc/modprobe.d/raspi-blacklist.conf
@@ -99,19 +104,18 @@ echo "  adding i2c-dev to /etc/modules"
 echo "WARNING - I don't actually do this, which is wierd - perhaps I should???"
 echo "Done setting up RTC"
 
-echo 
+echo
 echo "Adding heartbeat module..."
 echo "... updating /etc/modules with modprobe ledtrig_heartbeat"
 echo "ledtrig_heartbeat" >> /etc/modules
 echo "Done adding heartbeat module."
-echo 
+echo
 
 
 ### Remove clutter, sync and exit.
 rm -f /home/amon/pistore.desktop
 #find  /var/log -type f -delete
-rm -f home/jdmc2/amon/amon.log                                                                                                                       
-
+rm -f home/jdmc2/amon/amon.log
 
 sync
 sync
@@ -124,6 +128,6 @@ echo " now poweroff, and take this image as the new install image"
 echo " sudo dd bs=512 count=6400000 if=/dev/sdc of=solo-fdate.img ; sync"
 echo " where the count=XXX you can get from fdisk -l"
 echo "----------------------------------------------------------"
-echo 
+echo
 
 exit 0

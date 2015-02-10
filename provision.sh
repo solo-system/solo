@@ -97,12 +97,10 @@ echo "Done updating rc.local"
 echo
 
 echo
-echo "setting up RTC"
-echo "  un-blacklisting i2c-bcm2708"
-sed -i 's:^blacklist i2c-bcm2708$:#&1:' /etc/modprobe.d/raspi-blacklist.conf
-echo "  adding i2c-dev to /etc/modules"
-echo "WARNING - I don't actually do this, which is wierd - perhaps I should???"
-echo "Done setting up RTC"
+echo "Enabling i2c (for rtc) (see raspi-config for more details"
+printf "dtparam=i2c_arm=on\n" >> /boot/config.txt
+# there used to be stuff about un-blacklisting, but not needed any more 
+echo "Done enabling i2c"
 
 echo
 echo "Adding heartbeat module..."
@@ -110,7 +108,6 @@ echo "... updating /etc/modules with modprobe ledtrig_heartbeat"
 echo "ledtrig_heartbeat" >> /etc/modules
 echo "Done adding heartbeat module."
 echo
-
 
 ### Remove clutter, sync and exit.
 rm -f /home/amon/pistore.desktop

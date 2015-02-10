@@ -1,0 +1,31 @@
+RTC
+---
+
+The real time clock is an i2c device connected to the gpio pins.
+
+The kernel needs to have i2c enabled.  This is now done by adding it
+to devicetree (eh?), but adding this line to /boot/config.txt:
+
+dtparam=i2c_arm=on
+
+That enables i2c, and you snould notice (after a reboot, or do an
+modprobe i2c_bcm2708) that the i2c_bcm2708 module is loaded.
+
+Only now can we tell the kernel about the i2c device we've plugged
+into the i2c bus (it's not a plug-n-play bus, so can't be autodetected
+easily).
+
+echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-1/new_device
+
+Tells the kernel there is a new device at that address (0x68) of that
+type (ds`307 = chip on the RTC), on that i2c bus (i2c-1).
+
+Typing this command produces this in /var/log/kern.log:
+[  529.914840] i2c i2c-1: new_device: Instantiated device ds1307 at 0x68
+[  529.944447] rtc-ds1307 1-0068: rtc core: registered ds1307 as rtc0
+[  529.944522] rtc-ds1307 1-0068: 56 bytes nvram
+
+and the device /dev/rtc0 is now available.
+
+Check the clock with:
+/sbin/hwclock -r (reads the clock)

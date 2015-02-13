@@ -93,7 +93,7 @@ echo
 
 PURGE="fake-hwclock wolfram-engine xserver.* x11-.* xarchiver xauth xkb-data console-setup xinit lightdm lxde.* python-tk python3-tk scratch gtk.* libgtk.* openbox libxt.* lxpanel gnome.* libqt.* gvfs.* xdg-.* desktop.* freepats smbclient"
 echo "APT: remove stuff we don't want, and installing things we do..."
-if [ $QPURGE = "yes" ] then ; 
+if [ $QPURGE = "yes" ] ; then
   apt-get -y purge $PURGE
   apt-get --yes autoremove
   apt-get --yes autoclean
@@ -146,7 +146,6 @@ if [ $QPURGE ] ; then
     ### Experimental removes - added 2015-02-10 by jdmc2.
     rm -rf /usr/share/{icons,doc,share,scratch,midi,fonts}
 fi
-
 
 sync
 sync

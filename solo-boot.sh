@@ -14,6 +14,16 @@ else
     IICBUS=1
 fi
 
+KRNL=$(uname -r | cut -f1,2 -d'.')
+if [ $KRNL = "3.12" ] ; then
+    DT=no
+elif [ $KRNL = "3.18" ] ; then
+    DT=yes
+else
+    DT=unknown
+fi
+
+echo "Detected KRNL version $KRNL, so assuming device tree is $DT"
 echo "detected raspi hardware version $REV so using i2c bus $IICBUS"
 
 ### TODO - this doesn't catch the situation where the partition is
@@ -86,16 +96,40 @@ echo "starting: switchoff, tvservice, and heartbeat at `date`"
 /opt/solo/switchoff.py &
 /opt/vc/bin/tvservice -off
 
-LED=/sys/class/leds/ACT/trigger
+if [ $DT = "yes" ] ; then
+    LED=/sys/class/leds/ACT/trigger
+else
+    LED=/sys/class/leds/led0/trigger
+fi
+
+if [ ! -f $LED ] ; then 
+  echo "WARNING: no LED detected - programmer error"
+fi
+
+echo "starting heartbeat in $LED"
 [ -f $LED ] && echo heartbeat > $LED
+echo "Done starting heartbeat in $LED"
+
 echo "Done starting switchoff, tvservice, and heartbeat at `date`"
 echo
 
 echo "Setting up the clock at `date`"
 echo "... detected raspi revision $REV"
 
-echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-${IICBUS}/new_device
-echo "... informed the kernel of new_device at `date`"
+if [ $DT = no ] ; then
+    RTC=/sys/class/i2c-adapter/i2c-${IICBUS}/new_device
+    if [ -f $RTC ] ; then
+	echo "informing kernel of rtc device"
+	echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-${IICBUS}/new_device
+	echo "done informing kernel of rtc device"
+    else
+	echo "Warning: Can't find RTC device in $RTC"
+    fi
+else
+    echo "HELP - do we need to do anything here.  Device Tree should handle it all I think"
+fi
+
+echo "Done setting up clock at `date`"
 sleep 1 # let is settle.
 ls -l /dev/rtc0
 /sbin/hwclock -r  # read it 

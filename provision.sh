@@ -92,24 +92,38 @@ echo
 ### Packages:
 
 PURGE="fake-hwclock wolfram-engine xserver.* x11-.* xarchiver xauth xkb-data console-setup xinit lightdm lxde.* python-tk python3-tk scratch gtk.* libgtk.* openbox libxt.* lxpanel gnome.* libqt.* gvfs.* xdg-.* desktop.* freepats smbclient"
-echo "APT: remove stuff we don't want, and installing things we do..."
+
+
 if [ $QPURGE = "yes" ] ; then
+  echo "APT: purging unwanted packages..."
   apt-get -y purge $PURGE
   apt-get --yes autoremove
   apt-get --yes autoclean
-  apt-get --yes clean
+  apt-get --yes clea
+  echo "APT: Done purging unwanted packages..."
 fi
 
 ### update and install things we need
+### on second thoughts - this is NOT the right thing to do.
+### I should trust the raspbian release to be correct, no need to update
+### Just as there is no reason to run rpi-update.
+
+### This makes solo rebuilds stable (within a raspbian release)
+### vulnerable to external changes out of my control.  If I find
+### specific packages need updating, then can do it here on a pkg by
+### pkg basis. So... New policy - Dont do apt-get upgrade here.
+
+NEWPKGS="i2c-tools bootlogd ntpdate rdate"
+echo "APT: installing new packages: $NEWPKGS"
 apt-get update
-apt-get -y upgrade
-apt-get -y install i2c-tools bootlogd ntpdate rdate
+#apt-get -y upgrade
+apt-get -y install $NEWPKGS
 apt-get -y install emacs23-nox # ARGH this costs 60Mb.
-# rpi-update #dont do this as it mucks things up
+# rpi-update #dont do this as it might muck things up
 apt-get --yes autoremove
 apt-get --yes autoclean
 apt-get --yes clean
-echo "APT: done all the apt stuff and cleaned up"
+echo "APT: done installing new packages..."
 
 echo
 echo "Adding solo-boot.sh to rc.local"

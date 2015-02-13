@@ -23,6 +23,19 @@ fi
 
 [ $PWD != '/opt/solo' ] && { echo "must be in /opt/solo, not $PWD. Stopping."; exit -1; }
 
+# are we 3.12 or 3.18 kernel (device tree or not?)
+KRNL=$(uname -r | cut -f1,2 -d'.')
+if [ $KRNL = "3.12" ] ; then
+    DT=no
+elif [ $KRNL = "3.18" ] ; then
+    DT=yes
+else
+    DT=unknown
+fi
+
+echo "Detected KRNL version $KRNL, so assuming device tree is $DT"
+
+
 echo " *** Press return to continue ..."
 read a
 

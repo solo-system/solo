@@ -93,10 +93,12 @@ echo
 
 PURGE="fake-hwclock wolfram-engine xserver.* x11-.* xarchiver xauth xkb-data console-setup xinit lightdm lxde.* python-tk python3-tk scratch gtk.* libgtk.* openbox libxt.* lxpanel gnome.* libqt.* gvfs.* xdg-.* desktop.* freepats smbclient"
 echo "APT: remove stuff we don't want, and installing things we do..."
-apt-get -y purge $PURGE
-apt-get --yes autoremove
-apt-get --yes autoclean
-apt-get --yes clean
+if [ $QPURGE = "yes" ] then ; 
+  apt-get -y purge $PURGE
+  apt-get --yes autoremove
+  apt-get --yes autoclean
+  apt-get --yes clean
+fi
 
 ### update and install things we need
 apt-get update
@@ -118,8 +120,14 @@ echo
 
 echo
 echo "Enabling i2c (for rtc) (see raspi-config for more details)"
-printf "dtparam=i2c_arm=on\n" >> /boot/config.txt
-# there used to be stuff about un-blacklisting, but not needed any more 
+if [ $DT = "yes" ] ; then
+    printf "dtparam=i2c_arm=on\n" >> /boot/config.txt
+else
+    echo "KRNL suggests we're doing a cirrus install (old krnl), so configure that clock here"
+    echo "Don't know how to do that yet"
+    echo "TODO"
+fi
+    # there used to be stuff about un-blacklisting, but not needed any more 
 echo "Done enabling i2c"
 
 #echo
@@ -129,13 +137,16 @@ echo "Done enabling i2c"
 #echo "Done adding heartbeat module."
 #echo
 
-### Remove clutter, sync and exit.
-rm -f /home/amon/pistore.desktop
-#find  /var/log -type f -delete
-rm -f home/jdmc2/amon/amon.log
+if [ $QPURGE ] ; then 
+    ### Remove clutter, sync and exit.
+    rm -f /home/amon/pistore.desktop
+    #find  /var/log -type f -delete
+    rm -f home/jdmc2/amon/amon.log
 
-### Experimental removes - added 2015-02-10 by jdmc2.
-rm -rf /usr/share/{icons,doc,share,scratch,midi,fonts}
+    ### Experimental removes - added 2015-02-10 by jdmc2.
+    rm -rf /usr/share/{icons,doc,share,scratch,midi,fonts}
+fi
+
 
 sync
 sync

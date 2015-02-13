@@ -36,7 +36,7 @@ fi
 echo "Detected KRNL version $KRNL, so assuming device tree is $DT"
 
 QPURGE=unk
-while [ $QPURGE != "yes" && $QPURGE != "no" ] ; do
+while [ $QPURGE != "yes" -a $QPURGE != "no" ] ; do
   echo "shall I purge unneeded packages (slow) ???"
   read QPURGE
 done

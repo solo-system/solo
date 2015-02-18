@@ -125,6 +125,8 @@ echo "Setting up the clock at `date`"
 echo "... detected raspi revision $REV"
 
 if [ $DT = no ] ; then
+    echo "doing modprobe i2c-dev"
+    modprobe i2c-dev
     RTC=/sys/class/i2c-adapter/i2c-${IICBUS}/new_device
     if [ -f $RTC ] ; then
 	echo "informing kernel of rtc (DS-1307 L-shaped) device"

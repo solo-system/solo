@@ -93,8 +93,16 @@ echo "Done checking disk free info."
 ### do normal setup required for deployed solos
 echo 
 echo "starting: switchoff, tvservice, and heartbeat at `date`"
-/opt/solo/switchoff.py &
 /opt/vc/bin/tvservice -off
+
+# only start switchoff if this is NOT a wolfson/cirrus install
+# since don't know how to do GPIO with wolfson/cirrus.
+if [ $DT = "yes" ] ; then
+    echo "starting switchoff.py"
+    /opt/solo/switchoff.py &
+else
+    echo "NOT starting switchoff.py, cos it's a cirrus install"
+fi
 
 if [ $DT = "yes" ] ; then
     LED=/sys/class/leds/ACT/trigger

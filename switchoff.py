@@ -10,17 +10,17 @@ GPIO.setmode(GPIO.BCM)
 POWERPIN = 11
 GPIO.setup(POWERPIN, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
-# the playback button
-PLAYPIN = 25
-GPIO.setup(PLAYPIN, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+# the playback button - for clacker - disabling for the moment.
+#PLAYPIN = 25
+#GPIO.setup(PLAYPIN, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
 print "Starting shutdown GPIO monitor"
 while (GPIO.input(POWERPIN) == True):
 
     # check the playback pin
-    if (GPIO.input(PLAYPIN) == False):
-        print "detected press on playback pin"
-        os.system("/home/amon/amon/playback.sh")
+#    if (GPIO.input(PLAYPIN) == False):
+#        print "detected press on playback pin"
+#        os.system("/home/amon/amon/playback.sh")
 
     time.sleep(1)
 

@@ -127,8 +127,10 @@ echo "... detected raspi revision $REV"
 if [ $DT = no ] ; then
     RTC=/sys/class/i2c-adapter/i2c-${IICBUS}/new_device
     if [ -f $RTC ] ; then
-	echo "informing kernel of rtc device"
+	echo "informing kernel of rtc (DS-1307 L-shaped) device"
 	echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-${IICBUS}/new_device
+	echo "informing kernel of rtc (MCP-7941x piface shim) device"
+	echo mcp7941x 0x6f > /sys/class/i2c-adapter/i2c-${IICBUS}/new_device
 	echo "done informing kernel of rtc device"
     else
 	echo "Warning: Can't find RTC device in $RTC"

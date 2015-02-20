@@ -17,6 +17,7 @@ now, with lots of removal
 Filesystem     1K-blocks    Used Available Use% Mounted on
 /dev/root        3023728 1011612   1838804  36% /
 
+<<<<<<< HEAD
 =====================================================================
 Other things to try:
 
@@ -49,6 +50,29 @@ The img file looks like this:
 and we want 
 
 [ MBR | boot | p1 | <space> ].img
+=======
+----------------------------------------------------------
+
+http://www.htmlgraphic.com/how-to-resize-partition-without-data-loss-part-2-of-3
+
+TODO: work out what level to do the mount on, WAIT - we shouldn't need to mount anything, since we aren't accessing any files!
+The img file looks like this:
+
+[ MBR | boot | p1    | <space> ].img
+
+and we want
+
+[ MBR | boot | p1 | <space> ].img
+
+so these things MUST change:
+1) MBR must be updated to indicate CORRECT END to p1 - nothing else in MBR
+2) p1 must be shrunk.
+3) the img file must be truncated.
+
+
+
+------------------------------------------------------------------------
+>>>>>>> 80e43ecfd56a996e9c24f63036d537976f28f447
 
 
 ----------------------------------------------
@@ -92,3 +116,33 @@ sudo apt-get autoremove
 mounting img files with offset:
 fdisk -l 2014-06-20-wheezy-raspbian.img
 sudo mount -o loop,offset=$((122880*512)) 2014-06-20-wheezy-raspbian.img mnt/
+
+
+======================================
+-------------------------------------------
+Packages:
+
+# This is mostly X stuff:
+sudo apt-get --yes purge xserver.* x11-.* xarchiver xauth xkb-data console-setup xinit lightdm lxde.* python-tk python3-tk scratch gtk.* libgtk.* openbox libxt.* lxpanel gnome.* libqt.* gvfs.* xdg-.* desktop.*
+
+sudo apt-get --yes autoremove
+sudo apt-get --yes autoclean
+sudo apt-get --yes clean
+
+
+
+--------------------------------------------
+Files:
+
+can also remove: all files in /var/log 
+should also remove any stale amon.log
+
+# documentation:
+sudo rm -rf /usr/share/doc/* /opt/vc/src/hello_pi/hello_video/test.h264
+
+# other locales (perhaps not good?)
+find /usr/share/locale/* -maxdepth 0 -type d |grep -v en |xargs sudo rm -rf
+find /usr/share/man/* -maxdepth 0 -type d |grep -Pv 'man\d' |xargs sudo rm -rf
+
+
+--------------------------------------------------------------------

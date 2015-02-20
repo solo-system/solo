@@ -38,10 +38,24 @@ echo "new size is $newsize4k (4kb), adding 200Mb (50,000 x 4kb) gives desired si
 echo "resizing to desired size..."
 sudo resize2fs /dev/loop0 $newsize4kplus
 
+# BUG: this doesn't buy us 200M in the final product - only 148M: (does the journal need 50Mb perhaps)
+# jdmc2@t510j ~/git/solo/p1 $ df -h .
+# Filesystem      Size  Used Avail Use% Mounted on
+# /dev/loop0      1.1G  877M  148M  86% /home/jdmc2/git/solo/p1
+# jdmc2@t510j ~/git/solo/p1 $ df .
+# Filesystem     1K-blocks   Used Available Use% Mounted on
+# /dev/loop0       1122084 897548    151128  86% /home/jdmc2/git/solo/p1
+
+
 echo "Finding new size of fs:"
 newsize4k=$(sudo dumpe2fs /dev/loop0 | grep "Block count:" | awk '{print $3}')
 newsize1k=$((newsize4k * 4))
 echo "New (desired) size of fs is $newsize4k (4k blocks), or $newsize1k (1k blocks)"
+
+echo "Rebuilding the journal..."
+sudo tune2fs -j /dev/loop0
+
+sync # paranoia
 
 echo "removing /dev/loop0"
 sudo losetup -d /dev/loop0
@@ -57,11 +71,11 @@ sudo fdisk -l $img
 
 # when I did this "exactly" I was off by one:
 # EXT4-fs (loop0): bad geometry: block count 285148 exceeds size of device (285147 blocks)
-# so add one 512k block
+# so add one 512k block - and that fixes it - Yay!
 echo "now doing the truncate, to make the img file smaller"
 lastpartoffset=`fdisk -l $img | tail -1 | awk '{print $3}';`
 echo "truncating to $lastpartoffset * 512 bytes."
-truncate -s $((lastpartoffset*512 + 1)) $img
+truncate -s $(((lastpartoffset+1)*512)) $img
 echo "truncate done - ls -l $img:"
 ls -l $img
 echo "now zipping..."

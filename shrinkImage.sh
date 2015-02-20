@@ -32,8 +32,16 @@ sudo e2fsck -f /dev/loop0
 
 echo "Finding new size of fs:"
 newsize4k=$(sudo dumpe2fs /dev/loop0 | grep "Block count:" | awk '{print $3}')
+newsize4kplus=$((newsize4k + 50000)) # add 200Mb free space.
+echo "new size is $newsize4k (4kb), adding 200Mb (50,000 x 4kb) gives desired size of $newsize4kplus"
+
+echo "resizing to desired size..."
+sudo resize2fs /dev/loop0 $newsize4kplus
+
+echo "Finding new size of fs:"
+newsize4k=$(sudo dumpe2fs /dev/loop0 | grep "Block count:" | awk '{print $3}')
 newsize1k=$((newsize4k * 4))
-echo "New size of fs is $newsize4k (4k blocks), or $newsize1k (1k blocks)"
+echo "New (desired) size of fs is $newsize4k (4k blocks), or $newsize1k (1k blocks)"
 
 echo "removing /dev/loop0"
 sudo losetup -d /dev/loop0
@@ -47,13 +55,17 @@ echo "Done partition table shrink..."
 echo "Table now looks like:"
 sudo fdisk -l $img
 
+# when I did this "exactly" I was off by one:
+# EXT4-fs (loop0): bad geometry: block count 285148 exceeds size of device (285147 blocks)
+# so add one 512k block
 echo "now doing the truncate, to make the img file smaller"
 lastpartoffset=`fdisk -l $img | tail -1 | awk '{print $3}';`
-truncate -s $((lastpartoffset*512)) $img
+echo "truncating to $lastpartoffset * 512 bytes."
+truncate -s $((lastpartoffset*512 + 1)) $img
 echo "truncate done - ls -l $img:"
 ls -l $img
 echo "now zipping..."
-#not yet
+echo "not really - not yet"
 #zip $img.zip $img
 
 

@@ -11,11 +11,21 @@
 # Third:  is the truncation of the img file itself.
 ######################################################################
 
+# resize2fs doesn't give you the free space you might think:
+# (and all this is WITHOUT rebuilding the journal, which takes 32786 (1k) = 32Mb.
+# Asked  fs-size (df)	free(1k)	Difference.
+# 400M   1350852          332436	68M less than asked-for <- 332Mb free - choose as dflt)
+# 200M   1154964          147312   	53M less than asked-for
+# 100M   1054964           52312   	48M less than asked-for
+# 64M    1021016           20164   	44M less than asked-for
+# 48M    1005016            4964 	43M less than asked-for
+# 40M     997016               0 	40M less than asked-for
+
 # takes an img file and reduces the size of it.
 img=localCopy.img
 
 # how many extra 4k blocks to add to the FS:
-extra4k=125000  # freee space to leave (in units of 4k)
+extra4k=100000  # this is 400M.
 
 function log() {
     msg="$1"

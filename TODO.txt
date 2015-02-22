@@ -1,5 +1,12 @@
 TODO:  for SOLOs (and probably some amon stuff too)
 
+Just turned jdmc2.com copy of .git repo for solo into bare repo:
+
+mv solo/.git solo.git
+git --git-dir=solo.git config core.bare true
+then change configs in remote "following" repos on laptops.  And you're done.
+
+
 change label on slash partition to something meaningful (it comes up as c432434232-23fbs43-4-23423 on linux, and I don't know what on Windows).
 
 

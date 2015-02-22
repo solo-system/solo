@@ -1,13 +1,27 @@
 #!/bin/bash
 
+######################################################################
+# Job is to take an .img file and shrink the "root" partition within
+# it.  We assume here that there is lots of space within that
+# partition
+#
+# Algorthm is in 3 bits:
+# First:  the ext fs - minimize then add a bit for free space
+# Second: is the MBR/partition table.
+# Third:  is the truncation of the img file itself.
+######################################################################
+
+# takes an img file and reduces the size of it.
+img=localCopy.img
+
+# how many extra 4k blocks to add to the FS:
+extra4k=125000  # freee space to leave (in units of 4k)
+
 function log() {
     msg="$1"
     out="[SHRINK IMAGE]: $msg"
     echo "$out"
 }
-
-# takes an img file and reduces the size of it.
-img=first.img
 
 if [ ! -f $img ] ; then 
     echo "Error - no such image $img"
@@ -28,7 +42,7 @@ log "removing journal..."
 sudo tune2fs -O ^has_journal /dev/loop0 #get rid ofjournal prior to resize.
 
 log "fscking again to be paranoid"
-sudo e2fsck -f /dev/loop0 # do it again to feel safe. it reports: 236827/784640 blocks
+sudo e2fsck -f /dev/loop0 
 
 log "resizing to minimum size [TAKES TIME] ..."
 sudo resize2fs -M /dev/loop0  # do the resize to the minimum sixe
@@ -36,27 +50,18 @@ sudo resize2fs -M /dev/loop0  # do the resize to the minimum sixe
 log "checking fs again..."
 sudo e2fsck -f /dev/loop0
 
-log "Finding new size of fs:"
-newsize4k=$(sudo dumpe2fs /dev/loop0 | grep "Block count:" | awk '{print $3}')
-newsize4kplus=$((newsize4k + 50000)) # add 200Mb free space.
-log "new size is $newsize4k (4kb), adding 200Mb (50,000 x 4kb) gives desired size of $newsize4kplus"
+log "Finding size of minimized fs:"
+minsize4k=$(sudo dumpe2fs /dev/loop0 | grep "Block count:" | awk '{print $3}')
+targetsize4k=$((minsize4k + extra4k)) # the extra space
+log "minsize = $minsize4k (4kb).  Adding $extra4k (4k) -> target size of $targetsize4k"
 
-log "resizing to desired size of $newsize4kplus ..."
-sudo resize2fs /dev/loop0 $newsize4kplus
-
-# BUG: this doesn't buy us 200M in the final product - only 148M: (does the journal need 50Mb perhaps)
-# jdmc2@t510j ~/git/solo/p1 $ df -h .
-# Filesystem      Size  Used Avail Use% Mounted on
-# /dev/loop0      1.1G  877M  148M  86% /home/jdmc2/git/solo/p1
-# jdmc2@t510j ~/git/solo/p1 $ df .
-# Filesystem     1K-blocks   Used Available Use% Mounted on
-# /dev/loop0       1122084 897548    151128  86% /home/jdmc2/git/solo/p1
-
+log "resizing to desired size of $targetsize4k..."
+sudo resize2fs -p /dev/loop0 $targetsize4k
 
 log "Finding new size of fs:"
 newsize4k=$(sudo dumpe2fs /dev/loop0 | grep "Block count:" | awk '{print $3}')
 newsize1k=$((newsize4k * 4))
-log "New (desired) size of fs is $newsize4k (4k blocks), or $newsize1k (1k blocks)"
+log "Final size of fs is $newsize4k (4k blocks), or $newsize1k (1k blocks)"
 
 log "Rebuilding the journal..."
 sudo tune2fs -j /dev/loop0

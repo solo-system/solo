@@ -2,7 +2,7 @@
 
 function log() {
     msg="$1"
-    out="[SHRINKIMG]: $msg"
+    out="[SHRINK IMAGE]: $msg"
     echo "$out"
 }
 

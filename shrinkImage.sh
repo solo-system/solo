@@ -18,8 +18,6 @@ fi
 rootoffset=`fdisk -l $img | tail -1 | head -1 | awk '{print $2}';`
 log "root partition starts at: $rootoffset"
 
-exit 0
-
 log "setting up loop with offset..."
 sudo losetup -v -o $(($rootoffset*512)) /dev/loop0 $img  # build a device.
 

@@ -1,5 +1,11 @@
 TODO:  for SOLOs (and probably some amon stuff too)
 
+The big problem here is that 
+    (1) we can't build new images automatically
+    (2) we can't test new images automatically
+fi
+Nah - they aren't really problems.  They are nice-to-haves    
+
 Just turned jdmc2.com copy of .git repo for solo into bare repo:
 
 mv solo/.git solo.git

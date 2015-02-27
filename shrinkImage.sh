@@ -22,7 +22,23 @@
 # 40M     997016               0 	40M less than asked-for
 
 # takes an img file and reduces the size of it.
-img=localCopy.img
+
+if [ $# -ne 1 ] ; then
+    echo "Error: must prescribe img file on command line"
+    exit -1
+fi
+
+img=$1
+
+if [ ! -f "$img" ] ; then
+    echo "Error: no such file $img"
+    exit -1
+fi
+
+echo "About to shrink: $img"
+echo "press return to continue ... WAITING"
+read
+
 
 # how many extra 4k blocks to add to the FS:
 extra4k=100000  # this is 400M.
@@ -105,13 +121,15 @@ log "truncate done - ls -l $img:"
 ls -l $img
 
 log "now zipping..."
-log "not really - not yet"
-#zip $img.zip $img
+zip $img.zip $img
 
 echo "-------------------------------------------------------"
 echo "examine new ext2 contents with:"
 echo "sudo mount -o loop,offset=\$((122880*512)) $img p1"
 echo "Or check for stray dev/loops with losetup -a"
+echo "--------------------------------------------------------"
+echo "Finished shrinking $img into $img.zip"
+ls -l $img $img.zip
 echo "Exiting happy."
 
 exit 0

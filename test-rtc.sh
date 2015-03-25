@@ -6,7 +6,8 @@ echo "*** Welcome to test-rtc.sh - inspect, test and set the rtc (real time cloc
 echo
 
 if [ $USER != "root" ] ; then
-    echo "Error: must be root to set clocks"
+    echo "Error: must be root.  Use sudo ..."
+    exit -1
 fi
 
 echo "Looking for RTC... ( checking /dev/rtc0)"

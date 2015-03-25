@@ -163,7 +163,10 @@ if [ $QPURGE ] ; then
     rm -rf /usr/share/{icons,doc,share,scratch,midi,fonts}
     
     ### Cirrus logic put example flac files in /home/pi - purge them
-    rm -rf /home/pi/*.flac
+    rm -rf /home/pi/*.flac 
+
+    ### python games in /home/pi should go too:
+    rm -rf /home/pi/python_games
 
 fi
 

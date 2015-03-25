@@ -161,6 +161,10 @@ if [ $QPURGE ] ; then
 
     ### Experimental removes - added 2015-02-10 by jdmc2.
     rm -rf /usr/share/{icons,doc,share,scratch,midi,fonts}
+    
+    ### Cirrus logic put example flac files in /home/pi - purge them
+    rm -rf /home/pi/*.flac
+
 fi
 
 sync

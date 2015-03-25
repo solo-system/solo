@@ -36,6 +36,7 @@ if [ ! -f "$img" ] ; then
 fi
 
 echo "About to shrink: $img"
+echo "WARNING *** This program changes the input file !!! ***"
 echo "press return to continue ... WAITING"
 read
 
@@ -55,7 +56,7 @@ if [ ! -f $img ] ; then
 fi
 
 # It's only partition 2 we want (for the moment)
-rootoffset=`fdisk -l $img | tail -1 | head -1 | awk '{print $2}';`
+rootoffset=`fdisk -l $img | grep ${img}2 | awk '{print $2}';`
 log "root partition starts at: $rootoffset"
 
 log "setting up loop with offset..."
@@ -101,7 +102,7 @@ sudo losetup -d /dev/loop0
 log "done with all the stuff at fs level - now doing MBR/partition stuff..."
 log "Doing the partition table shrink..."
 # now we want to resize the partition in the MBR
-fcmd="d \n 2 \n n \n p \n 2 \n 122880 \n +${newsize1k}K \n w"
+fcmd="d\n2\nn\np\n2\n122880\n+${newsize1k}K\nw\n"
 echo -e $fcmd | fdisk $img
 
 log "Done partition table shrink... Table now looks like:"
@@ -112,7 +113,7 @@ sudo fdisk -l $img
 # so add one 512k block - and that fixes it - Yay!
 
 log "now done with the MBR/partition table level stuff - now truncate the .img file"
-lastpartoffset=`fdisk -l $img | tail -1 | awk '{print $3}';`
+lastpartoffset=`fdisk -l $img | grep ${img}2 | awk '{print $3}';`
 truncatesize=$(((lastpartoffset+1)*512))
 log "truncating to $lastpartoffset * 512 bytes = $truncatesize"
 truncate -s $truncatesize $img

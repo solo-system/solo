@@ -2,10 +2,12 @@
 
 echo 
 echo 
-echo "*** This is test-RTC - tests the operation, and sets the RTC"
+echo "*** Welcome to test-rtc.sh - inspect, test and set the rtc (real time clock)"
 echo
-echo "Current system time is :"
 
+if [ $USER != "root" ] ; then
+    echo "Error: must be root to set clocks"
+fi
 
 echo "Looking for RTC... ( checking /dev/rtc0)"
 

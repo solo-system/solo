@@ -101,6 +101,8 @@ if [ $QPURGE = "yes" ] ; then
   apt-get --yes autoclean
   apt-get --yes clea
   echo "APT: Done purging unwanted packages..."
+else
+  echo "NOT purging unwanted packages (since QPURGE is not yes)"
 fi
 
 ### update and install things we need

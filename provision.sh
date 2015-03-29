@@ -35,7 +35,7 @@ fi
 echo "OLD: Detected KRNL version $KRNL, so assuming device tree is $DT"
 
 CLAC=unk
-while [ $CLAC != "yes" -a $CLAC != "no" ] ; then
+while [ $CLAC != "yes" -a $CLAC != "no" ] ; do
   echo "Include Ragnar-Jensen's CLAC support?"
   read CLAC
 done

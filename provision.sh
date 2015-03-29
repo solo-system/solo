@@ -21,6 +21,14 @@ if [ "$USER" != "root" ] ; then
     exit -1
 fi
 
+# check we have enough disk free... (in Mbytes)
+diskfree=`df -BM --output="avail" /  | tail -1 | sed 's:M::g'`
+if [ $diskfree -lt 200 ] ; then
+    echo "Error - not enough free disk space - exiting"
+    exit -1
+fi
+
+
 [ $PWD != '/opt/solo' ] && { echo "must be in /opt/solo, not $PWD. Stopping."; exit -1; }
 
 # are we 3.12 or 3.18 kernel (device tree or not?)

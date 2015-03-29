@@ -168,18 +168,23 @@ echo "Done enabling i2c"
 #echo "Done adding heartbeat module."
 #echo
 
-if [ $CLAC ] ; then
+if [ $CLAC = "yes" ] ; then
     echo 
     echo "Installing Ragnar Jensen's CLAC stuff..."
     pushd /
     tar xzf $RJ 
     popd
     echo "  ...Updating /boot/config.txt"
+    cp /boot/config.txt /boot/config.txt.pre-provision
+    echo "" >> /boot/config.txt
+    echo "# Below added by solo's provision.sh" >> /boot/config.txt
     echo "dtparam=spi=on" >> /boot/config.txt
 #    echo "dtparam=i2c_arm=on" >> /boot/config.txt WE ALREADY DID THIS.
     echo "dtoverlay=rpi-cirrus-wm5102-overlay" >> /boot/config.txt
     echo "kernel=kernel_CL.img" >> /boot/config.txt
     echo "  ...Updating /etc/modprobe.d/raspi-blacklist.conf"
+    cp /etc/modprobe.d/raspi-blacklist.conf /etc/modprobe.d/raspi-blacklist.conf.pre-provision
+    echo "# lines below added by solo's provision.sh" >> /etc/modprobe.d/raspi-blacklist.conf
     echo "softdep arizona-spi pre: arizona-ldo1" >> /etc/modprobe.d/raspi-blacklist.conf
     echo "softdep spi-bcm2708 pre: fixed" >> /etc/modprobe.d/raspi-blacklist.conf
     echo "Done Installing Ragnar Jensen's CLAC stuff..."

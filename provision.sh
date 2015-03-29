@@ -212,7 +212,10 @@ if [ $QPURGE ] ; then
     rm -rf /home/pi/*.flac 
 
     ### python games in /home/pi should go too:
-    rm -rf /home/pi/python_games
+    rm -rf /home/pi/python_games 
+
+    ### and Music folder 
+    rm -rf /home/pi/Music
 
 fi
 

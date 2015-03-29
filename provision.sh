@@ -32,12 +32,23 @@ elif [ $KRNL = "3.18" ] ; then
 else
     DT=unknown
 fi
+echo "OLD: Detected KRNL version $KRNL, so assuming device tree is $DT"
 
-echo "Detected KRNL version $KRNL, so assuming device tree is $DT"
+CLAC=unk
+while [ $CLAC != "yes" -a $CLAC != "no" ] ; then
+  echo "Include Ragnar-Jensen's CLAC support?"
+  read CLAC
+done
+if [ $CLAC = "yes" ] ; then
+    echo "getting ragnar jensen's kernel.tar.gz package..."
+    RJ=/opt/solo/kernel_3_18_9_W_CL.tgz
+    scp jdmc2@t510j:raspi/ragnar-jensen/kernel_3_18_9_W_CL.tgz $RJ
+    echo "Done"
+fi
 
 QPURGE=unk
 while [ $QPURGE != "yes" -a $QPURGE != "no" ] ; do
-  echo "shall I purge unneeded packages (slow) ???"
+  echo "Minimize img size by purging unnecessarry packages? (slower)"
   read QPURGE
 done
 
@@ -89,10 +100,8 @@ dpkg-reconfigure -f noninteractive tzdata
 echo "Done doing raspi-config-like things."
 echo 
 
-### Packages:
-
+### Package management:
 PURGE="fake-hwclock wolfram-engine xserver.* x11-.* xarchiver xauth xkb-data console-setup xinit lightdm lxde.* python-tk python3-tk scratch gtk.* libgtk.* openbox libxt.* lxpanel gnome.* libqt.* gvfs.* xdg-.* desktop.* freepats smbclient"
-
 
 if [ $QPURGE = "yes" ] ; then
   echo "APT: purging unwanted packages..."
@@ -139,6 +148,8 @@ echo "Enabling i2c (for rtc) (see raspi-config for more details)"
 if [ $DT = "yes" ] ; then
     printf "dtparam=i2c_arm=on\n" >> /boot/config.txt
 else
+
+    echo "ARGH! We should never get here any more.  No old kernels!!!"
     echo "KRNL suggests we're doing a cirrus install (old krnl), so configure that clock here"
     echo "Don't know how to do that yet"
     echo "TODO"
@@ -152,6 +163,24 @@ echo "Done enabling i2c"
 #echo "ledtrig_heartbeat" >> /etc/modules
 #echo "Done adding heartbeat module."
 #echo
+
+if [ $CLAC ] ; then
+    echo 
+    echo "Installing Ragnar Jensen's CLAC stuff..."
+    pushd /
+    tar xvzf $RJ 
+    popd
+    echo "  ...Updating /boot/config.txt"
+    echo "dtparam=spi=on" >> /boot/config.txt
+    echo "dtparam=i2c_arm=on" >> /boot/config.txt
+    echo "dtoverlay=rpi-cirrus-wm5102-overlay" >> /boot/config.txt
+    echo "kernel=kernel_CL.img" >> /boot/config.txt
+    echo "  ...Updating /etc/modprobe.d/raspi-blacklist.conf"
+    echo "softdep arizona-spi pre: arizona-ldol" >> /etc/modprobe.d/raspi-blacklist.conf
+    echo "softdep spi-bcm2708 pre: fixed" >> /etc/modprobe.d/raspi-blacklist.conf
+    echo "Done Installing Ragnar Jensen's CLAC stuff..."
+    echo
+fi
 
 if [ $QPURGE ] ; then 
     ### Remove clutter, sync and exit.

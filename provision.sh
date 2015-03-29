@@ -168,7 +168,7 @@ if [ $CLAC ] ; then
     echo 
     echo "Installing Ragnar Jensen's CLAC stuff..."
     pushd /
-    tar xvzf $RJ 
+    tar xzf $RJ 
     popd
     echo "  ...Updating /boot/config.txt"
     echo "dtparam=spi=on" >> /boot/config.txt

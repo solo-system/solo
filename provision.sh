@@ -22,7 +22,7 @@ if [ "$USER" != "root" ] ; then
 fi
 
 # check we have enough disk free... (in Mbytes)
-diskfree=`df -BM --output="avail" /  | tail -1 | sed 's:M::g'`
+diskfree=`df -BM / | tail -1 | awk '{print $4}' | sed 's:M::g'`
 if [ $diskfree -lt 200 ] ; then
     echo "Error - not enough free disk space - exiting"
     exit -1

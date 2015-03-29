@@ -42,7 +42,7 @@ done
 #if [ $CLAC = "yes" ] ; then
 #    echo "getting ragnar jensen's kernel.tar.gz package..."
 # using his entire img, rather than just the kernel tarfile. (it didn't work - 
-# perhaps because I was doing all the  other "solo" things - perhaps because there was no internet connection, perhaps because I was using an older (jan 2015, not feb 2015) version of stock raspbian.
+# perhaps because I was doing all the  other "solo" things - perhaps because there was no internet connection, perhaps because I was using an older (jan 2015, not feb 2015) version of stock raspbian.  OOPS or perhaps it was because I mis-spelled the "ldo1" for "ldol" below in the softdep: bit (now fixed).
 #    RJ=/opt/solo/kernel_3_18_9_W_CL.tgz
 #    scp jdmc2@t510j:raspi/ragnar-jensen/kernel_3_18_9_W_CL.tgz $RJ
 #    echo "Done"

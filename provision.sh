@@ -39,12 +39,14 @@ while [ $CLAC != "yes" -a $CLAC != "no" ] ; do
   echo "Include Ragnar-Jensen's CLAC support?"
   read CLAC
 done
-if [ $CLAC = "yes" ] ; then
-    echo "getting ragnar jensen's kernel.tar.gz package..."
-    RJ=/opt/solo/kernel_3_18_9_W_CL.tgz
-    scp jdmc2@t510j:raspi/ragnar-jensen/kernel_3_18_9_W_CL.tgz $RJ
-    echo "Done"
-fi
+#if [ $CLAC = "yes" ] ; then
+#    echo "getting ragnar jensen's kernel.tar.gz package..."
+# using his entire img, rather than just the kernel tarfile. (it didn't work - 
+# perhaps because I was doing all the  other "solo" things - perhaps because there was no internet connection, perhaps because I was using an older (jan 2015, not feb 2015) version of stock raspbian.
+#    RJ=/opt/solo/kernel_3_18_9_W_CL.tgz
+#    scp jdmc2@t510j:raspi/ragnar-jensen/kernel_3_18_9_W_CL.tgz $RJ
+#    echo "Done"
+#fi
 
 QPURGE=unk
 while [ $QPURGE != "yes" -a $QPURGE != "no" ] ; do
@@ -144,7 +146,9 @@ echo "Done updating rc.local"
 echo
 
 echo
-echo "Enabling i2c (for rtc) (see raspi-config for more details)"
+
+# we always do this below, 
+#echo "Enabling i2c (for rtc) (see raspi-config for more details)"
 if [ $DT = "yes" ] ; then
     printf "dtparam=i2c_arm=on\n" >> /boot/config.txt
 else
@@ -176,7 +180,7 @@ if [ $CLAC ] ; then
     echo "dtoverlay=rpi-cirrus-wm5102-overlay" >> /boot/config.txt
     echo "kernel=kernel_CL.img" >> /boot/config.txt
     echo "  ...Updating /etc/modprobe.d/raspi-blacklist.conf"
-    echo "softdep arizona-spi pre: arizona-ldol" >> /etc/modprobe.d/raspi-blacklist.conf
+    echo "softdep arizona-spi pre: arizona-ldo1" >> /etc/modprobe.d/raspi-blacklist.conf
     echo "softdep spi-bcm2708 pre: fixed" >> /etc/modprobe.d/raspi-blacklist.conf
     echo "Done Installing Ragnar Jensen's CLAC stuff..."
     echo

@@ -172,7 +172,7 @@ if [ $CLAC ] ; then
     popd
     echo "  ...Updating /boot/config.txt"
     echo "dtparam=spi=on" >> /boot/config.txt
-    echo "dtparam=i2c_arm=on" >> /boot/config.txt
+#    echo "dtparam=i2c_arm=on" >> /boot/config.txt WE ALREADY DID THIS.
     echo "dtoverlay=rpi-cirrus-wm5102-overlay" >> /boot/config.txt
     echo "kernel=kernel_CL.img" >> /boot/config.txt
     echo "  ...Updating /etc/modprobe.d/raspi-blacklist.conf"

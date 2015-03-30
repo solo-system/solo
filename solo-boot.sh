@@ -134,13 +134,13 @@ echo
 echo
 echo "=================================================="
 echo "Activating the LEDs [`date`]"
+led_done=0
 for ledpath in /sys/class/leds/ACT/trigger /sys/class/leds/led0/trigger ; do
-    led_done=0
     if [ -f $ledpath ] ; then
 	echo "... Enalbling led=$led to be a heartbeat."
 	echo heartbeat > $ledpath
 	led_done=$((led_done+1))
-    else
+    fi
 done
 echo "... Enabled total of $led_done leds as heartbeats"
 if [ $led_done = "0" ] ; then echo "... Warning: didn't enable any leds" ; fi

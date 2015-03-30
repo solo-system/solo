@@ -24,7 +24,8 @@ fi
 # check we have enough disk free... (in Mbytes)
 diskfree=`df -BM / | tail -1 | awk '{print $4}' | sed 's:M::g'`
 if [ $diskfree -lt 200 ] ; then
-    echo "Error - not enough free disk space - exiting"
+    df -h /
+    echo "Error - not enough free disk space - exiting (try rm -rf /home/pi/Music)"
     exit -1
 fi
 
@@ -60,11 +61,15 @@ while [ $QPURGE != "yes" -a $QPURGE != "no" ] ; do
   echo "Minimize img size by purging unnecessarry packages? (slower)"
   read QPURGE
 done
-
 echo "PURGE is $QPURGE"
-echo 
+
+echo "====================================================================="
+echo "Provisioner is about to install solo with purge=$PURGE and CLAC=$CLAC"
 echo " *** Press return to continue ..."
 read a
+
+echo "And we're off..."
+
 
 ### Users:
 echo
@@ -88,10 +93,11 @@ echo "PATH=$PATH:/home/amon/amon/" > /home/amon/.bashrc
 echo "Done downloading our software"
 echo
 
-echo " --------------------------------- "
-echo " GO AWAY - I can do the rest myself"
-echo " ----------------------------------"
-
+echo " -----------------------------------"
+echo " -----------------------------------"
+echo " GO AWAY - I can do the rest myself."
+echo " -----------------------------------"
+echo " -----------------------------------"
 
 ### Do things raspi-config would normally do: (timezone, hostname, i2c)
 echo

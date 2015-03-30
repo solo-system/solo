@@ -34,6 +34,8 @@ fi
 echo "Detected KRNL version $KRNL, so assuming device tree is $DT"
 echo "detected raspi hardware version $REV so using i2c bus $IICBUS"
 echo "NEW!!! is clack installed?  CLAC=$CLAC"
+echo 
+echo
 
 ### TODO - this doesn't catch the situation where the partition is
 ### made, but the fs isn't (or the FS is corrupt).  Instead, we should
@@ -49,16 +51,17 @@ echo "NEW!!! is clack installed?  CLAC=$CLAC"
 # if p3 doesn't exist, make it, mount it.
 #if ! grep mmcblk0p3 /proc/partitions > /dev/null ; then
 if ! grep mmcblk0p3 /proc/mounts > /dev/null ; then
-  echo "No mount associated with p3 on mmc: assuming first boot - building..."
+  echo "==============================="
+  echo "FIRSTBOOT: No mount associated with p3 on mmc: assuming first boot - building..."
   # TODO: should refactor first boot() into a function
-  echo "First-boot: making new partition at `date`"
+  echo "... First-boot: making new partition at `date`"
   echo "... Making partition p3 on /dev/mmcblk0 ..."
-
-  echo "finding last partition of p2..."
+  echo "... finding last partition of p2..."
   endlast=`fdisk -l /dev/mmcblk0 | grep /dev/mmcblk0p2 | awk '{print $3}'`
   startnew=$((endlast+1))
+  echo "... endlast = $endlast and startnew=$startnew".
   fcmd="n\np\n3\n$startnew\n\nw"
-  echo "running $fcmd > fdisk"
+  echo "... running $fcmd > fdisk"
   echo -e $fcmd | fdisk /dev/mmcblk0 > /opt/solo/fdisk.log
   echo "... running partprobe..."
   partprobe
@@ -68,39 +71,43 @@ if ! grep mmcblk0p3 /proc/mounts > /dev/null ; then
   echo $fstabtxt >> /etc/fstab
 
   ### TRYTHIS - add a sync to ensure the mkfs and fstab work sticks.
-  echo "syncing disks..."
+  echo "... syncing disks..."
   sync
 
+  echo "... Making /mnt/sdcard mount point"
   mkdir -p /mnt/sdcard
 
   ### TRYTHIS - add a second sync to ensure the mkdir sticks - whynot ???
+  echo "... syncing again (paranoid)"
   sync
 
-  echo "... remounting.."
+  echo "... remounting to get new mount of p3"
   mount -a
+  
+  echo "... making directory amondata on new mount point"
   mkdir /mnt/sdcard/amondata
   # chown amon.amon /mnt/sdcard/amondata
   # now build the crontab:
   # add crontabs ... (these should NOT be here - since they overwrite with each boot).
-  echo
-  echo "Now adding watchdog and playback to amon's crontab:"
-  echo -e "* * * * * /home/amon/amon/amon watchdog >> /home/amon/amon/cron.log 2>&1\n#0 */2 * * * /home/amon/amon/playback.sh >> /home/amon/amon/playback.log 2>&1" | crontab -u amon -
-  echo "Done building crontab"
 
-  echo "First-boot: finished at `date`"
+  echo "... placing output of df and mount into file /opt/solo/diskinfo.txt for inspection"
+  df -h > /opt/solo/diskinfo.txt
+  mount >> /opt/solo/diskinfo.txt
+
+  echo "... Finished doing new partition stuff, now other chores for FIRSTBOOT:"
+  echo "... adding watchdog and playback to amon's crontab:"
+  echo -e "* * * * * /home/amon/amon/amon watchdog >> /home/amon/amon/cron.log 2>&1\n#0 */2 * * * /home/amon/amon/playback.sh >> /home/amon/amon/playback.log 2>&1" | crontab -u amon -
+  echo "... Done building crontab"
+
+  echo "FIRSTBOOT: finished at `date`"
   echo "======================================================"
 else 
-  echo "NOTE: p3 is already there - great, lets get on with it."
+  echo "FIRSTBOOT: p3 is already there - great. Not activating FIRSTBOOT code."
 fi
 
-###
-echo "Checking disk free info:"
-df -h
-echo "--------------"
-mount
-echo "Done checking disk free info."
+### get a print out of the 
 
-### do normal setup required for deployed solos
+
 echo 
 echo "Solo-boot.sh: Starting switchoff, tvservice, and heartbeat at `date`"
 /opt/vc/bin/tvservice -off

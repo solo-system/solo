@@ -176,6 +176,8 @@ if [ $DT = no ] ; then
     fi
 else
     echo "... Not doing anything - Device Tree should handle it all I think"
+    echo "... Actually - ading the piface shim clock by hand, but this will mess up old solo with ds1307"
+    echo mcp7941x 0x6f > /sys/class/i2c-adapter/i2c-${IICBUS}/new_device
 fi
 
 echo "Done ... Activating the RTC clock at [`date`]"

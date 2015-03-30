@@ -7,6 +7,7 @@ echo
 echo "Started at: `date`"
 
 # on raspi model A get: 0008 from /proc/cpuinfo
+# on raspi model A+ get: 0012 (also get Hardware = BCM2708
 REV=`grep Revision /proc/cpuinfo  | awk '{print $3}'`
 if [ "$REV" = 0002 ] ; then
     IICBUS=0
@@ -23,8 +24,16 @@ else
     DT=unknown
 fi
 
+# do we have a CLAC installed?
+if grep sndrpiwsp /proc/asound/cards > /dev/null ; then 
+    CLAC=yes
+else
+    CLAC=no
+fi
+
 echo "Detected KRNL version $KRNL, so assuming device tree is $DT"
 echo "detected raspi hardware version $REV so using i2c bus $IICBUS"
+echo "NEW!!! is clack installed?  CLAC=$CLAC"
 
 ### TODO - this doesn't catch the situation where the partition is
 ### made, but the fs isn't (or the FS is corrupt).  Instead, we should
@@ -79,6 +88,7 @@ if ! grep mmcblk0p3 /proc/mounts > /dev/null ; then
   echo "Done building crontab"
 
   echo "First-boot: finished at `date`"
+  echo "======================================================"
 else 
   echo "NOTE: p3 is already there - great, lets get on with it."
 fi
@@ -92,37 +102,57 @@ echo "Done checking disk free info."
 
 ### do normal setup required for deployed solos
 echo 
-echo "starting: switchoff, tvservice, and heartbeat at `date`"
+echo "Solo-boot.sh: Starting switchoff, tvservice, and heartbeat at `date`"
 /opt/vc/bin/tvservice -off
 
 # only start switchoff if this is NOT a wolfson/cirrus install
 # since don't know how to do GPIO with wolfson/cirrus.
-if [ $DT = "yes" ] ; then
-    echo "starting switchoff.py"
+echo
+echo "=================================================="
+echo "Starting the switchoff monitor script"
+if [ $CLAC = "no" ] ; then
+    echo "... starting switchoff.py"
     /opt/solo/switchoff.py &
 else
-    echo "NOT starting switchoff.py, cos it's a cirrus install"
+    echo "... NOT starting switchoff.py, cos it's a cirrus install and I don't know the pins"
 fi
-
-if [ $DT = "yes" ] ; then
-    LED=/sys/class/leds/ACT/trigger
-else
-    LED=/sys/class/leds/led0/trigger
-fi
-
-if [ ! -f $LED ] ; then 
-  echo "WARNING: no LED detected - programmer error"
-fi
-
-echo "starting heartbeat in $LED"
-[ -f $LED ] && echo heartbeat > $LED
-echo "Done starting heartbeat in $LED"
-
-echo "Done starting switchoff, tvservice, and heartbeat at `date`"
+echo "Done - Starting the switchoff monitor script"
+echo "=================================================="
 echo
 
-echo "Setting up the clock at `date`"
-echo "... detected raspi revision $REV"
+
+### LEDs - set them up.
+# on RJ's img we have two leds (/sys/class/leds/led{0,1}.  led0 is the
+# RED (power) led, and led1 is the GREEN led (previously the
+# activity/heartbeat led).  We how have control of the RED one (which
+# is good).. TODO - should do something clever with these two.  NOTE
+# BOTH of these are on the rpi board NOT the CLAC.  Don't know how to
+# control the CLAC leds.
+# On the rpi version B - we had either led0 or (with newer kernels) ACT.
+# It seems with Ragnar Jensens' image, and a CLAC on rpi version B+, the ACT is no longer, and it's back to led0 and led1.
+
+echo
+echo "=================================================="
+echo "Activating the LEDs [`date`]"
+for ledpath in /sys/class/leds/ACT/trigger /sys/class/leds/led0/trigger ; do
+    led_done=0
+    if [ -f $ledpath ] ; then
+	echo "... Enalbling led=$led to be a heartbeat."
+	echo heartbeat > $ledpath
+	led_done=$((led_done+1))
+    else
+done
+echo "... Enabled total of $led_done leds as heartbeats"
+if [ $led_done = "0" ] ; then echo "... Warning: didn't enable any leds" ; fi
+echo "Done - Activating the LEDs [`date`]"
+echo "=================================================="
+echo
+
+
+# now set up the RTC clock.
+echo
+echo "=================================================="
+echo "Activating the RTC clock at `date`"
 
 if [ $DT = no ] ; then
     echo "doing modprobe i2c-dev"
@@ -138,21 +168,40 @@ if [ $DT = no ] ; then
 	echo "Warning: Can't find RTC device in $RTC"
     fi
 else
-    echo "HELP - do we need to do anything here.  Device Tree should handle it all I think"
+    echo "... Not doing anything - Device Tree should handle it all I think"
 fi
 
-echo "Done setting up clock at `date`"
-sleep 1 # let is settle.
+echo "Done ... Activating the RTC clock at [`date`]"
+echo "=================================================="
+echo
+
+# now interrogate the clock and set system time from it.  Should really use test-rtc.sh for this???
+echo
+echo "=================================================="
+echo "Setting the time... [`date`]"
+
+sleep 1 # let the above setup settle. TODO: get rid of this ??? if DT handled it, kernel loaded RTC ages ago.
+echo "... Checking rtc exists:"
 ls -l /dev/rtc0
+echo "... Reading rtc..."
 /sbin/hwclock -r  # read it 
 echo "... setting system time from rtc at `date`"
 /sbin/hwclock -s  # set system time from it
-echo "ZOOM into the future..." 
-echo "Done setting up the clock. New time is : `date`"
+echo "... ZOOM into the future..." 
+echo "... system time is now: `date`"
 echo
+
+echo "Done ... Setting the time at  [`date`]"
+echo "=================================================="
+echo
+
+echo
+echo "that's all folks"
+echo 
 
 echo
 echo "Exiting happy from solo-boot.sh at `date`"
 echo 
+
 
 exit 0

@@ -28,7 +28,6 @@ if [ $diskfree -lt 200 ] ; then
     exit -1
 fi
 
-
 [ $PWD != '/opt/solo' ] && { echo "must be in /opt/solo, not $PWD. Stopping."; exit -1; }
 
 # are we 3.12 or 3.18 kernel (device tree or not?)
@@ -155,8 +154,8 @@ echo
 
 echo
 
-# we always do this below, 
-#echo "Enabling i2c (for rtc) (see raspi-config for more details)"
+# enable i2c in kernel (see raspi-config for more details)
+echo "Enabling i2c (for rtc and clac) in /boot/config.txt"
 if [ $DT = "yes" ] ; then
     printf "dtparam=i2c_arm=on\n" >> /boot/config.txt
 else
@@ -176,7 +175,8 @@ echo "Done enabling i2c"
 #echo "Done adding heartbeat module."
 #echo
 
-if [ $CLAC = "yes" ] ; then
+# This is useful if you are using his tarball (that unpacks on top of stock raspbian, but not if you use his image, as he's done it for you. so disable for the moment with ""
+if [ "" -a  $CLAC = "yes" ] ; then
     echo 
     echo "Installing Ragnar Jensen's CLAC stuff..."
     pushd /

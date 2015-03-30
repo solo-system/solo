@@ -81,8 +81,7 @@ echo
 echo "Preparing our boot scripts"
 chmod +x /opt/solo/solo-boot.sh /opt/solo/switchoff.py
 echo "Downloading and Installing amon ..."
-echo "ARGH - we need a git checkout master here cos the clone gets the wrong branch"
-( cd /home/amon/ ; git clone jdmc2@jdmc2.com:git/amon.git ; git checkout master )
+( cd /home/amon/ ; git clone jdmc2@jdmc2.com:git/amon.git )
 chown -R amon.amon /home/amon
 chmod +x /home/amon/amon/amon # gosh - that's silly
 echo "PATH=$PATH:/home/amon/amon/" > /home/amon/.bashrc

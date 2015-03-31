@@ -15,10 +15,23 @@ Only now can we tell the kernel about the i2c device we've plugged
 into the i2c bus (it's not a plug-n-play bus, so can't be autodetected
 easily).
 
-echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-1/new_device
+[ Below both i2c-adapter and i2c-dev are used.  Dunno if that's a
+  kernel upgrade difference, or because of "modprobe i2c-dev".  I
+  prefer to run with i2c-dev and use the /dev/i2c... entries ]
+
+# now load the i2c-dev module, which presents i2c bus as /dev/i2c...
+modprobe i2c-dev
+
+# optionally pre-load device driver (note colon syntax)
+modprobe i2c:mcp7941x 
+
+# L-shaped rtc's
+echo ds1307   0x68 > /sys/class/i2c-adapter/i2c-1/new_device 
+# piface shim rtc
+echo mcp7941x 0x6f > /sys/class/i2c-dev/i2c-1/device/new_device 
 
 Tells the kernel there is a new device at that address (0x68) of that
-type (ds`307 = chip on the RTC), on that i2c bus (i2c-1).
+type (ds1307 = chip on the RTC), on that i2c bus (i2c-1). 
 
 Typing this command produces this in /var/log/kern.log:
 [  529.914840] i2c i2c-1: new_device: Instantiated device ds1307 at 0x68
@@ -29,3 +42,132 @@ and the device /dev/rtc0 is now available.
 
 Check the clock with:
 /sbin/hwclock -r (reads the clock)
+
+
+Debugging: Does it keep time?
+-----------------------------
+Set system time to something memorable, write to rtc and reboot:
+date ­s "20 FEB 2014 12:00:00"
+hwclock -w
+poweroff
+[unplug all power, then reboot]
+hwclock [-r] # show the time on the rtc - is it feb 20th 
+
+---------------
+Recent debug:
+
+modprobe i2c-dev  # enables /dev driver for i2c - assigns /dev/rtc0
+modprobe i2c:mcp7941x  # loads the driver (curiously it's the rtc_ds1307)
+echo mcp7941x 0x6f > /sys/class/i2c-dev/i2c-1/device/new_device
+
+Last line informs kernel dev exists on that i2cbus with those
+characteristics.nd if we grep for it in /lib (grep -r mcp7941x
+/lib/) we see why.
+
+[   55.080120] i2c /dev entries driver
+[   63.930267] rtc-ds1307 1-006f: rtc core: registered mcp7941x as rtc0
+[   63.930335] rtc-ds1307 1-006f: 64 bytes nvram
+[   63.930399] i2c i2c-1: new_device: Instantiated device mcp7941x at 0x6f
+
+root@raspberrypi:/lib# lsmod
+Module                  Size  Used by
+rtc_ds1307             10347  0 # added by modprobe
+i2c_dev                 6709  0 # added by modprobe
+i2c_bcm2708             6200  0 # added by /boot/config
+
+root@raspberrypi:/home/pi# i2cdetect  -y 1
+     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+00:          -- -- -- -- -- -- -- -- -- -- -- -- -- 
+10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- UU 
+70: -- -- -- -- -- -- -- --                         
+
+====================================================
+
+Now try a rpi with no shim, but a CLAC and RJ's img:
+
+sudo apt-get install i2c-tools
+i2cdetect -l (nothing, so install dev driver, as i2cdetect seems to use /dev)
+modprobe i2c-dev  
+and now i2cdetect -l sees the bus, and i2cdetect -y 1 gives:
+
+root@raspberrypi:/home/pi# i2cdetect -y 1
+     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+00:          -- -- -- -- -- -- -- -- -- -- -- -- -- 
+10: -- -- -- -- -- -- -- -- -- -- 1a -- -- -- -- -- 
+20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+30: -- -- -- -- -- -- -- -- -- -- UU -- -- -- -- -- 
+40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+70: -- -- -- -- -- -- -- --                         
+
+So the CLAC puts 2 devices on the bus: at 1a and 3a (1a is not in UUse).
+
+but no conflict with 6f of the shim-rtc.
+
+-------------------------------------
+
+No now we've learned all that, try a new unit with both, and RJ's code:
+
+apt-get install i2c-tools
+i2cdetect -l (nothing, so install dev driver, as i2cdetect seems to use /dev)
+modprobe i2c-dev
+i2cdetect -l
+i2cdetect -y 1
+
+And we get, exactly as expected, all THREE things on the bus:
+root@raspberrypi:/home/pi# i2cdetect -y 1
+     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+00:          -- -- -- -- -- -- -- -- -- -- -- -- -- 
+10: -- -- -- -- -- -- -- -- -- -- 1a -- -- -- -- -- 
+20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+30: -- -- -- -- -- -- -- -- -- -- UU -- -- -- -- -- 
+40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 6f 
+70: -- -- -- -- -- -- -- --                         
+
+----
+
+so now activate the rtc:
+
+load kernel with driver:
+modprobe i2c:mcp7941x
+and inform kernel:
+echo mcp7941x 0x6f > /sys/class/i2c-dev/i2c-$i/device/new_device
+
+[  670.682278] rtc-ds1307 1-006f: SET TIME!
+[  670.685101] rtc-ds1307 1-006f: rtc core: registered mcp7941x as rtc0
+[  670.685164] rtc-ds1307 1-006f: 64 bytes nvram
+[  670.685233] i2c i2c-1: new_device: Instantiated device mcp7941x at 0x6f
+
+Which looks good.  So now :
+root@raspberrypi:/home/pi# ls -l /dev/rtc0
+crw------- 1 root root 254, 0 Mar 31 09:10 /dev/rtc0
+root@raspberrypi:/home/pi# hwclock
+Mon 01 Jan 2001 00:00:30 UTC  -0.205805 seconds
+
+--------------------
+
+this debug script was used to check all of robbie's solo2's (CLAC + SHIM).
+---------------------------------
+modprobe i2c-dev     #load /dev monitor for i2c. (gives us /dev/i2c...
+i2cdetect -l         # lists all i2c busses
+i2cdetect -y 1	     # shows table of i2c devices on bus 1
+modprobe i2c:mcp7941x   # load kernel module for mcp7941x
+echo mcp7941x 0x6f > /sys/class/i2c-dev/i2c-1/device/new_device   # tell kernel about that device at that address
+
+ls -l /dev/rtc0
+hwclock -r
+
+sudo date -s "20 FEB 2014 10:10:30"
+hwclock -w
+hwclock -w
+
+echo "hwclock time is :"
+hwclock -r

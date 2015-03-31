@@ -193,7 +193,7 @@ echo "... Reading rtc..."
 rtctime=`/sbin/hwclock -r`  # read time on rtc 
 echo "... RTC reports time is $rtctime"
 
-if [ $rtctime ] ; then # this test should check that rtctime is > 2015-01-01
+if [ "$rtctime" ] ; then # this test should check that rtctime is > 2015-01-01
     echo "... setting system time from rtc at `date`"
     /sbin/hwclock -s  # set system time from it
     echo "... ZOOM into the future..." 

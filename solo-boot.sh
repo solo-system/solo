@@ -208,11 +208,8 @@ echo
 
 echo
 echo "that's all folks"
-echo 
-
 echo
 echo "Exiting happy from solo-boot.sh at `date`"
 echo 
-
 
 exit 0

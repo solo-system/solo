@@ -1,10 +1,11 @@
 #!/bin/bash
 
+echo "=========================================================="
 echo "-----------------------"
 echo "Welcome to solo-boot.sh"
 echo "-----------------------"
 echo
-echo "Started at: `date`"
+echo "Started at: `date` [estimated date/time - RTC not read yet]"
 
 # on raspi model A get: 0008 from /proc/cpuinfo
 # on raspi model A+ get: 0012 (also get Hardware = BCM2708

@@ -64,7 +64,7 @@ done
 echo "PURGE is $QPURGE"
 
 echo "====================================================================="
-echo "Provisioner is about to install solo with purge=$PURGE and CLAC=$CLAC"
+echo "Provisioner is about to install solo with purge=$QPURGE and CLAC=$CLAC"
 echo " *** Press return to continue ..."
 read a
 

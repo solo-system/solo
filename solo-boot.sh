@@ -105,18 +105,19 @@ else
   echo "FIRSTBOOT: p3 is already there - great. Not activating FIRSTBOOT code."
 fi
 
-### get a print out of the 
-
-
-echo 
-echo "Solo-boot.sh: Starting switchoff, tvservice, and heartbeat at `date`"
+echo
+echo "=================================================="
+echo "Disabling tvservice to save power"
 /opt/vc/bin/tvservice -off
+echo "Done Disabling tvservice to save power"
+echo "=================================================="
+echo
 
 # only start switchoff if this is NOT a wolfson/cirrus install
 # since don't know how to do GPIO with wolfson/cirrus.
 echo
 echo "=================================================="
-echo "Starting the switchoff monitor script"
+echo "Starting the switchoff.py monitor script"
 if [ $CLAC = "no" ] ; then
     echo "... starting switchoff.py"
     /opt/solo/switchoff.py &
@@ -127,7 +128,6 @@ echo "Done - Starting the switchoff monitor script"
 echo "=================================================="
 echo
 
-
 ### LEDs - set them up.
 # on RJ's img we have two leds (/sys/class/leds/led{0,1}.  led0 is the
 # RED (power) led, and led1 is the GREEN led (previously the
@@ -137,7 +137,6 @@ echo
 # control the CLAC leds.
 # On the rpi version B - we had either led0 or (with newer kernels) ACT.
 # It seems with Ragnar Jensens' image, and a CLAC on rpi version B+, the ACT is no longer, and it's back to led0 and led1.
-
 echo
 echo "=================================================="
 echo "Activating the LEDs [`date`]"
@@ -156,30 +155,28 @@ echo "=================================================="
 echo
 
 
-# now set up the RTC clock.
+# now set up the RTC clock (should we not do this WAY before now?)
 echo
 echo "=================================================="
-echo "Activating the RTC clock at `date`"
-
-if [ $DT = no ] ; then
-    echo "doing modprobe i2c-dev"
-    modprobe i2c-dev
+echo "Activating the RTC clock at [`date`]"
+modprobe i2c-dev
+echo "... inserted module i2c-dev (so i2c bus appears in /dev)"
+if [ $CLAC = no ] ; then # this test is for shim / l-shaped RTC (improveme)
     RTC=/sys/class/i2c-adapter/i2c-${IICBUS}/new_device
     if [ -f $RTC ] ; then
 	echo "informing kernel of rtc (DS-1307 L-shaped) device"
 	echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-${IICBUS}/new_device
-	echo "informing kernel of rtc (MCP-7941x piface shim) device"
-	echo mcp7941x 0x6f > /sys/class/i2c-adapter/i2c-${IICBUS}/new_device
 	echo "done informing kernel of rtc device"
     else
 	echo "Warning: Can't find RTC device in $RTC"
     fi
 else
-    echo "... Not doing anything - Device Tree should handle it all I think"
-    echo "... Actually - ading the piface shim clock by hand, but this will mess up old solo with ds1307"
-    echo mcp7941x 0x6f > /sys/class/i2c-adapter/i2c-${IICBUS}/new_device
+    echo "... this is a CLAC install, so assuming piface shim rtc"
+    modprobe i2c:mcp7941x
+    echo "... loaded mcp7941x module"
+    echo mcp7941x 0x6f > /sys/class/i2c-dev/i2c-${IICBUS}/device/new_device
+    echo "... informed kernel of new i2c device on i2c bus"
 fi
-
 echo "Done ... Activating the RTC clock at [`date`]"
 echo "=================================================="
 echo
@@ -193,13 +190,14 @@ sleep 1 # let the above setup settle. TODO: get rid of this ??? if DT handled it
 echo "... Checking rtc exists:"
 ls -l /dev/rtc0
 echo "... Reading rtc..."
-/sbin/hwclock -r  # read it 
+rtctime=`/sbin/hwclock -r`  # read time on rtc 
+echo "... RTC reports time is $rtctime"
+
+if [ $rtctime ] ; then # this test should check that rtctime is > 2015-01-01
 echo "... setting system time from rtc at `date`"
 /sbin/hwclock -s  # set system time from it
 echo "... ZOOM into the future..." 
 echo "... system time is now: `date`"
-echo
-
 echo "Done ... Setting the time at  [`date`]"
 echo "=================================================="
 echo

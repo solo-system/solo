@@ -32,14 +32,14 @@ fi
 [ $PWD != '/opt/solo' ] && { echo "must be in /opt/solo, not $PWD. Stopping."; exit -1; }
 
 # are we 3.12 or 3.18 kernel (device tree or not?)
-KRNL=$(uname -r | cut -f1,2 -d'.')
-if [ $KRNL = "3.12" ] ; then
-    DT=no
-elif [ $KRNL = "3.18" ] ; then
-    DT=yes
-else
-    DT=unknown
-fi
+#KRNL=$(uname -r | cut -f1,2 -d'.')
+#if [ $KRNL = "3.12" ] ; then
+#    DT=no
+#elif [ $KRNL = "3.18" ] ; then
+DT=yes # NO OLD KERNELS ANY MORE since Ragnar Jensen provided 3.18 based CLAC.img.
+#else
+#    DT=unknown
+#fi
 echo "OLD: Detected KRNL version $KRNL, so assuming device tree is $DT"
 
 CLAC=unk
@@ -99,7 +99,6 @@ echo " GO AWAY - I can do the rest myself."
 echo " -----------------------------------"
 echo " -----------------------------------"
 
-### Do things raspi-config would normally do: (timezone, hostname, i2c)
 echo
 echo "Doing raspi-config things..."
 echo "  setting hostname..."
@@ -123,7 +122,7 @@ if [ $QPURGE = "yes" ] ; then
   apt-get -y purge $PURGE
   apt-get --yes autoremove
   apt-get --yes autoclean
-  apt-get --yes clea
+  apt-get --yes clean
   echo "APT: Done purging unwanted packages..."
 else
   echo "NOT purging unwanted packages (since QPURGE is not yes)"

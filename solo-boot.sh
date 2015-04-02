@@ -130,14 +130,17 @@ echo "=================================================="
 echo
 
 ### LEDs - set them up.
-# on RJ's img we have two leds (/sys/class/leds/led{0,1}.  led0 is the
-# RED (power) led, and led1 is the GREEN led (previously the
-# activity/heartbeat led).  We how have control of the RED one (which
+# on RJ's img we have two leds (/sys/class/leds/led{0,1}.
+# led0    GREEN    (originally "activity")
+# led1    RED      (originally power)
+# We how have control of the RED one (which
 # is good).. TODO - should do something clever with these two.  NOTE
 # BOTH of these are on the rpi board NOT the CLAC.  Don't know how to
 # control the CLAC leds.
 # On the rpi version B - we had either led0 or (with newer kernels) ACT.
-# It seems with Ragnar Jensens' image, and a CLAC on rpi version B+, the ACT is no longer, and it's back to led0 and led1.
+# It seems with Ragnar Jensens' image, and a CLAC on rpi
+# version B+, the ACT is no longer, and it's back to led0 and led1.
+
 echo
 echo "=================================================="
 echo "Activating the LEDs [`date`]"

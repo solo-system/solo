@@ -224,6 +224,21 @@ if [ $QPURGE ] ; then
 
 fi
 
+set $DEBUG
+if [ $DEBUG ] ; then
+    echo "Generating some debug files..."
+    debug_dir=/opt/solo/debug/
+    mkdir $debug_dir
+    find / > $debug_dir/filelist.txt
+    dpkg -l > $debug_dir/installed-packages.txt
+    du -skh /* > $debug_dir/diskusage-level1.txt
+    du -skh /*/* > $debug_dir/diskusage-leve2.txt
+    du -skh /*/*/* > $debug_dir/diskusage-leve3.txt
+    dpkg-query -Wf '${Installed-Size}\t${Package}\n' | sort -n > $debug_dir/biggest-packages.txt
+    echo "copy all debug: scp -prv $debug_dir jdmc2@t510j:solo-debug"
+    echo "Done generating debug files - see $debug_dir"
+fi
+
 sync
 sync
 

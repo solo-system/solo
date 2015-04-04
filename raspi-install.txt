@@ -1,7 +1,6 @@
 To build a image:
 -----------------
-
-# flash a card with BASE raspbian:
+# flash a card with BASE image (raspbian OR RJ's clac):
 sudo dd bs=4M if=~/raspi/images/2014-09-09-wheezy-raspbian.img of=/dev/sdc ; sync ; sync
 
 ## Move to raspi:
@@ -14,37 +13,5 @@ chmod +x /opt/solo/provision.sh
 ./provision.sh   # this does a lot
 sudo poweroff
 
-## Move card back to pc, and copy image to HDD.  This image is bootable.
-sudo dd bs=512 count=6400000 if=/dev/sdX of=~/raspi/images/solo-`fdate`.img ; sync
-
-
-# get new images from "http://www.raspberrypi.org/downloads/"
-
-## The below works to shring the img (through resize2fs)
-########################################################
-
-> if you want to shrink the / partition: (make this a script).
-img=/home/jdmc2/raspi/images/recorder-X.img
-sudo chown jdmc2.jdmc2 $img
-sudo losetup -v -o $((122880*512)) /dev/loop0 recorder-2014-11-12.img
-sudo e2fsck -f /dev/loop0
-sudo resize2fs -M /dev/loop0  (again and again if you like!)
-> currently get fs as 269186 blocks long (bloks are 4k).  So to add 100Mb, add 25,000 blocks)
-sudo resize2fs -p /dev/loop0 $((269186+25000))
-sudo losetup -d /dev/loop0
-sudo sync; 
-
-> shrink containing partition: 294186 *4 (to get K).
-onekblocks=`echo "294186 * 4" | bc`
-fcmd="d \n 2 \n n \n p \n 2 \n 122880 \n +${onekblocks}K \n w"
-echo -e $fcmd
-echo "Now run: echo -e \$fcmd | fdisk whichever.img"
-
-> Then check truncating the img file itself.
-> fdisk says end of p2 is 3322880, and blocks are 512bytes, so truncate:
-truncate -s $((3322880*512)) dd.img
-zip -r image.zip image.img
-
-done
-
---------------------------------------------
+## Move card back to pc, and copy image to HDD.
+sudo dd bs=512 count=6400000 if=/dev/sdX of=~/raspi/images/solo-xxx-`fdate`.img ; sync

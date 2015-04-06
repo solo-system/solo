@@ -117,15 +117,21 @@ echo
 ### Package management:
 PURGE="fake-hwclock wolfram-engine xserver.* x11-.* xarchiver xauth xkb-data console-setup xinit lightdm lxde.* python-tk python3-tk scratch gtk.* libgtk.* openbox libxt.* lxpanel gnome.* libqt.* gvfs.* xdg-.* desktop.* freepats smbclient"
 
+### packages I might regret removing...
+MIGHT_REGRET="libgl1-mesa-dri libflite1 libatlas3-base poppler-data fonts-freefont-ttf omxplayer fonts-droid libwibble-dev epiphany-browser-data gconf2-common libgconf-2-4 libxml2 gsfonts libsmbclient libxapian-dev dpkg-dev  libept-dev libfreetype6-dev libpng12-dev libtagcoll2-dev manpages-dev manpages libexif12 libopencv-core2.4 libdirectfb-1.2-9 jackd2 libaspell15 debian-reference-en libgstreamer-plugins-base0.10-0 libgstreamer-plugins-base1.0-0 libgstreamer0.10-0 libgstreamer1.0-0 penguinspuzzle fontconfig-config fontconfig libfontconfig1 libfontenc1 libfreetype6 libfreetype6-dev libxfont1 libxdmcp6 libxau6 libfontenc1 libmenu-cache1"
+
 if [ $QPURGE = "yes" ] ; then
   echo "APT: purging unwanted packages..."
-  apt-get -y purge $PURGE
+  apt-get -y purge $PURGE 
+  apt-get -y purge $MIGHT_REGRET # no reason for different line...
   apt-get --yes autoremove
   apt-get --yes autoclean
   apt-get --yes clean
   echo "APT: Done purging unwanted packages..."
 else
   echo "NOT purging unwanted packages (since QPURGE is not yes)"
+  echo "Instead, installing emacs"
+  apt-get -y install emacs23-nox # ARGH this costs 60Mb.
 fi
 
 ### update and install things we need
@@ -143,7 +149,7 @@ echo "APT: installing new packages: $NEWPKGS"
 apt-get update
 #apt-get -y upgrade
 apt-get -y install $NEWPKGS
-apt-get -y install emacs23-nox # ARGH this costs 60Mb.
+
 # rpi-update #dont do this as it might muck things up
 apt-get --yes autoremove
 apt-get --yes autoclean
@@ -202,9 +208,15 @@ if [ "" -a  $CLAC = "yes" ] ; then
     echo "softdep spi-bcm2708 pre: fixed" >> /etc/modprobe.d/raspi-blacklist.conf
     echo "Done Installing Ragnar Jensen's CLAC stuff..."
     echo
+else
+    echo "Done NOT enabling ragnar jensen's stuff"
 fi
 
+echo "About to purge if required:"
+
 if [ $QPURGE ] ; then 
+    echo "purging files..."
+
     ### Remove clutter, sync and exit.
     rm -f /home/amon/pistore.desktop
     #find  /var/log -type f -delete
@@ -222,18 +234,20 @@ if [ $QPURGE ] ; then
     ### and Music folder 
     rm -rf /home/pi/Music
 
+    echo "Done purging files"
 fi
 
-set $DEBUG
+DEBUG=yes
 if [ $DEBUG ] ; then
     echo "Generating some debug files..."
     debug_dir=/opt/solo/debug/
     mkdir $debug_dir
     find / > $debug_dir/filelist.txt
     dpkg -l > $debug_dir/installed-packages.txt
-    du -skh /* > $debug_dir/diskusage-level1.txt
-    du -skh /*/* > $debug_dir/diskusage-leve2.txt
-    du -skh /*/*/* > $debug_dir/diskusage-leve3.txt
+    du -sk / | sort -n > $debug_dir/diskusage-level0.txt
+    du -sk /* | sort -n > $debug_dir/diskusage-level1.txt
+    du -sk /*/* | sort -n > $debug_dir/diskusage-level2.txt
+    du -sk /*/*/* | sort -n > $debug_dir/diskusage-leve3.txt
     dpkg-query -Wf '${Installed-Size}\t${Package}\n' | sort -n > $debug_dir/biggest-packages.txt
     echo "copy all debug: scp -prv $debug_dir jdmc2@t510j:solo-debug"
     echo "Done generating debug files - see $debug_dir"

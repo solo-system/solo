@@ -233,6 +233,9 @@ if [ $QPURGE ] ; then
 
     ### and Music folder 
     rm -rf /home/pi/Music
+    
+    ### an example video:
+    rm -rf /opt/vc/src/hello_pi/hello_video/test.h264
 
     echo "Done purging files"
 fi
@@ -242,7 +245,7 @@ if [ $DEBUG ] ; then
     echo "Generating some debug files..."
     debug_dir=/opt/solo/debug/
     mkdir $debug_dir
-    find / > $debug_dir/filelist.txt
+    find  / -ls | sort -n -k7 > $debug_dir/filelist.txt
     dpkg -l > $debug_dir/installed-packages.txt
     du -sk / | sort -n > $debug_dir/diskusage-level0.txt
     du -sk /* | sort -n > $debug_dir/diskusage-level1.txt

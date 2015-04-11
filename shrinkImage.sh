@@ -88,7 +88,8 @@ sudo resize2fs -p /dev/loop0 $targetsize4k
 log "Finding new size of fs:"
 newsize4k=$(sudo dumpe2fs /dev/loop0 | grep "Block count:" | awk '{print $3}')
 newsize1k=$((newsize4k * 4))
-log "Final size of fs is $newsize4k (4k blocks), or $newsize1k (1k blocks)"
+newsizehalfk=$((newsize1k * 2)) #this is in 512 byte blocks (half-k)
+log "Final size of fs is $newsize4k (4k blocks), or $newsize1k (1k blocks) or $newsizehalfk (half-k blocks)"
 
 log "Rebuilding the journal..."
 sudo tune2fs -j /dev/loop0
@@ -102,7 +103,8 @@ sudo losetup -d /dev/loop0
 log "done with all the stuff at fs level - now doing MBR/partition stuff..."
 log "Doing the partition table shrink..."
 # now we want to resize the partition in the MBR
-fcmd="d\n2\nn\np\n2\n122880\n+${newsize1k}K\nw\n"
+fcmd="d\n2\nn\np\n2\n122880\n+${newsizehalfk}\nw\n"
+echo "about to put this into fdisk: $fcmd..."
 echo -e $fcmd | fdisk $img
 
 log "Done partition table shrink... Table now looks like:"
@@ -111,6 +113,7 @@ sudo fdisk -l $img
 # when I did this "exactly" I was off by one:
 # EXT4-fs (loop0): bad geometry: block count 285148 exceeds size of device (285147 blocks)
 # so add one 512k block - and that fixes it - Yay!
+# BUT then found another bug (months later), and this could be unnecessary now (haven't checked)
 
 log "now done with the MBR/partition table level stuff - now truncate the .img file"
 lastpartoffset=`fdisk -l $img | grep ${img}2 | awk '{print $3}';`
@@ -121,8 +124,8 @@ truncate -s $truncatesize $img
 log "truncate done - ls -l $img:"
 ls -l $img
 
-log "now zipping..."
-zip $img.zip $img
+log "now zipping... (not really)"
+echo zip $img.zip $img
 
 echo "-------------------------------------------------------"
 echo "examine new ext2 contents with:"

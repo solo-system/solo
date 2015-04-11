@@ -6,6 +6,10 @@
 # hostname = solo, user=amon, software = amon
 # directory = /opt/solo/
 
+# log to console AND to logfile.
+
+exec > >(tee "/opt/solo/provision.log") 2>&1
+
 echo
 echo "------------------------------------------------"
 echo " Welcome to the provisioner."

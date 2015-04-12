@@ -1,5 +1,4 @@
 # .asoundrc for "amon"'s home directory if using CLAC audio board.
-
 pcm.clachw {
     type hw
     card sndrpiwsp

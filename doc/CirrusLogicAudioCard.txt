@@ -1,0 +1,28 @@
+Integrating CLAC (cirrus logic audio card)
+==========================================
+[written 2015-04-12]
+
+http://www.element14.com/community/community/raspberry-pi/raspberry-pi-accessories/cirrus_logic_audio_card
+
+Cirrus still don't have drivers sorted out.  They have an img
+(massive) based on 3.12 kernel (raspbian uses 3.18 currently). 
+
+I've tried using the img and it works, but it's massive, and I don't
+like having to maintain support for 2 totally different kernels
+(DeviceTree on in one and not in the other).  Sooo... Ragnar Jensen
+has released both an Img file, AND a tar file which can be unpacked
+over the stock raspbian and used.  It's this img that I'm going to
+use.  (I'd prefer to use the tar file, but don't have time today.)
+
+So policy is for provision to provision in a GENERAL way, supporting
+whatever hardware we might ever need to support, and then solo-boot.sh
+can enable whatever it wants, once it can see the hardware (at boot
+time).  This doesn't apply to kernels, so I'm hoping the CLAC kernel
+(from RJ) will operate fine if there is no CLAC hardware present (and
+we don't (therefore) try to configure it).  If the raspi.org people
+ever get a smart-boot thing going that can autodetect pi versus piv2
+(diff processor) then perhaps that intelligence can also be used to
+control what boots.  Actually, this must already exist (for the pi2 /
+pi decision, but don't know how it works).
+
+

@@ -1,73 +1,44 @@
-Integrating CLAC (cirrus logic audio card) with normal kernel.
+TODO: for the Solo Software (Image)
+===================================
 
-Cirrus still don't have drivers sorted out.  They have an img
-(massive) based on 3.12 kernel (raspbian uses 3.18 currently).  So
-it's a bit of a mess.
-
-I've tried using the img and it works, but it's massive, and I don't
-like having to maintain support for 2 totally different kernels
-(DeviceTree on in one and not in the other).  Sooo... Ragnar Jensen
-has released both an Img file, AND a tar file which can be unpacked
-over the stock raspbian and used.  It's this img that I'm going to
-use.  (I'd prefer to use the tar file, but don't have time today.)
-
-So policy is for provision to provision in a GENERAL way, supporting
-whatever hardware we might ever need to support, and then solo-boot.sh
-can enable whatever it wants, once it can see the hardware (at boot
-time).  This doesn't apply to kernels, so I'm hoping the CLAC kernel
-(from RJ) will operate fine if there is no CLAC hardware present (and
-we don't try to configure it).  If the raspi.org people ever get a
-smart-boot thing going that can autodetect pi versus piv2 (diff
-processor) then perhaps that intelligence can also be used to control
-what boots.
-
-currently use "grep sndrpiwsp /proc/asound/cards " in solo-boot.sh to
-detect whether a clac is present, but that is probably no good as it's
-too late at that point.  So still a bit stuck.
-
-
-TODO:  for SOLOs (and probably some amon stuff too)
-
-The big problem here is that 
-    (1) we can't build new images automatically
-    (2) we can't test new images automatically
-fi
-Nah - they aren't really problems.  They are nice-to-haves    
-
-Just turned jdmc2.com copy of .git repo for solo into bare repo:
-
-mv solo/.git solo.git
-git --git-dir=solo.git config core.bare true
-then change configs in remote "following" repos on laptops.  And you're done.
-
-
-change label on slash partition to something meaningful (it comes up as c432434232-23fbs43-4-23423 on linux, and I don't know what on Windows).
-
+Better Disk Labels:
+p1 currently boot - could be changed in provision ( to soloboot?)
+p2 currently unset - do it in provision DONE
+p3 do it solo-boot.sh - we do it already.
 
 switchoff.py is a "service / daemon" and should be interrupt driven (I think).
 
+Crontab: premature cronning:
 ISSUE: where do we fill out the crontab with amon watchdog?
 solo-boot:  No - this means user changes are lost at every reboot
 first-boot:  OK (current implementation).  But lacks flexibility of enabling/disabling packages later.
 provision: No - far too early - don't want crontabs running during install process.
 best is a service based management of all this - using updstar/systemd etc... but leave for now since in flux.
 
-# numbers on /etc/fstab entry for fsck
-# hostname exists in the /etc/hosts file too!
-# still get NOTICE: the software on this Raspberry Pi has not been fully configured
-# we should turn off swap Adding 102396k swap on /var/swap                           
+RTC should be enabled before it is.  Do things earlier in boot process
+than we do currently: eg RTC setup.  Wait for raspbian to move to
+systemd (?) - debian does it soon (does that matter - does raspbian
+flow from debian in that way...)
 
-Make script shrinkImg - take source from raspi-install.txt.
-     It should take a img file and output an img file with smaller / partition.
-     and zip it (or print instructions).
+How can we set RTC.
 
+Change /etc/fstab to have proper numbers in columns 5,6 for fsck
 
-Support all microphones (USB) - set volume in a device independent
-way.  What are the sample rates?
+/etc/hosts contains a copy of system hostname - ensure we update/set it when we set hostname
 
-get bluetooth connection working.  all that BNEP stuff. 
+Disarm raspi-config warning: "the software on this Raspberry Pi has not been fully configured"
 
-Then (after netwrokgin above...) get web interface going.
+Turn off swap with dphyswap or whatever it's called (and ensure 100Mb file is removed).
+
+Support more microphones (USB) - set volume in a device independent
+way.  What are the sample rates - does the new alsa-utils
+--dump-hw-params show this sort of thing?
+
+Support audio input dongles. (see recent german article on audio boards for rpi).
+
+bluetooth networking for configuration?  Or setting rtc?  Or webconfig page?
+
+A general API for configuration?
 
 Clacker: it was fragile but did work.  How to do more complex
 playbacks in the field?  Hardware is the difficult bit.
@@ -76,13 +47,7 @@ playback system with nice interface.
 
 Refactor switchoff.sh script as GPIOhandler.py/sh and make it interrupt driven so we can have better responsiveness.
 
-
-silence the /etc/profile.d/raspi-config crap from system (should probably go in provision.sh)
-      /usr/bin/raspi-config (need to delete the line from /etc/inittab, and uncomment the other?)
-
-
-Need to add a section about GPU_split=32 or whatever.
-turn off swap
+What should be done with GPU_split ? in /boot/config.txt
 
 # TODO: should be cleverer in reading hwclock. If < 2014, don't set sys time.
 # also - if `date` is already >=2014, then must be networked - so SET rtc from sys 
@@ -93,32 +58,11 @@ Networking - wirelessly:
 sudo echo "
 network={
     ssid=\"BTHomeHub2-5QCP\"
-    psk=\"d6346cbcb2\"
+    psk=\"not telling you\"
     key_mgmt=WPA-PSK
 }
 " >> slash/etc/wpa_supplicant/wpa_supplicant.conf 
 EOF
-
-================================================================
-RTC (make sure rtc is plugged in)
----
-sudo apt-get purge fake-hwclock
-sudo apt-get install i2c-tools bootlogd emacs23-nox
-sudo update-rc.d hwclock.sh defaults
-sudo update-rc.d hwclock.sh enable
-
-sudo nano /etc/modules ( append: i2c-dev i2c-bcm2708)
-sudo nano /etc/modprobe.d/raspi-blacklist.conf # remove i2c line
-
-# add this just before the case .. start) stanza
-sudo emacs -nw /etc/init.d/hwclock.sh
-"echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-1/new_device"
-
-sudo reboot (if you want to test / set the rtc)
-
-# sudo i2cdetect -y 0 (or 0)
-# sudo hwclock -r
-================================================================
 
 ================================================================
 vmon
@@ -190,21 +134,12 @@ sudo nano /boot/config.txt
 
 -----------------------------
 
-audio input dongle
-
-deployments:
-mount on arcticCat
-mount in car (in cabin or elsewhere?)
-bats
-
 develop:
 compress audio
 record video
 pir sensor?
-durie camera (still camera is fine).
 
 TODO:
-	
 straighten out logic in amoncleanup, with its no-ops and stuff.  think
 we need a are-we-running function which returns yes/no.  if yes, its
 cos everything is running well, if NO its because were not running.
@@ -234,31 +169,14 @@ PPP: set up pppd to accept point-to-point internet link.
 sudo apt-get install pppd 
 hmmm - ppp not easy...
 
-===========================================
-fsck:
-# To clone a working amon machine, put card into memorycard reader then
-# I did this:
-sudo fsck.fat  -a -V -v /dev/sdc1  # to check the filesystems on the memcard.
-sudo fsck -f -p -v /dev/sdc2       # to check the filesystems on the memcard.
-
 =============================================
-
-#finally, copy the card to local hard drive
-sudo dd bs=512 count=5785600 if=/dev/sdc of=amonruns.img
-sync
-
--------
-timestamp log file: add date to arecord output:
-
-tail -f /mnt/sdcard/amondata/wavs/arecord.log | while read line ; do date=`date +"%Y-%m-%d %H-%M-%S"` ; uptime=`uptime`; echo $date $uptime $line ; done
-----
-
---------------------
+Bespoke arecord.c :
 sudo apt-get --compile source alsa-utils
 installs and compiles source.  BUT you need to add lots of dependentpackages
-
 ================
 
+Bluetooth networking:
+=====================
 I got bluetooth tethering working between my laptop and andriod phone
 (pc gets internet through phone) via bluetooth by enableing tethering
 on the phone, and then using the gui bluetooth thing in ubuntu to
@@ -288,4 +206,3 @@ sudo pand -c 00:1F:E1:E5:C5:A5 --role PANU --persist 30
 # setup PC to listen for connections
 
 ==============================
-

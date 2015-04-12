@@ -1,13 +1,15 @@
 #!/bin/bash
 
+# provision.sh: turn a stock raspbian img into a bootable "Solo
+# Software Image"
+
+# Notes:
 # There should be NO mention of p3 here. It doesn't exist
-# It should only do things that need internet access.
-# [ or are slow - I supose ]
-# hostname = solo, user=amon, software = amon
-# directory = /opt/solo/
+# Anything needing internet access must be done here.
+# Anything slow should be done too
+# Install base is : directory = /opt/solo/
 
 # log to console AND to logfile.
-
 exec > >(tee "/opt/solo/provision.log") 2>&1
 
 echo
@@ -17,13 +19,15 @@ echo " This is run by hand on a freshly installed SBC"
 echo " to add solo functionality."
 echo " See accompanying raspi-install.txt for more"
 echo "------------------------------------------------"
-echo 
+echo
 
 if [ "$USER" != "root" ] ; then
     echo
     echo "Error: must be root - use \"sudo su\"."
     exit -1
 fi
+
+[ $PWD != '/opt/solo' ] && { echo "must be in /opt/solo, not $PWD. Stopping."; exit -1; }
 
 # check we have enough disk free... (in Mbytes)
 diskfree=`df -BM / | tail -1 | awk '{print $4}' | sed 's:M::g'`
@@ -32,8 +36,6 @@ if [ $diskfree -lt 200 ] ; then
     echo "Error - not enough free disk space - exiting (try rm -rf /home/pi/Music)"
     exit -1
 fi
-
-[ $PWD != '/opt/solo' ] && { echo "must be in /opt/solo, not $PWD. Stopping."; exit -1; }
 
 # are we 3.12 or 3.18 kernel (device tree or not?)
 #KRNL=$(uname -r | cut -f1,2 -d'.')
@@ -44,7 +46,7 @@ DT=yes # NO OLD KERNELS ANY MORE since Ragnar Jensen provided 3.18 based CLAC.im
 #else
 #    DT=unknown
 #fi
-echo "OLD: Detected KRNL version $KRNL, so assuming device tree is $DT"
+#echo "OLD: Detected KRNL version $KRNL, so assuming device tree is $DT"
 
 CLAC=unk
 while [ $CLAC != "yes" -a $CLAC != "no" ] ; do
@@ -173,17 +175,9 @@ echo
 
 # enable i2c in kernel (see raspi-config for more details)
 echo "Enabling i2c (for rtc and clac) in /boot/config.txt"
-if [ $DT = "yes" ] ; then
-    printf "dtparam=i2c_arm=on\n" >> /boot/config.txt
-else
-
-    echo "ARGH! We should never get here any more.  No old kernels!!!"
-    echo "KRNL suggests we're doing a cirrus install (old krnl), so configure that clock here"
-    echo "Don't know how to do that yet"
-    echo "TODO"
-fi
-    # there used to be stuff about un-blacklisting, but not needed any more 
+printf "dtparam=i2c_arm=on\n" >> /boot/config.txt
 echo "Done enabling i2c"
+echo 
 
 #echo
 #echo "Adding heartbeat module..."
@@ -220,7 +214,7 @@ fi
 
 echo "About to purge if required:"
 
-if [ $QPURGE ] ; then 
+if [ $QPURGE = "yes" ] ; then 
     echo "purging files..."
 
     ### Remove clutter, sync and exit.

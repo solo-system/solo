@@ -1,0 +1,75 @@
+Notes about Microphones.
+------------------------
+
+Just tested voltage output on pins of 3.5mm female jack connector on
+the CLAC (Cirrus Logic Audio Card).  It's the pink one on the board,
+also referred to as "line in".
+
+It has a functionality known as "Mic Bias", which supplies a voltage
+down these lines (in the wrong direction, if you like to see it that
+way), to power the microphone.  The experiment is to understand this
+voltage, and when it is applied.
+
+Setup: raspi A+ with CLAC.  3-pin jack to XLR cable plugged into
+line-in socket (pink).  Fluke 117 multimeter probes being shoved into
+the XLR female (or is it male?) connector.  Reading DC volts.
+
+Pins are labeled on the XLR conector (as I look at the end of it):
+
+                
+pin-2 ->     o     o     <- pin-1
+                o
+ 
+                ^
+                |
+ 	      pin-3
+
+Measuring pin-1 is the earth, pin 2 and three the "balanced" signal
+pins (left and right).
+
+When not recording, the voltages are all zero. Absolutely zero on my
+meter. Both between pin-1 and pin-2, and between pin-1 and pin-3.
+Also just tried between pin-2 and pin-3, and got zero again. Good.
+
+Now turn on recording WITH MIC-BIAS: 
+pin-1 to pin-2: 2.753V
+pin-2 to pin-3	2.751V
+
+Now disable micbias:
+pin-1 to pin-2:  V
+pin-2 to pin-3  V
+
+
+-----------------
+COMMANDS USED TO DEBUG THE WIERD HANG:
+
+amixer -Dhw:sndrpiwsp cset name='Line Input Switch' on
+
+arecord -d 1 -Dhw:sndrpiwsp -r 44100 -c 2 -f S32_LE /tmp/out.wav
+arecord -d 1 -Dhw:sndrpiwsp -r 44100 -c 2 -f S32_LE /tmp/out.wav
+# as many as you like ...
+arecord -d 1 -Dhw:sndrpiwsp -r 44100 -c 2 -f S32_LE /tmp/out.wav
+
+amixer -Dhw:sndrpiwsp cset name='Line Input Switch' off
+
+amon@solo:~$ arecord -d 1 -Dhw:sndrpiwsp -r 44100 -c 2 -f S16_LE /tmp/out.wav
+Recording WAVE '/tmp/out.wav' : Signed 32 bit Little Endian, Rate 44100 Hz, Stereo
+arecord: pcm_read:1801: read error: Input/output error
+
+dmesg reads:
+[ 7264.652324] bcm2708-dmaengine bcm2708-dmaengine: DMA transfer could not be terminated
+
+Then can't recover it...
+
+except by:
+amon@solo:~$ sudo /etc/init.d/alsa-utils reset
+[ ok ] Resetting ALSA...done.
+../pi/Reset_paths.sh
+../pi/Record_from_lineIn.sh 
+
+Recording WAVE '/tmp/out.wav' : Signed 16 bit Little Endian, Rate 44100 Hz, Stereo
+-rw-r--r-- 1 amon amon 176444 Apr 21 21:28 /tmp/out.wav
+
+the alsa reset does NOT always clear it
+
+

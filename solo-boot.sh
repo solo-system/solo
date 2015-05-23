@@ -17,13 +17,6 @@ else
 fi
 
 KRNL=$(uname -r | cut -f1,2 -d'.')
-if [ $KRNL = "3.12" ] ; then
-    DT=no
-elif [ $KRNL = "3.18" ] ; then
-    DT=yes
-else
-    DT=unknown
-fi
 
 # do we have a CLAC installed?
 if grep sndrpiwsp /proc/asound/cards > /dev/null ; then 
@@ -32,10 +25,10 @@ else
     CLAC=no
 fi
 
-echo "Detected KRNL version $KRNL, so assuming device tree is $DT"
-echo "detected raspi hardware version $REV so using i2c bus $IICBUS"
-echo "NEW!!! is clack installed?  CLAC=$CLAC"
-echo 
+echo "... Detected KRNL version $KRNL"
+echo "... Detected raspi hardware version $REV so using i2c bus $IICBUS"
+echo "... Is Cirrus Logic Audio Card installed?  CLAC=$CLAC"
+echo
 echo
 
 ### TODO - this doesn't catch the situation where the partition is
@@ -71,7 +64,7 @@ if ! grep mmcblk0p3 /proc/mounts > /dev/null ; then
   fstabtxt="/dev/mmcblk0p3  /mnt/sdcard     vfat    defaults,noatime,umask=111,dmask=000  0  2"
   echo $fstabtxt >> /etc/fstab
 
-  ### TRYTHIS - add a sync to ensure the mkfs and fstab work sticks.
+  ### add a sync to ensure the mkfs and fstab work sticks.
   echo "... syncing disks..."
   sync
 
@@ -147,7 +140,7 @@ echo "Activating the LEDs [`date`]"
 led_done=0
 for ledpath in /sys/class/leds/ACT/trigger /sys/class/leds/led0/trigger ; do
     if [ -f $ledpath ] ; then
-	echo "... Enalbling led=$led to be a heartbeat."
+	echo "... Enabling led=$ledpath to be a heartbeat."
 	echo heartbeat > $ledpath
 	led_done=$((led_done+1))
     fi
@@ -165,23 +158,30 @@ echo "=================================================="
 echo "Activating the RTC clock at [`date`]"
 modprobe i2c-dev
 echo "... inserted module i2c-dev (so i2c bus appears in /dev)"
-if [ $CLAC = no ] ; then # this test is for shim / l-shaped RTC (improveme)
-    RTC=/sys/class/i2c-adapter/i2c-${IICBUS}/new_device
-    if [ -f $RTC ] ; then
-	echo "informing kernel of rtc (DS-1307 L-shaped) device"
-	echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-${IICBUS}/new_device
-	echo "done informing kernel of rtc device"
-    else
-	echo "Warning: Can't find RTC device in $RTC"
-    fi
+REGPATH=/sys/class/i2c-adapter/i2c-${IICBUS}/new_device # where to register new devices
+
+echo "... we don't know which clock is attached, so add all (both) types"
+echo "... adding lshaped clock"
+echo "... informing kernel of rtc (DS-1307 L-shaped) device"
+echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-${IICBUS}/new_device
+echo "... Done adding lshaped clock"
+echo "... Adding second clock - piface shim"
+modprobe i2c:mcp7941x # why don't we need a modprobe for the l-shaped?
+echo "... loaded mcp7941x module"
+echo "... informing kernel of rtc (DS-1307 L-shaped) device"
+echo mcp7941x 0x6f > /sys/class/i2c-dev/i2c-${IICBUS}/device/new_device
+echo "... Done adding piface-shim clock"
+echo "... Did it work?"
+
+sleep 1 # let the above setup settle. TODO: get rid of this ??? if DT handled it, kernel loaded RTC ages ago.
+
+if [ -e /dev/rtc0 ] ; then 
+    echo "... I see clock"
 else
-    echo "... this is a CLAC install, so assuming piface shim rtc"
-    modprobe i2c:mcp7941x
-    echo "... loaded mcp7941x module"
-    echo mcp7941x 0x6f > /sys/class/i2c-dev/i2c-${IICBUS}/device/new_device
-    echo "... informed kernel of new i2c device on i2c bus"
+    echo "... WARNING - I see NO clock"
 fi
-echo "Done ... Activating the RTC clock at [`date`]"
+
+echo "Done ... Activating the RTC clock(s) at [`date`]"
 echo "=================================================="
 echo
 
@@ -190,7 +190,6 @@ echo
 echo "=================================================="
 echo "Setting the time... [`date`]"
 
-sleep 1 # let the above setup settle. TODO: get rid of this ??? if DT handled it, kernel loaded RTC ages ago.
 echo "... Checking rtc exists:"
 ls -l /dev/rtc0
 echo "... Reading rtc..."

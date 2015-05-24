@@ -109,6 +109,12 @@ echo " -----------------------------------"
 
 
 echo
+echo "Labeling file system partitions nicely..."
+e2label /dev/mmcblk0p1 soloboot
+e2label /dev/mmcblk0p2 solosys
+echo "Done Labeling file system partitions nicely..."
+
+echo
 echo "Doing raspi-config things..."
 echo "  setting hostname..."
 CURRENT_HOSTNAME=`cat /etc/hostname | tr -d " \t\n\r"`

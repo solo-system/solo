@@ -60,7 +60,7 @@ if ! grep mmcblk0p3 /proc/mounts > /dev/null ; then
   echo "... running partprobe..."
   partprobe
   echo "... running mkfs.vfat"
-  mkfs.vfat -v -n AUDIO /dev/mmcblk0p3 > /opt/solo/mkfs.vfat.log
+  mkfs.vfat -v -n solo-data /dev/mmcblk0p3 > /opt/solo/mkfs.vfat.log
   fstabtxt="/dev/mmcblk0p3  /mnt/sdcard     vfat    defaults,noatime,umask=111,dmask=000  0  2"
   echo $fstabtxt >> /etc/fstab
 

@@ -107,6 +107,7 @@ echo " GO AWAY - I can do the rest myself."
 echo " -----------------------------------"
 echo " -----------------------------------"
 
+
 echo
 echo "Doing raspi-config things..."
 echo "  setting hostname..."
@@ -211,6 +212,16 @@ if [ "" -a  $CLAC = "yes" ] ; then
 else
     echo "Done NOT enabling ragnar jensen's stuff"
 fi
+
+
+echo
+echo "Labeling file system partitions nicely..."
+fatlabel /dev/mmcblk0p1 solo-boot
+e2label /dev/mmcblk0p2 solo-sys
+sync
+echo "Done Labeling file system partitions nicely..."
+echo
+
 
 echo "About to purge if required:"
 

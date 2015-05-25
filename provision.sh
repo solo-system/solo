@@ -217,7 +217,7 @@ fi
 
 echo
 echo "Labeling file system partitions nicely..."
-fatlabel /dev/mmcblk0p1 solo-boot
+fatlabel /dev/mmcblk0p1 soloboot
 e2label /dev/mmcblk0p2 solo-sys
 sync
 echo "Done Labeling file system partitions nicely..."

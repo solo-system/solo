@@ -154,7 +154,9 @@ fi
 ### specific packages need updating, then can do it here on a pkg by
 ### pkg basis. So... New policy - Dont do apt-get upgrade here.
 
-NEWPKGS="i2c-tools bootlogd ntpdate rdate"
+# need exfat-utils for doslabel command below (not needed on solo, just to rename the partition in the img)
+
+NEWPKGS="i2c-tools bootlogd ntpdate rdate exfat-utils"
 echo "APT: installing new packages: $NEWPKGS"
 apt-get update
 #apt-get -y upgrade

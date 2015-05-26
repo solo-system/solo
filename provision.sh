@@ -48,19 +48,11 @@ DT=yes # NO OLD KERNELS ANY MORE since Ragnar Jensen provided 3.18 based CLAC.im
 #fi
 #echo "OLD: Detected KRNL version $KRNL, so assuming device tree is $DT"
 
-CLAC=unk
-while [ $CLAC != "yes" -a $CLAC != "no" ] ; do
-  echo "Include Ragnar-Jensen's CLAC support?"
-  read CLAC
+RJCLAC=unk
+while [ $RJCLAC != "yes" -a $RJCLAC != "no" ] ; do
+  echo "Include Ragnar Jensen's debs for CLAC (Cirrus Logic Audio Card) support?"
+  read RJCLAC
 done
-#if [ $CLAC = "yes" ] ; then
-#    echo "getting ragnar jensen's kernel.tar.gz package..."
-# using his entire img, rather than just the kernel tarfile. (it didn't work - 
-# perhaps because I was doing all the  other "solo" things - perhaps because there was no internet connection, perhaps because I was using an older (jan 2015, not feb 2015) version of stock raspbian.  OOPS or perhaps it was because I mis-spelled the "ldo1" for "ldol" below in the softdep: bit (now fixed).
-#    RJ=/opt/solo/kernel_3_18_9_W_CL.tgz
-#    scp jdmc2@t510j:raspi/ragnar-jensen/kernel_3_18_9_W_CL.tgz $RJ
-#    echo "Done"
-#fi
 
 QPURGE=unk
 while [ $QPURGE != "yes" -a $QPURGE != "no" ] ; do
@@ -178,7 +170,7 @@ echo
 echo
 
 # enable i2c in kernel (see raspi-config for more details)
-echo "Enabling i2c (for rtc and clac) in /boot/config.txt"
+echo "Enabling i2c (for rtc (and clac)) in /boot/config.txt"
 printf "dtparam=i2c_arm=on\n" >> /boot/config.txt
 echo "Done enabling i2c"
 echo 
@@ -190,33 +182,97 @@ echo
 #echo "Done adding heartbeat module."
 #echo
 
-# This is useful if you are using his tarball (that unpacks on top of stock raspbian, but not if you use his image, as he's done it for you. so disable for the moment with ""
-if [ "" -a  $CLAC = "yes" ] ; then
+
+# OK - I just wrote the below code to install the CLAC support:
+# comments:
+# 1) it's a real mess having to pick these bits from idfferent places
+# 2) Most of this ought to be part of the "amon" package (or atleast
+# in the amon directory).
+
+if [ $RJCLAC = "yes" ] ; then
     echo 
     echo "Installing Ragnar Jensen's CLAC stuff..."
-    pushd /
-    tar xzf $RJ 
-    popd
-    echo "  ...Updating /boot/config.txt"
+
+    mkdir /opt/solo/rj/
+    pushd /opt/solo/rj/
+
+    # Step 1 : get the debs and unpack.
+    # They live here: 
+    # Normal : https://drive.google.com/uc?export=download&id=0BzIaxMH3N5O1OGNpYl8wRVhqbU0
+    # Raspiv2: https://drive.google.com/uc?export=download&id=0BzIaxMH3N5O1S1JyTkJ4Z090cHc
+    # but I've kept a local copy in:
+    echo "... getting debs"
+    wget jdmc2.com/rjdebs/linux-image-3.18.9cludlmmapfll_3.18.9cludlmmapfll-3_armhf.deb
+    wget jdmc2.com/rjdebs/linux-image-3.18.9-v7cludlmmapfll_3.18.9-v7cludlmmapfll-4_armhf.deb
+    # They should be md5sum: 
+    # b7947af7cbeb34d2d0324c6896aedf67  linux-image-3.18.9cludlmmapfll_3.18.9cludlmmapfll-3_armhf.deb
+    # b168d2d736974f1f681fdefa9e246909  linux-image-3.18.9-v7cludlmmapfll_3.18.9-v7cludlmmapfll-4_armhf.deb
+
+    echo "... installing debs"
+    dpkg -i linux-image-3.18.9-v7cludlmmapfll_3.18.9-v7cludlmmapfll-4_armhf.deb
+    dpkg -i linux-image-3.18.9cludlmmapfll_3.18.9cludlmmapfll-3_armhf.deb
+
+    popd # done fiddling with the debs.  Could delete them here (TODO: PURGE)
+
+    # now need to change /boot/config.txt to contain:
+    # kernel=vmlinuz-3.18.9cludlmmapfll
+    # kernel=vmlinuz-3.18.9-v7cludlmmapfll 
+
+    # TODO: this handles only the older RPi versions (not version 2).
+    # But we have installed the kernel and modules for both orig and
+    # v7 architectures, so it's annoying not to be able to auto-boot
+    # the correct one in the same way. Perhaps choosing the same name
+    # as originals?  Anyway - I don't know how that intelligence
+    # works, so leaving it supporting only orig (not v7/rpi2) boards.
+
+    echo "... Updating /boot/config.txt"
     cp /boot/config.txt /boot/config.txt.pre-provision
-    echo "" >> /boot/config.txt
+    echo "" >> /boot/config.txt # add a new line
     echo "# Below added by solo's provision.sh" >> /boot/config.txt
+    echo "kernel=vmlinuz-3.18.9cludlmmapfll" >> /boot/config.txt
+    # echo "kernel=vmlinuz-3.18.9-v7cludlmmapfll" >> /boot/config.txt
     echo "dtparam=spi=on" >> /boot/config.txt
-#    echo "dtparam=i2c_arm=on" >> /boot/config.txt WE ALREADY DID THIS.
     echo "dtoverlay=rpi-cirrus-wm5102-overlay" >> /boot/config.txt
-    echo "kernel=kernel_CL.img" >> /boot/config.txt
-    echo "  ...Updating /etc/modprobe.d/raspi-blacklist.conf"
-    cp /etc/modprobe.d/raspi-blacklist.conf /etc/modprobe.d/raspi-blacklist.conf.pre-provision
-    echo "# lines below added by solo's provision.sh" >> /etc/modprobe.d/raspi-blacklist.conf
-    echo "softdep arizona-spi pre: arizona-ldo1" >> /etc/modprobe.d/raspi-blacklist.conf
-    echo "softdep spi-bcm2708 pre: fixed" >> /etc/modprobe.d/raspi-blacklist.conf
+    echo "... Done updating /boot/config.txt"
+
+    # now add stuff to blacklist
+    echo "... updating blacklist with dependencies"
+    bl=/etc/modprobe.d/raspi-blacklist.conf
+    echo "  ...Updating $bl"
+    cp $bl $bl.pre-provision
+    echo "# lines below added by solo's provision.sh" >> $bl
+    echo "softdep arizona-spi pre: arizona-ldo1" >> $bl
+    echo "softdep spi-bcm2708 pre: fixed" >> $bl
+    echo "... Done updating blacklist with dependencies"
+
+    # now get the overlay.
+    # (crikey, this is a chore...)
+    # looks like we have to get the whole repo, just for the dtb:
+    echo "Getting the device tree overlay from the git repo..."
+    mkdir /opt/solo/cirrus-git
+    pushd /opt/solo/cirrus-git
+    git clone --depth 1 https://github.com/CirrusLogic/rpi-linux.git
+    cp rpi-linux/arch/arm/boot/dts/rpi-cirrus-wm5102-overlay.dtb /boot/overlays/
+    # could remove all the kernel sources here TODO PURGE
+    popd 
+    echo "Done getting dtoverlay from Cirrus repo."
+
+    # now get the scripts:
+    echo "...Installing control scripts"
+    mkdir /opt/solo/clacconf/
+    mkdir /opt/solo/clacconf/
+    pushd /opt/solo/clacconf/
+    git clone --depth 1 https://github.com/CirrusLogic/wiki-content.git
+    mv wiki-content/scripts /opt/solo/clacconf
+    chmod +x /opt/solo/clacconf/scripts/*.sh
+    popd
+    echo "...Finished with control scripts"
+
     echo "Done Installing Ragnar Jensen's CLAC stuff..."
     echo
 else
     echo "Done NOT enabling ragnar jensen's stuff"
 fi
-
-
 
 
 echo "About to purge if required:"

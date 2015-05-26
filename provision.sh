@@ -214,7 +214,7 @@ if [ $RJCLAC = "yes" ] ; then
     
     # get the older tarball, containing the DTS and the control scripts:
     wget jdmc2.com/rjdebs/kernel_3_18_9_W_CL.tgz # older versino of it all (debs superscede, but don't have dts.)
-    tar xvzf kernel_3_18_9_W_CL.tgz 
+    tar xfz kernel_3_18_9_W_CL.tgz 
     cp -v boot/overlays/rpi-cirrus-wm5102-overlay.dtb /boot/overlays/
     cp -prv  home/pi/use_case_scripts /home/amon/clac/
     chmod +x /home/amon/clac/*.sh

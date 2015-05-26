@@ -247,7 +247,7 @@ if [ $RJCLAC = "yes" ] ; then
     echo "... updating blacklist with dependencies"
     bl=/etc/modprobe.d/raspi-blacklist.conf
     echo "  ...Updating $bl"
-    cp $bl $bl.pre-provision
+    #cp $bl $bl.pre-provision # no old version to backup.
     echo "# lines below added by solo's provision.sh" >> $bl
     echo "softdep arizona-spi pre: arizona-ldo1" >> $bl
     echo "softdep spi-bcm2708 pre: fixed" >> $bl

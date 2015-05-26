@@ -211,8 +211,16 @@ if [ $RJCLAC = "yes" ] ; then
     echo "... installing debs"
     dpkg -i linux-image-3.18.9-v7cludlmmapfll_3.18.9-v7cludlmmapfll-4_armhf.deb
     dpkg -i linux-image-3.18.9cludlmmapfll_3.18.9cludlmmapfll-3_armhf.deb
+    
+    # get the older tarball, containing the DTS and the control scripts:
+    wget jdmc2.com/rjdebs/kernel_3_18_9_W_CL.tgz # older versino of it all (debs superscede, but don't have dts.)
+    tar xvzf kernel_3_18_9_W_CL.tgz 
+    cp -v boot/overlays/rpi-cirrus-wm5102-overlay.dtb /boot/overlays/
+    cp -prv  home/pi/use_case_scripts /home/amon/clac/
+    chmod +x /home/amon/clac/*.sh
 
-    popd # done fiddling with the debs.  Could delete them here (TODO: PURGE)
+    popd # done fiddling with the debs and tarfile.  Could delete them here (TODO: PURGE)
+    echo "... Done installing debs, dtoverlay and control-scripts"
 
     # now need to change /boot/config.txt to contain:
     # kernel=vmlinuz-3.18.9cludlmmapfll
@@ -247,26 +255,25 @@ if [ $RJCLAC = "yes" ] ; then
 
     # now get the overlay.
     # (crikey, this is a chore...)
-    # looks like we have to get the whole repo, just for the dtb:
-    echo "Getting the device tree overlay from the git repo..."
-    mkdir /opt/solo/cirrus-git
-    pushd /opt/solo/cirrus-git
-    git clone --depth 1 https://github.com/CirrusLogic/rpi-linux.git
-    cp rpi-linux/arch/arm/boot/dts/rpi-cirrus-wm5102-overlay.dtb /boot/overlays/
+    #echo "Getting the device tree overlay."
+    #mkdir /opt/solo/cirrus-git
+    #pushd /opt/solo/cirrus-git
+    #git clone --depth 1 https://github.com/CirrusLogic/rpi-linux.git
+    #cp rpi-linux/arch/arm/boot/dts/rpi-cirrus-wm5102-overlay.dtb /boot/overlays/
     # could remove all the kernel sources here TODO PURGE
-    popd 
-    echo "Done getting dtoverlay from Cirrus repo."
+    #popd 
+    #echo "Done getting dtoverlay from Cirrus repo."
 
     # now get the scripts:
-    echo "...Installing control scripts"
-    mkdir /opt/solo/clacconf/
-    mkdir /opt/solo/clacconf/
-    pushd /opt/solo/clacconf/
-    git clone --depth 1 https://github.com/CirrusLogic/wiki-content.git
-    mv wiki-content/scripts /opt/solo/clacconf
-    chmod +x /opt/solo/clacconf/scripts/*.sh
-    popd
-    echo "...Finished with control scripts"
+    #echo "...Installing control scripts"
+    #mkdir /opt/solo/clacconf/
+    #mkdir /opt/solo/clacconf/
+    #pushd /opt/solo/clacconf/
+    #git clone --depth 1 https://github.com/CirrusLogic/wiki-content.git
+    #mv wiki-content/scripts /opt/solo/clacconf
+    #chmod +x /opt/solo/clacconf/scripts/*.sh
+    #popd
+    #echo "...Finished with control scripts"
 
     echo "Done Installing Ragnar Jensen's CLAC stuff..."
     echo

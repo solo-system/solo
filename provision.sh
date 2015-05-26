@@ -64,7 +64,7 @@ done
 
 QPURGE=unk
 while [ $QPURGE != "yes" -a $QPURGE != "no" ] ; do
-  echo "Minimize img size by purging unnecessarry packages? (slower)"
+  echo "Minimize img size by purging unnecessary packages? (slower)"
   read QPURGE
 done
 echo "PURGE is $QPURGE"
@@ -217,13 +217,6 @@ else
 fi
 
 
-echo
-echo "Labeling file system partitions nicely..."
-fatlabel /dev/mmcblk0p1 soloboot
-e2label /dev/mmcblk0p2 solo-sys
-sync
-echo "Done Labeling file system partitions nicely..."
-echo
 
 
 echo "About to purge if required:"
@@ -269,6 +262,18 @@ if [ $DEBUG ] ; then
     echo "copy all debug: scp -prv $debug_dir jdmc2@t510j:solo-debug"
     echo "Done generating debug files - see $debug_dir"
 fi
+
+
+# do this last cos we unmount /boot 
+echo
+echo "Labeling file system partitions nicely..."
+# fatlabel /dev/mmcblk0p1 soloboot
+umount /boot 
+dosfslabel /dev/mmcblk0p1 soloboot
+e2label /dev/mmcblk0p2 solo-sys
+sync
+echo "Done Labeling file system partitions nicely..."
+echo
 
 sync
 sync

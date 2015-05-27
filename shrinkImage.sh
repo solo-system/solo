@@ -43,6 +43,7 @@ read
 
 # how many extra 4k blocks to add to the FS:
 extra4k=100000  # this is 400M.
+extra4k=25000  # this is 100M.
 
 function log() {
     msg="$1"

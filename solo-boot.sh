@@ -173,10 +173,10 @@ echo mcp7941x 0x6f > /sys/class/i2c-dev/i2c-${IICBUS}/device/new_device
 echo "... Done adding piface-shim clock"
 echo "... Did it work?"
 
-sleep 1 # let the above setup settle. TODO: get rid of this ??? if DT handled it, kernel loaded RTC ages ago.
+sleep 2 # let the above setup settle. TODO: get rid of this ??? if DT handled it, kernel loaded RTC ages ago.
 
 if [ -e /dev/rtc0 ] ; then 
-    echo "... I see clock"
+    echo "... I see a clock - good."
 else
     echo "... WARNING - I see NO clock"
 fi
@@ -190,10 +190,9 @@ echo
 echo "=================================================="
 echo "Setting the time... [`date`]"
 
-echo "... Checking rtc exists:"
-ls -l /dev/rtc0
 echo "... Reading rtc..."
 rtctime=`/sbin/hwclock -r`  # read time on rtc 
+rtctime=`/sbin/hwclock -r`  # read time a second time, incase first fails.
 echo "... RTC reports time is $rtctime"
 
 if [ "$rtctime" ] ; then # this test should check that rtctime is > 2015-01-01

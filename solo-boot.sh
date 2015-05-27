@@ -17,6 +17,7 @@ else
 fi
 
 KRNL=$(uname -r | cut -f1,2 -d'.')
+FULL_KERNEL=$(uname -r)
 
 # do we have a CLAC installed?
 if grep sndrpiwsp /proc/asound/cards > /dev/null ; then 
@@ -25,7 +26,7 @@ else
     CLAC=no
 fi
 
-echo "... Detected KRNL version $KRNL"
+echo "... Detected KRNL version $KRNL ($FULL_KERNEL)"
 echo "... Detected raspi hardware version $REV so using i2c bus $IICBUS"
 echo "... Is Cirrus Logic Audio Card installed?  CLAC=$CLAC"
 echo

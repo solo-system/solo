@@ -241,17 +241,17 @@ if [ $RJCLAC = "yes" ] ; then
     # echo "kernel=vmlinuz-3.18.9-v7cludlmmapfll" >> /boot/config.txt
     echo "dtparam=spi=on" >> /boot/config.txt
     echo "dtoverlay=rpi-cirrus-wm5102-overlay" >> /boot/config.txt
-    echo "... Done updating /boot/config.txt"
+    echo "... done updating /boot/config.txt"
 
     # now add stuff to blacklist
     echo "... updating blacklist with dependencies"
     bl=/etc/modprobe.d/raspi-blacklist.conf
-    echo "  ...Updating $bl"
+    echo "... updating $bl"
     #cp $bl $bl.pre-provision # no old version to backup.
     echo "# lines below added by solo's provision.sh" >> $bl
     echo "softdep arizona-spi pre: arizona-ldo1" >> $bl
     echo "softdep spi-bcm2708 pre: fixed" >> $bl
-    echo "... Done updating blacklist with dependencies"
+    echo "... done updating blacklist with dependencies"
 
     # now get the overlay.
     # (crikey, this is a chore...)
@@ -275,20 +275,16 @@ if [ $RJCLAC = "yes" ] ; then
     #popd
     #echo "...Finished with control scripts"
 
-    echo "Done Installing Ragnar Jensen's CLAC stuff..."
-    echo
-else
-    echo "Done NOT enabling ragnar jensen's stuff"
+    echo "Done Installing CLAC stuff..."
 fi
 
 
-echo "About to purge if required:"
-
 if [ $QPURGE = "yes" ] ; then 
-    echo "purging files..."
+    echo "About to purge if required:"
 
     ### Remove clutter, sync and exit.
     rm -f /home/amon/pistore.desktop
+
     #find  /var/log -type f -delete
     rm -f home/jdmc2/amon/amon.log
 
@@ -308,6 +304,8 @@ if [ $QPURGE = "yes" ] ; then
     rm -rf /opt/vc/src/hello_pi/hello_video/test.h264
 
     echo "Done purging files"
+else
+    echo "Not purging"
 fi
 
 DEBUG=yes

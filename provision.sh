@@ -201,7 +201,7 @@ if [ $RJCLAC = "yes" ] ; then
     # Normal : https://drive.google.com/uc?export=download&id=0BzIaxMH3N5O1OGNpYl8wRVhqbU0
     # Raspiv2: https://drive.google.com/uc?export=download&id=0BzIaxMH3N5O1S1JyTkJ4Z090cHc
     # but I've kept a local copy in:
-    echo "... getting debs"
+    echo "... fetching CLAC debs"
     wget jdmc2.com/rjdebs/linux-image-3.18.9cludlmmapfll_3.18.9cludlmmapfll-3_armhf.deb
     wget jdmc2.com/rjdebs/linux-image-3.18.9-v7cludlmmapfll_3.18.9-v7cludlmmapfll-4_armhf.deb
     # They should be md5sum: 
@@ -215,10 +215,12 @@ if [ $RJCLAC = "yes" ] ; then
     # get the older tarball, containing the DTS and the control scripts:
     wget jdmc2.com/rjdebs/kernel_3_18_9_W_CL.tgz # older versino of it all (debs superscede, but don't have dts.)
     tar xfz kernel_3_18_9_W_CL.tgz 
+    echo "... installing clac overlay to /boot/"
     cp -v boot/overlays/rpi-cirrus-wm5102-overlay.dtb /boot/overlays/
+    echo "... installing use_case scripts to /home/amon/clac..."
     cp -prv  home/pi/use_case_scripts /home/amon/clac/
     chmod +x /home/amon/clac/*.sh
-
+    
     popd # done fiddling with the debs and tarfile.  Could delete them here (TODO: PURGE)
     echo "... Done installing debs, dtoverlay and control-scripts"
 

@@ -2,6 +2,9 @@
 
 dev=/dev/mmcblk0
 
+echo "Not meant for distribution - so doing nothing."
+exit -1
+
 echo
 echo "using drive: $dev"
 

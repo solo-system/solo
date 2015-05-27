@@ -315,22 +315,22 @@ if [ $DEBUG ] ; then
     echo "Generating some debug files..."
     debug_dir=/opt/solo/debug/
     mkdir $debug_dir
-    find  / -ls | sort -n -k7 > $debug_dir/filelist.txt
+    find  / -ls 2> /dev/null | sort -n -k7 > $debug_dir/filelist.txt
     dpkg -l > $debug_dir/installed-packages.txt
-    du -sk / | sort -n > $debug_dir/diskusage-level0.txt
-    du -sk /* | sort -n > $debug_dir/diskusage-level1.txt
-    du -sk /*/* | sort -n > $debug_dir/diskusage-level2.txt
-    du -sk /*/*/* | sort -n > $debug_dir/diskusage-leve3.txt
+    du -sk / 2> /dev/null | sort -n > $debug_dir/diskusage-level0.txt
+    du -sk /* 2> /dev/null | sort -n > $debug_dir/diskusage-level1.txt
+    du -sk /*/* 2> /dev/null | sort -n > $debug_dir/diskusage-level2.txt
+    du -sk /*/*/* 2> /dev/null | sort -n > $debug_dir/diskusage-leve3.txt
     dpkg-query -Wf '${Installed-Size}\t${Package}\n' | sort -n > $debug_dir/biggest-packages.txt
     echo "copy all debug: scp -prv $debug_dir jdmc2@t510j:solo-debug"
     echo "Done generating debug files - see $debug_dir"
 fi
 
-
 # do this last cos we unmount /boot 
 echo
 echo "Labeling file system partitions nicely..."
 # fatlabel /dev/mmcblk0p1 soloboot
+sync
 umount /boot 
 dosfslabel /dev/mmcblk0p1 soloboot
 e2label /dev/mmcblk0p2 solo-sys

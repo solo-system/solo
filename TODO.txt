@@ -1,11 +1,6 @@
 TODO: for the Solo Software (Image)
 ===================================
 
-Better Disk Labels:
-p1 currently boot - could be changed in provision ( to soloboot?)
-p2 currently unset - do it in provision DONE
-p3 do it solo-boot.sh - we do it already.
-
 switchoff.py is a "service / daemon" and should be interrupt driven (I think).
 
 Crontab: premature cronning:

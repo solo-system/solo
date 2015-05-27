@@ -169,7 +169,7 @@ echo "... Done adding lshaped clock"
 echo "... Adding second clock - piface shim"
 modprobe i2c:mcp7941x # why don't we need a modprobe for the l-shaped?
 echo "... loaded mcp7941x module"
-echo "... informing kernel of rtc (DS-1307 L-shaped) device"
+echo "... informing kernel of rtc (piface shim) device"
 echo mcp7941x 0x6f > /sys/class/i2c-dev/i2c-${IICBUS}/device/new_device
 echo "... Done adding piface-shim clock"
 echo "... Did it work?"

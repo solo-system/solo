@@ -90,13 +90,18 @@ if ! grep mmcblk0p3 /proc/mounts > /dev/null ; then
   
   echo "... making directory amondata on new mount point"
   mkdir /mnt/sdcard/amondata
+
+  SOLOLOGDIR=/mnt/sdcard/logs
+  echo "... making directory $SOLOLOGDIR on new mount point"
+  mkdir $SOLOLOGDIR
+  
   # chown amon.amon /mnt/sdcard/amondata
   # now build the crontab:
   # add crontabs ... (these should NOT be here - since they overwrite with each boot).
 
   echo "... placing output of df and mount into file /opt/solo/diskinfo.txt for inspection"
-  df -h > /opt/solo/diskinfo.txt
-  mount >> /opt/solo/diskinfo.txt
+  df -h > $SOLOLOGDIR/df.txt
+  mount > $SOLOLOGDIR/mount.txt
 
   echo "... Finished doing new partition stuff, now other chores for FIRSTBOOT:"
   echo "... adding watchdog and playback to amon's crontab:"
@@ -222,17 +227,20 @@ if [ $DEBUG = "on" ] ; then
     echo "DEBUG mode is on - so doing lots of lsusb stuff"
     echo "--------------"
     echo "lsusb"
-    lsusb
+    lsusb > $SOLOLOGDIR/lsusb.txt
     echo "---------------"
     echo "lsusb -t"
-    lsusb -t
+    lsusb -t > $SOLOLOGDIR/lsusb-t.txt
     echo "---------------"
     echo "lsusb -v"
-    lsusb -v
+    lsusb -v > $SOLOLOGDIR/lsusb-v.txt
     echo "end of debug mode"
+    dmesg > $SOLOLOGDIR/dmesg.txt
+
 fi
 
-
+echo "about to exit - copying this log output to $SOLOLOGDIR..."
+cp /opt/solo/solo-boot.log $SOLOLOGDIR/solo-boot.log
 echo
 echo "that's all folks"
 echo

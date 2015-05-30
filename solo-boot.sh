@@ -32,6 +32,15 @@ echo "... Is Cirrus Logic Audio Card installed?  CLAC=$CLAC"
 echo
 echo
 
+if [ -f /boot/solo.conf ] ; then
+
+    source /boot/solo.conf
+fi
+
+# but hack this for the moment...
+DEBUG=on
+
+
 ### TODO - this doesn't catch the situation where the partition is
 ### made, but the fs isn't (or the FS is corrupt).  Instead, we should
 ### check for the presence of the FS. somehow.  I just saw this on a
@@ -208,6 +217,21 @@ fi
 echo "Done ... Setting the time at  [`date`]"
 echo "=================================================="
 echo
+
+if [ $DEBUG = "on" ] ; then
+    echo "DEBUG mode is on - so doing lots of lsusb stuff"
+    echo "--------------"
+    echo "lsusb"
+    lsusb
+    echo "---------------"
+    echo "lsusb -t"
+    lsusb -t
+    echo "---------------"
+    echo "lsusb -v"
+    lsusb -v
+    echo "end of debug mode"
+fi
+
 
 echo
 echo "that's all folks"

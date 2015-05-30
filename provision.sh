@@ -87,6 +87,7 @@ echo "Downloading and Installing amon ..."
 ( cd /home/amon/ ; git clone jdmc2@jdmc2.com:git/amon.git )
 cp /opt/solo/asoundrc /home/amon/.asoundrc
 cp /opt/solo/bootamon.conf /boot/amon.conf
+cp /opt/solo/bootsolo.conf /boot/solo.conf
 chown -R amon.amon /home/amon
 chmod +x /home/amon/amon/amon # gosh - that's silly
 echo "PATH=$PATH:/home/amon/amon/" > /home/amon/.bashrc

@@ -99,7 +99,7 @@ if ! grep mmcblk0p3 /proc/mounts > /dev/null ; then
   # now build the crontab:
   # add crontabs ... (these should NOT be here - since they overwrite with each boot).
 
-  echo "... placing output of df and mount into file /opt/solo/diskinfo.txt for inspection"
+  echo "... placing output of df and mount into logs for inspection"
   df -h > $SOLOLOGDIR/df.txt
   mount > $SOLOLOGDIR/mount.txt
 

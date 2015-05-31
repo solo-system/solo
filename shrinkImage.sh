@@ -132,6 +132,7 @@ echo "-------------------------------------------------------"
 echo "examine new ext2 contents with:"
 echo "sudo mount -o loop,offset=\$((122880*512)) $img p1"
 echo "Or check for stray dev/loops with losetup -a"
+echo "TODO ***** should check df of / and /boot so ensure we're notfull - the free-space isn't what you think it is"
 echo "--------------------------------------------------------"
 echo "Finished shrinking $img into $img.zip"
 ls -l $img $img.zip

@@ -288,7 +288,9 @@ if [ $QPURGE = "yes" ] ; then
     ### Remove clutter, sync and exit.
     rm -f /home/amon/pistore.desktop
 
-    #find  /var/log -type f -delete
+    # this one is quite aggressive...
+    find  /var/log -type f -delete 
+    
     rm -f home/jdmc2/amon/amon.log
 
     ### Experimental removes - added 2015-02-10 by jdmc2.
@@ -306,6 +308,8 @@ if [ $QPURGE = "yes" ] ; then
     ### an example video:
     rm -rf /opt/vc/src/hello_pi/hello_video/test.h264
 
+    apt-get -y clean
+     
     echo "Done purging files"
 else
     echo "Not purging"

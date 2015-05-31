@@ -232,9 +232,8 @@ if [ $DEBUG = "on" ] ; then
     echo "lsusb -v"
     lsusb -v > $SOLOLOGDIR/lsusb-v.txt
     echo "dmesg"
-    dmesg > $SOLOLOGDIR/dmesg.txt
-    echo "PARTIAL ONLY" >> $SOLOLOGDIR/dmesg.txt
-    
+    dmesg > $SOLOLOGDIR/dmesg.txt.postboot
+
     # TODO: there are more things in /var/log which we could copy:
     # The problem is that we are just at boot time, and so we end
     # up with only partial copies.

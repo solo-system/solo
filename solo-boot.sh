@@ -225,18 +225,21 @@ echo
 
 if [ $DEBUG = "on" ] ; then
     echo "DEBUG mode is on - so doing lots of lsusb stuff"
-    echo "--------------"
-    echo "lsusb"
+    echo "lsusb ..."
     lsusb > $SOLOLOGDIR/lsusb.txt
-    echo "---------------"
     echo "lsusb -t"
     lsusb -t > $SOLOLOGDIR/lsusb-t.txt
-    echo "---------------"
     echo "lsusb -v"
     lsusb -v > $SOLOLOGDIR/lsusb-v.txt
-    echo "end of debug mode"
+    echo "dmesg"
     dmesg > $SOLOLOGDIR/dmesg.txt
-
+    echo "PARTIAL ONLY" >> $SOLOLOGDIR/dmesg.txt
+    
+    # TODO: there are more things in /var/log which we could copy:
+    # The problem is that we are just at boot time, and so we end
+    # up with only partial copies.
+    echo "end of debug mode"
+    
 fi
 
 echo "about to exit - copying this log output to $SOLOLOGDIR..."

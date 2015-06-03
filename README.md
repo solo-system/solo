@@ -1,18 +1,28 @@
-solo
+Solo
 ====
+# Tools to build an ".img" file suitable to run a Solo field recorder.
 
-Tools to build an ".img" file suitable to run a Solo field recorder.
+We take an image file from [raspbian](www.raspberrypi.org/downloads), and produce a modified version which will run the Solo field recorder. 
 
-We take a raw raspbian ".img" (downloadable from raspberry pi website) and make lots of changes to it, producing an image file as the output.
+The instructions to do this are in the file raspi-install.txt.
 
-It does the following things:
+This is done by flashing a SD-card with the stock raspbian release, booting a networked raspberrypi, logging in over ssh, cloning this repo, and running the script provision.sh.  Then poweroff, move SD-card back to PC, and copy the modified disk image onto the PC.  This image is now an SRI (Solo Recorder Image), and can be flashed onto SD-cards to be deployed in the Solo.
 
-1.  Read the hardware clock to set the time
-2.  Build third partition (/dev/mmcblk0p3 -> /mnt/sdcard) for all the audio data
-3.  minimize power consumption
+provision.sh performs the following:
+
+1.  Sets up reading the hardware clock to set the time in the Solo
+2.  Sets up building third partition (/dev/mmcblk0p3 -> /mnt/sdcard) for all the audio data
+3.  adds packages needed to run Solo (via apt-get install ...)
+4.  removes un-necessary packages  (via apt-get purge ...)
+5.  ensures solo-boot.sh is run at every boot time to do config on the live system.
+6.  
+5.  
+
+minimize power consumption
 4.  add cron job to start and monitor the "amon" audio monitor software
 5.  Set the timezone.
-6.  Remove unwanted packages
+6.  Remove unwanted pack
+7.  ages
 
 It's done by booting a networked raspberry pi with a stock raspbian release, loggin in, running "provision.sh", whichh puts all these things in place.  We then poweroff and move the SDcard back to a PC to keep it for later flashing.  See raspi-install.sh for notes on the steps to take to do this.
 

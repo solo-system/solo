@@ -1,6 +1,8 @@
 TODO: for the Solo Software (Image)
 ===================================
 
+move asoundrc into amon repo
+
 purge .git directories too.  And all RJ's code we inadvertently included.
 
 purge /var/log since it's full of old dmesg and syslog stuff.

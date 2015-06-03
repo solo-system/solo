@@ -2,7 +2,7 @@
 
 dev=/dev/mmcblk0
 
-echo "Not meant for distribution - so doing nothing."
+echo "WARNING: only run this if you know what you are doing. (And know how to get rid of this message.)"
 exit -1
 
 echo

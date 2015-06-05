@@ -9,12 +9,67 @@ echo "Started at: `date` [estimated date/time - RTC not read yet]"
 
 # on raspi model A get: 0008 from /proc/cpuinfo
 # on raspi model A+ get: 0012 (also get Hardware = BCM2708
+# see: http://elinux.org/RPi_HardwareHistory#Board_Revision_History
+# for a full list.
+
+# 2 3 4 5 6 are modelB with 256M Ram
+# 7 8 9     are model A with 256Mb
+# d e f     are B's with 512 Meg Ram
+# 10        Model B+ with 512M ram
+# 11        compute module (not supported here)
+# 12        A+ with 256M Ram.
+# a21041    rev2 model B (newer cpu) with 1G RAM
+# ^^^^^^^  I don't trust this from e-linux.org ... TODO: check.
+
 REV=`grep Revision /proc/cpuinfo  | awk '{print $3}'`
 if [ "$REV" = 0002 ] ; then
     IICBUS=0
 else
     IICBUS=1
 fi
+
+### NEW!!! properly understand the revision of the board:
+
+case $REV in
+
+    0002 | 0003 | 0004 | 0005 | 0006)
+        echo "rev is $REV: hardware is version 2,3,4,5,6 - model B with 256M RAM"
+        RPINAME="B"
+	RPIMEM="256"
+        ;;
+
+    0007 | 0008 | 0009)
+        echo "rev is $REV: hardware is version 7,8,9 = model A with 256M RAM"
+	RPINAME="A"
+	RPIMEM="256"
+        ;;
+
+    000d | 000e | 000f)
+        echo "rev is $REV: hardware is version d,e,f = model B with 512M RAM"
+	RPINAME="B"
+	RPIMEM="512"
+        ;;
+
+    0010)
+        echo "rev is $REV: hardware is version 10 = model B+ with 512M RAM"
+	RPINAME="B+"
+	RPIMEM="512"
+        ;;
+
+    0011)
+        echo "rev is $REV: hardware is version 11 = compute module (Not Supported - I wonder what will happen)"
+	RPINAME="CM"
+	RPIMEM="512"
+        ;;
+
+    0012)
+        echo "rev is $REV: hardware is version 12 = model A+ with 256M RAM"
+	RPINAME="A+"
+	RPIMEM="256"
+        ;;
+    *)
+	echo "rev is $REV: hardware version recognised."
+esac
 
 KRNL=$(uname -r | cut -f1,2 -d'.')
 FULL_KERNEL=$(uname -r)
@@ -26,12 +81,14 @@ else
     CLAC=no
 fi
 
+echo "... Finished detecting raspberry pi hardware: RPINAME=$RPINAME, RPIMEM=$RPIMEM"
 echo "... Detected KRNL version $KRNL ($FULL_KERNEL)"
 echo "... Detected raspi hardware version $REV so using i2c bus $IICBUS"
 echo "... Is Cirrus Logic Audio Card installed?  CLAC=$CLAC"
 echo
 echo
 
+# read the user-supplied config file, if it exists
 if [ -f /boot/solo.conf ] ; then
     source /boot/solo.conf
 fi
@@ -145,16 +202,24 @@ echo
 echo
 echo "=================================================="
 echo "Activating the LEDs [`date`]"
-led_done=0
-for ledpath in /sys/class/leds/ACT/trigger /sys/class/leds/led0/trigger ; do
-    if [ -f $ledpath ] ; then
-	echo "... Enabling led=$ledpath to be a heartbeat."
-	echo heartbeat > $ledpath
-	led_done=$((led_done+1))
-    fi
-done
-echo "... Enabled total of $led_done leds as heartbeats"
-if [ $led_done = "0" ] ; then echo "... Warning: didn't enable any leds" ; fi
+
+if [ $RPINAME = "B+" -o $RPINAME = "A+" ] ; then
+    echo heartbeat > /sys/class/leds/led0 # heartbeat on green LED
+    echo none      > /sys/class/leds/led1 # turn off the red LED
+else
+    echo "don't know how to set LEDs on this hardware: $RPINAME"
+    ls -l /sys/class/leds/
+    echo "please update solo-boot.sh"
+fi    
+
+#for ledpath in /sys/class/leds/ACT/trigger /sys/class/leds/led0/trigger ; do
+#    if [ -f $ledpath ] ; then
+#	echo "... Enabling led=$ledpath to be a heartbeat."
+#	echo heartbeat > $ledpath
+#	led_done=$((led_done+1))
+#    fi
+#done
+
 echo "Done - Activating the LEDs [`date`]"
 echo "=================================================="
 echo

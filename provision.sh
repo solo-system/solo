@@ -84,7 +84,7 @@ echo
 echo "Preparing our boot scripts"
 chmod +x /opt/solo/solo-boot.sh /opt/solo/switchoff.py
 echo "Downloading and Installing amon ..."
-( cd /home/amon/ ; git clone jdmc2@jdmc2.com:git/amon.git )
+( cd /home/amon/ ; git clone https://github.com/solosystem/amon.git )
 cp /opt/solo/asoundrc /home/amon/.asoundrc
 cp /opt/solo/bootamon.conf /boot/amon.conf
 cp /opt/solo/bootsolo.conf /boot/solo.conf

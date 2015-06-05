@@ -8,7 +8,7 @@ sudo dd bs=4M if=~/raspi/images/2014-09-09-wheezy-raspbian.img of=/dev/sdc ; syn
 ssh raspberrypi -l pi
 sudo su
 cd /opt
-git clone jdmc2@jdmc2.com:git/solo
+git clone https://github.com/solosystem/solo
 cd solo
 chmod +x /opt/solo/provision.sh
 ./provision.sh   # this does a lot

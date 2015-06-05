@@ -2,7 +2,7 @@ Howto build a solo .img (SSI) from a raspbian img.
 --------------------------------------------------
 
 # get recent raspbian release (raspbian.img) and flash to a card:
-sudo dd bs=4M if=~/raspi/images/2014-09-09-wheezy-raspbian.img of=/dev/sdc ; sync ; sync
+sudo dd bs=4M if=~/raspi/images/2014-09-09-wheezy-raspbian.img of=/dev/sdX ; sync ; sync
 
 ## Move to raspi:
 ssh raspberrypi -l pi

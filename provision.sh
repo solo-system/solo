@@ -37,16 +37,8 @@ if [ $diskfree -lt 200 ] ; then
     exit -1
 fi
 
-# are we 3.12 or 3.18 kernel (device tree or not?)
-#KRNL=$(uname -r | cut -f1,2 -d'.')
-#if [ $KRNL = "3.12" ] ; then
-#    DT=no
-#elif [ $KRNL = "3.18" ] ; then
 DT=yes # NO OLD KERNELS ANY MORE since Ragnar Jensen provided 3.18 based CLAC.img.
-#else
-#    DT=unknown
-#fi
-#echo "OLD: Detected KRNL version $KRNL, so assuming device tree is $DT"
+
 
 RJCLAC=unk
 while [ $RJCLAC != "yes" -a $RJCLAC != "no" ] ; do
@@ -74,7 +66,11 @@ echo
 echo "Adding user amon..."
 useradd -m amon
 usermod -a -G adm,dialout,cdrom,kmem,sudo,audio,video,plugdev,games,users,netdev,input,gpio amon 
-passwd amon
+
+# hoping this new password setting will work (it's non interactive).
+echo "amon:amon" | chpasswd
+# used to do this  - but it was interactive.
+# passwd amon
 echo "amon ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 echo "Done adding user amon (with groups and sudo powers)"
 echo

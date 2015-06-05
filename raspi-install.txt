@@ -6,6 +6,8 @@ sudo dd bs=4M if=~/raspi/images/2014-09-09-wheezy-raspbian.img of=/dev/sdc ; syn
 
 ## Move to raspi:
 ssh raspberrypi -l pi
+
+# then type (on the raspberry pi):
 sudo su
 cd /opt
 git clone https://github.com/solosystem/solo
@@ -16,3 +18,6 @@ sudo poweroff
 
 ## Move card back to pc, and copy image to HDD.
 sudo dd bs=512 count=6400000 if=/dev/sdX of=~/raspi/images/solo-xxx-`fdate`.img ; sync
+
+### and you now have a file which can be flashed to an SD card for use in a Solo
+### or you can feed it to shrinkImage.sh to make it more compact.

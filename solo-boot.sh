@@ -50,7 +50,6 @@ DEBUG=on
 ### in /etc/fstab (the last bit of the below).  We should also "sync"
 ### after making the fs and sync after changing fstab.  The fstab on
 ### the pi in question was corrupt with lots of ^0^0^0 in it.
-## I've added 2 lines below tagged TRYTHIS:
 
 # if p3 doesn't exist, make it, mount it.
 #if ! grep mmcblk0p3 /proc/partitions > /dev/null ; then
@@ -81,7 +80,6 @@ if ! grep mmcblk0p3 /proc/mounts > /dev/null ; then
   echo "... Making /mnt/sdcard mount point"
   mkdir -p /mnt/sdcard
 
-  ### TRYTHIS - add a second sync to ensure the mkdir sticks - whynot ???
   echo "... syncing again (paranoid)"
   sync
 
@@ -91,7 +89,7 @@ if ! grep mmcblk0p3 /proc/mounts > /dev/null ; then
   echo "... making directory amondata on new mount point"
   mkdir /mnt/sdcard/amondata
 
-  SOLOLOGDIR=/mnt/sdcard/logs
+  SOLOLOGDIR=/mnt/sdcard/solo-logs
   echo "... making directory $SOLOLOGDIR on new mount point"
   mkdir $SOLOLOGDIR
   

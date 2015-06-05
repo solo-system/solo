@@ -33,13 +33,8 @@ echo
 echo
 
 if [ -f /boot/solo.conf ] ; then
-
     source /boot/solo.conf
 fi
-
-# but hack this for the moment...
-DEBUG=on
-
 
 ### TODO - this doesn't catch the situation where the partition is
 ### made, but the fs isn't (or the FS is corrupt).  Instead, we should
@@ -163,7 +158,6 @@ if [ $led_done = "0" ] ; then echo "... Warning: didn't enable any leds" ; fi
 echo "Done - Activating the LEDs [`date`]"
 echo "=================================================="
 echo
-
 
 # now set up the RTC clock (should we not do this WAY before now?)
 echo

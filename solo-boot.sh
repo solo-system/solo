@@ -23,9 +23,7 @@ echo "Started at: `date` [estimated date/time - RTC not read yet]"
 
 REV=`grep Revision /proc/cpuinfo  | awk '{print $3}'`
 if [ "$REV" = 0002 ] ; then
-    IICBUS=0
 else
-    IICBUS=1
 fi
 
 ### NEW!!! properly understand the revision of the board:
@@ -33,39 +31,45 @@ fi
 case $REV in
 
     0002 | 0003 | 0004 | 0005 | 0006)
-        echo "rev is $REV: hardware is version 2,3,4,5,6 - model B with 256M RAM"
+        echo "... rev is $REV: hardware is version 2,3,4,5,6 - model B with 256M RAM"
         RPINAME="B"
 	RPIMEM="256"
+	IICBUS=0
         ;;
 
     0007 | 0008 | 0009)
-        echo "rev is $REV: hardware is version 7,8,9 = model A with 256M RAM"
+        echo "... rev is $REV: hardware is version 7,8,9 = model A with 256M RAM"
 	RPINAME="A"
 	RPIMEM="256"
-        ;;
+	IICBUS=1
+	;;
 
     000d | 000e | 000f)
-        echo "rev is $REV: hardware is version d,e,f = model B with 512M RAM"
+        echo "... rev is $REV: hardware is version d,e,f = model B with 512M RAM"
 	RPINAME="B"
 	RPIMEM="512"
+	IICBUS=1
         ;;
 
     0010)
-        echo "rev is $REV: hardware is version 10 = model B+ with 512M RAM"
+        echo "... rev is $REV: hardware is version 10 = model B+ with 512M RAM"
 	RPINAME="B+"
 	RPIMEM="512"
+	IICBUS=1
         ;;
 
     0011)
-        echo "rev is $REV: hardware is version 11 = compute module (Not Supported - I wonder what will happen)"
+        echo "... rev is $REV: hardware is version 11 = compute module (Not Supported - I wonder what will happen)"
 	RPINAME="CM"
 	RPIMEM="512"
+	IICBUS=1
         ;;
 
     0012)
-        echo "rev is $REV: hardware is version 12 = model A+ with 256M RAM"
+        echo "... rev is $REV: hardware is version 12 = model A+ with 256M RAM"
 	RPINAME="A+"
 	RPIMEM="256"
+	IICBUS=1
         ;;
     *)
 	echo "rev is $REV: hardware version recognised."
@@ -81,9 +85,8 @@ else
     CLAC=no
 fi
 
-echo "... Finished detecting raspberry pi hardware: RPINAME=$RPINAME, RPIMEM=$RPIMEM"
+echo "... Finished detecting raspberry pi hardware: RPINAME=$RPINAME, RPIMEM=$RPIMEM IICBUS=$IICBUS"
 echo "... Detected KRNL version $KRNL ($FULL_KERNEL)"
-echo "... Detected raspi hardware version $REV so using i2c bus $IICBUS"
 echo "... Is Cirrus Logic Audio Card installed?  CLAC=$CLAC"
 echo
 echo

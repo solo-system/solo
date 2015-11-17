@@ -118,7 +118,8 @@ if ! grep mmcblk0p3 /proc/mounts > /dev/null ; then
   endlast=`fdisk -l /dev/mmcblk0 | grep /dev/mmcblk0p2 | awk '{print $3}'`
   startnew=$((endlast+1))
   echo "... endlast = $endlast and startnew=$startnew".
-  fcmd="n\np\n3\n$startnew\n\nw"
+  #fcmd="n\np\n3\n$startnew\n\nw"
+  fcmd="n\np\n3\n$startnew\n\nt\n3\nc\nw" # set type of p3 to FAT (c)
   echo "... running $fcmd > fdisk"
   echo -e $fcmd | fdisk /dev/mmcblk0 > /opt/solo/fdisk.log
   echo "... running partprobe..."

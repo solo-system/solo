@@ -5,7 +5,7 @@ echo "-----------------------"
 echo "Welcome to solo-boot.sh"
 echo "-----------------------"
 echo
-echo "Started at: `date` [estimated date/time - RTC not read yet]"
+echo "[solo-boot.sh] Started at: `date` [estimated date/time - RTC not read yet]"
 
 # on raspi model A get: 0008 from /proc/cpuinfo
 # on raspi model A+ get: 0012 (also get Hardware = BCM2708
@@ -22,9 +22,9 @@ echo "Started at: `date` [estimated date/time - RTC not read yet]"
 # ^^^^^^^  I don't trust this from e-linux.org ... TODO: check.
 
 REV=`grep Revision /proc/cpuinfo  | awk '{print $3}'`
-if [ "$REV" = 0002 ] ; then
-else
-fi
+#if [ "$REV" = 0002 ] ; then
+#else
+#fi
 
 ### NEW!!! properly understand the revision of the board:
 

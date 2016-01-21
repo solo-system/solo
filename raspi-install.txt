@@ -1,6 +1,6 @@
 Howto build a solo .img (SSI) from a raspbian img.
 --------------------------------------------------
-
+ 
 # get recent raspbian release (raspbian.img) and flash to a card:
 sudo dd bs=4M if=~/solo/images/2015-05-05-raspbian-wheezy.img of=/dev/sdX ; sync ; sync
 

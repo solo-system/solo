@@ -1,0 +1,20 @@
+Comparison of 2 12v -> 5v converters:
+
+1) CIGGY: a cigarette -> USB converter (maplin>) with silver half hoop
+   on front (and green LED)
+
+2) Fulree 12-5vdc with 2 USB outputs.  codename FULREE (from ebay)
+
+Both connected directly to Halfords car battery (@12.9V - measured by
+volt meter across battery terminals. Current out of battery measured
+by fluke meter.
+
+LOAD: pair of USB LEDs attached to the "spider" (a USB hub).
+
+     	 Unloaded      Spider+2LED    (diff - ie used on load)
+CIGGY: 	  25mA         105mA	      80mA
+FULREE:   10mA	        89mA	      79mA
+
+So looks like they both do roughly same job on conversion, but the
+CIGGY wastes lots of current on itself (lighting it's led?)
+

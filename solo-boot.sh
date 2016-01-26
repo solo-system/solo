@@ -79,7 +79,7 @@ KRNL=$(uname -r | cut -f1,2 -d'.')
 FULL_KERNEL=$(uname -r)
 
 # do we have a CLAC installed?
-if grep sndrpiwsp /proc/asound/cards > /dev/null ; then 
+if grep sndrpiwsp /proc/asound/cards > /dev/null ; then
     CLAC=yes
 else
     CLAC=no
@@ -141,14 +141,14 @@ if ! grep mmcblk0p3 /proc/mounts > /dev/null ; then
 
   echo "... remounting to get new mount of p3"
   mount -a
-  
+
   echo "... making directory amondata on new mount point"
   mkdir /mnt/sdcard/amondata
 
   SOLOLOGDIR=/mnt/sdcard/solo-logs
   echo "... making directory $SOLOLOGDIR on new mount point"
   mkdir $SOLOLOGDIR
-  
+
   # chown amon.amon /mnt/sdcard/amondata
   # now build the crontab:
   # add crontabs ... (these should NOT be here - since they overwrite with each boot).
@@ -164,7 +164,7 @@ if ! grep mmcblk0p3 /proc/mounts > /dev/null ; then
 
   echo "FIRSTBOOT: finished at `date`"
   echo "======================================================"
-else 
+else
   echo "FIRSTBOOT: p3 is already there - great. Not activating FIRSTBOOT code."
 fi
 
@@ -208,13 +208,14 @@ echo "=================================================="
 echo "Activating the LEDs [`date`]"
 
 if [ $RPINAME = "B+" -o $RPINAME = "A+" ] ; then
-    echo heartbeat > /sys/class/leds/led0 # heartbeat on green LED
-    echo none      > /sys/class/leds/led1 # turn off the red LED
+    echo "Activating LEDs - led0[green] = heartbeat, led1[red] off"
+    echo heartbeat > /sys/class/leds/led0/trigger # heartbeat on green LED
+    echo none      > /sys/class/leds/led1/trigger # turn off the red LED
 else
     echo "don't know how to set LEDs on this hardware: $RPINAME"
     ls -l /sys/class/leds/
     echo "please update solo-boot.sh"
-fi    
+fi
 
 #for ledpath in /sys/class/leds/ACT/trigger /sys/class/leds/led0/trigger ; do
 #    if [ -f $ledpath ] ; then
@@ -251,7 +252,7 @@ echo "... Did it work?"
 
 sleep 2 # let the above setup settle. TODO: get rid of this ??? if DT handled it, kernel loaded RTC ages ago.
 
-if [ -e /dev/rtc0 ] ; then 
+if [ -e /dev/rtc0 ] ; then
     echo "... I see a clock - good."
 else
     echo "... WARNING - I see NO RTC clock"
@@ -267,14 +268,14 @@ echo "=================================================="
 echo "Setting the time... [`date`]"
 
 echo "... Reading rtc..."
-rtctime=`/sbin/hwclock -r`  # read time on rtc 
+rtctime=`/sbin/hwclock -r`  # read time on rtc
 rtctime=`/sbin/hwclock -r`  # read time a second time, incase first fails.
 echo "... RTC reports time is $rtctime"
 
 if [ "$rtctime" ] ; then # this test should check that rtctime is > 2015-01-01
     echo "... setting system time from rtc at `date`"
     /sbin/hwclock -s  # set system time from it
-    echo "... ZOOM into the future..." 
+    echo "... ZOOM into the future..."
     echo "... system time is now: `date`"
 else
     echo "NOT setting system time, cos rtc didn't give a good answer"
@@ -299,7 +300,7 @@ if [ $DEBUG = "on" ] ; then
     # The problem is that we are just at boot time, and so we end
     # up with only partial copies.
     echo "end of debug mode"
-    
+
 fi
 
 echo "about to exit - copying this log output to $SOLOLOGDIR..."
@@ -308,6 +309,6 @@ echo
 echo "that's all folks"
 echo
 echo "Exiting happy from solo-boot.sh at `date`"
-echo 
+echo
 
 exit 0

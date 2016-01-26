@@ -11,6 +11,10 @@ Release Checklist:
 
 default to DMIC / linein. (and gains?) CHOOSE
 
+RC bugs:
+led flash
+provision.sh - leave me alone should be earlier.
+
 
 All stuff below here is pre the Jan-2016 work:
 ----------------------------------------------

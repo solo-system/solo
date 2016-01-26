@@ -254,7 +254,7 @@ sleep 2 # let the above setup settle. TODO: get rid of this ??? if DT handled it
 if [ -e /dev/rtc0 ] ; then 
     echo "... I see a clock - good."
 else
-    echo "... WARNING - I see NO clock"
+    echo "... WARNING - I see NO RTC clock"
 fi
 
 echo "Done ... Activating the RTC clock(s) at [`date`]"

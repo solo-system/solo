@@ -297,7 +297,8 @@ if [ $QPURGE = "yes" ] ; then
 
     apt-get -y clean
 
-    #TODO: purge all the RJ debs etc we wget'd above.
+    ### purge all the RJ files we wget'd above.
+    rm -rf /opt/solo/rj
      
     echo "Done purging files"
 else
@@ -305,7 +306,7 @@ else
 fi
 
 DEBUG=yes
-if [ $DEBUG ] ; then
+if [ $DEBUG = "yes" ] ; then
     echo "Generating some debug files..."
     debug_dir=/opt/solo/debug/
     mkdir $debug_dir
@@ -319,6 +320,8 @@ if [ $DEBUG ] ; then
     echo "copy all debug: scp -prv $debug_dir jdmc2@t510j:solo-debug"
     echo "Done generating debug files - see $debug_dir"
 fi
+
+
 
 # do this last cos we unmount /boot 
 echo

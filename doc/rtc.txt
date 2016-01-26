@@ -154,7 +154,7 @@ Mon 01 Jan 2001 00:00:30 UTC  -0.205805 seconds
 
 --------------------
 
-this debug script was used to check all of robbie's solo2's (CLAC + SHIM).
+this debug script was used to check solo2's (CLAC + SHIM).
 ---------------------------------
 modprobe i2c-dev     #load /dev monitor for i2c. (gives us /dev/i2c...
 i2cdetect -l         # lists all i2c busses

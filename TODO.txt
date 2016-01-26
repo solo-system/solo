@@ -1,6 +1,19 @@
 TODO: for the Solo Software (Image)
 ===================================
 
+Release Checklist:
+0) who is the release for.
+1) led flashes
+2) uptime load is low
+3) df / has space
+4) no strange dmesg messages
+5) arecord.log has no xruns.
+
+default to DMIC / linein. (and gains?) CHOOSE
+
+
+All stuff below here is pre the Jan-2016 work:
+----------------------------------------------
 move asoundrc into amon repo
 
 purge .git directories too.  And all RJ's code we inadvertently included.

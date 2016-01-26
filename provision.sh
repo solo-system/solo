@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # provision.sh: turn a stock raspbian img into a bootable "Solo
-# Software Image"
+# Software Image".  see raspi-install.txt in . for more info.
 
 # Notes:
 # There should be NO mention of p3 here. It doesn't exist
@@ -37,9 +37,6 @@ if [ $diskfree -lt 200 ] ; then
     exit -1
 fi
 
-DT=yes # NO OLD KERNELS ANY MORE since Ragnar Jensen provided 3.18 based CLAC.img.
-
-
 RJCLAC=unk
 while [ $RJCLAC != "yes" -a $RJCLAC != "no" ] ; do
   echo "Include Ragnar Jensen's debs for CLAC (Cirrus Logic Audio Card) support?"
@@ -57,7 +54,6 @@ echo "====================================================================="
 echo "Provisioner is about to install solo with purge=$QPURGE and CLAC=$RJCLAC"
 echo " *** Press return to continue ..."
 read a
-
 echo "And we're off..."
 
 
@@ -66,8 +62,6 @@ echo
 echo "Adding user amon..."
 useradd -m amon
 usermod -a -G adm,dialout,cdrom,kmem,sudo,audio,video,plugdev,games,users,netdev,input,gpio amon 
-
-# hoping this new password setting will work (it's non interactive).
 echo "amon:amon" | chpasswd
 # used to do this  - but it was interactive.
 # passwd amon
@@ -81,9 +75,9 @@ echo "Preparing our boot scripts"
 chmod +x /opt/solo/solo-boot.sh /opt/solo/switchoff.py
 echo "Downloading and Installing amon ..."
 ( cd /home/amon/ ; git clone https://github.com/solosystem/amon.git )
-cp /opt/solo/asoundrc /home/amon/.asoundrc
-cp /opt/solo/bootamon.conf /boot/amon.conf
-cp /opt/solo/bootsolo.conf /boot/solo.conf
+cp /opt/solo/asoundrc /home/amon/.asoundrc    # copy asoundrc into amon's home
+cp /opt/solo/bootamon.conf /boot/amon.conf    # need this on /boot partition
+cp /opt/solo/bootsolo.conf /boot/solo.conf    # need this on /boot partition
 chown -R amon.amon /home/amon
 chmod +x /home/amon/amon/amon # gosh - that's silly
 echo "PATH=$PATH:/home/amon/amon/" > /home/amon/.bashrc
@@ -96,17 +90,16 @@ echo " GO AWAY - I can do the rest myself."
 echo " -----------------------------------"
 echo " -----------------------------------"
 
-
-
 echo
-echo "Doing raspi-config things..."
+echo "Doing raspi-config things... (this could be a boot-time option - rather than provision)"
+echo " --- I like that-it would allow users to give different names to the units (and therefore the audio files)"
 echo "  setting hostname..."
 CURRENT_HOSTNAME=`cat /etc/hostname | tr -d " \t\n\r"`
 NEW_HOSTNAME="solo"
 echo $NEW_HOSTNAME > /etc/hostname
 sed -i "s/127.0.1.1.*$CURRENT_HOSTNAME/127.0.1.1\t$NEW_HOSTNAME/g" /etc/hosts
 
-
+### TODO: This is NOT in the right place.  Should be a boot-time thing, so it can be in /boot/solo.conf
 echo "Setting timezone ..."
 echo "Europe/London" > /etc/timezone
 dpkg-reconfigure -f noninteractive tzdata
@@ -162,8 +155,6 @@ echo "Adding solo-boot.sh to rc.local"
 sed -i 's:^exit 0$:/opt/solo/solo-boot.sh >> /opt/solo/solo-boot.log 2>\&1\n\n&:' /etc/rc.local
 chmod +x /opt/solo/solo-boot.sh
 echo "Done updating rc.local"
-echo
-
 echo
 
 # enable i2c in kernel (see raspi-config for more details)
@@ -305,6 +296,8 @@ if [ $QPURGE = "yes" ] ; then
     rm -rf /opt/vc/src/hello_pi/hello_video/test.h264
 
     apt-get -y clean
+
+    #TODO: purge all the RJ debs etc we wget'd above.
      
     echo "Done purging files"
 else
@@ -331,7 +324,7 @@ fi
 echo
 echo "Labeling file system partitions nicely..."
 # fatlabel /dev/mmcblk0p1 soloboot
-sync
+sync ; sync ; sync # old habits
 umount /boot 
 dosfslabel /dev/mmcblk0p1 soloboot
 e2label /dev/mmcblk0p2 solo-sys

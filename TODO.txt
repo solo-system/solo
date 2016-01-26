@@ -9,11 +9,15 @@ Release Checklist:
 4) no strange dmesg messages
 5) arecord.log has no xruns.
 
-default to DMIC / linein. (and gains?) CHOOSE
 
 RC bugs:
 led flash
 provision.sh - leave me alone should be earlier.
+what is solologdir.
+what is DEBUG (it's in 3 files)
+rename kernels (but where do we put modules?)
+default to DMIC / linein. (and gains?) CHOOSE
+default to 16KHz
 
 
 All stuff below here is pre the Jan-2016 work:

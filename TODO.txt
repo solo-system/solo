@@ -3,21 +3,19 @@ TODO: for the Solo Software (Image)
 
 Release Checklist:
 0) who is the release for.
-1) led flashes
+1) led flashes DONE
 2) uptime load is low
 3) df / has space
 4) no strange dmesg messages
 5) arecord.log has no xruns.
-
+6) check it runs on A+ B+ and Pi2
 
 RC bugs:
-led flash
 provision.sh - leave me alone should be earlier.
 what is solologdir.
 what is DEBUG (it's in 3 files)
 rename kernels (but where do we put modules?)
 default to DMIC / linein. (and gains?) CHOOSE
-default to 16KHz
 
 
 All stuff below here is pre the Jan-2016 work:

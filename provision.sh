@@ -340,7 +340,7 @@ echo
 echo "----------------------------------------------------------"
 echo " provision.sh finished successfully."
 echo " now poweroff, and take this image as the new install image"
-echo " sudo dd bs=512 count=6400000 if=/dev/sdc of=solo-fdate.img ; sync"
+echo " sudo dd bs=512 count=6400000 if=/dev/sdc of=solo-fdate-bloated.img ; sync"
 echo " where the count=XXX you can get from fdisk -l"
 echo "----------------------------------------------------------"
 echo

@@ -20,8 +20,7 @@
 # 64M    1021016           20164   	44M less than asked-for
 # 48M    1005016            4964 	43M less than asked-for
 # 40M     997016               0 	40M less than asked-for
-
-# takes an img file and reduces the size of it.
+# SEE MORE BELOW on what we actually use.
 
 if [ $# -ne 1 ] ; then
     echo "Error: must prescribe img file on command line"
@@ -35,26 +34,31 @@ if [ ! -f "$img" ] ; then
     exit -1
 fi
 
+if [ ! -f $img ] ; then
+    echo "Error - no such image $img"
+    exit -1
+fi
+
+if [ ! -w $img ] ; then
+    echo "Error - image not writable: $img"
+    exit -1
+fi
+
 echo "About to shrink: $img"
 echo "WARNING *** This program changes the input file !!! ***"
 echo "press return to continue ... WAITING"
 read
 
-
-# how many extra 4k blocks to add to the FS:
-extra4k=100000  # this is 400M.
-extra4k=25000  # this is 100M.
+# how many extra 4k blocks to add to the FS: (see info at top of file)
+extra4k=100000  # ask for 400M
+extra4k=25000   # ask for 100M - only yields 21Mb free.
+extra4k=50000   # ask for 200M - this yeilds 111Mb free (use this).
 
 function log() {
     msg="$1"
     out="[SHRINK IMAGE]: $msg"
     echo "$out"
 }
-
-if [ ! -f $img ] ; then 
-    echo "Error - no such image $img"
-    exit -1
-fi
 
 # It's only partition 2 we want (for the moment)
 rootoffset=`fdisk -l $img | grep ${img}2 | awk '{print $2}';`
@@ -125,8 +129,8 @@ truncate -s $truncatesize $img
 log "truncate done - ls -l $img:"
 ls -l $img
 
-log "now zipping... (not really)"
-echo zip $img.zip $img
+#log "now zipping... (not really)"
+
 
 echo "-------------------------------------------------------"
 echo "examine new ext2 contents with:"
@@ -135,7 +139,8 @@ echo "Or check for stray dev/loops with losetup -a"
 echo "TODO ***** should check df of / and /boot so ensure we're notfull - the free-space isn't what you think it is"
 echo "--------------------------------------------------------"
 echo "Finished shrinking $img into $img.zip"
-ls -l $img $img.zip
+echo "zip it with: zip $img.zip $img"
+ls -l $img
 echo "Exiting happy."
 
 exit 0

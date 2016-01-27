@@ -7,7 +7,8 @@ echo "-----------------------"
 echo
 echo "[solo-boot.sh] Started at: `date` [estimated date/time - RTC not read yet]"
 
-# what am I?
+# what am I ?
+# This helps: http://www.raspberrypi-spy.co.uk/2012/09/checking-your-raspberry-pi-board-version/
 REV=`grep Revision /proc/cpuinfo  | awk '{print $3}'`
 
 case $REV in

@@ -88,6 +88,9 @@ echo "... Is Cirrus Logic Audio Card installed?  CLAC=$CLAC"
 echo
 echo
 
+# a place to copy logs on the p3 partition
+SOLOLOGDIR=/mnt/sdcard/solo-logs
+
 # read the user-supplied config file, if it exists
 if [ -f /boot/solo.conf ] ; then
     source /boot/solo.conf
@@ -142,7 +145,6 @@ if ! grep mmcblk0p3 /proc/mounts > /dev/null ; then
   echo "... making directory amondata on new mount point"
   mkdir /mnt/sdcard/amondata
 
-  SOLOLOGDIR=/mnt/sdcard/solo-logs
   echo "... making directory $SOLOLOGDIR on new mount point"
   mkdir $SOLOLOGDIR
 

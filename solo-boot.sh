@@ -70,9 +70,22 @@ case $REV in
 	RPINAME="A+"
 	RPIMEM="256"
 	IICBUS=1
-        ;;
+	;;
+
+    a01041 | a21041 )
+	echo "... rev is $REV: hardware is pi2 B with 1G RAM"
+	RPINAME="PI2B"
+	RPIMEM="1024"
+	IICBUS=1
+	;;
+
     *)
-	echo "rev is $REV: hardware version recognised."
+	echo "... rev is $REV: hardware NOT RECOGNISED (please update solo-boot.sh)"
+	echo "... ASSUMING hardware is pi2"
+	RPINAME="PI2B"
+	RPIMEM="1024"
+	IICBUS=1
+	;;
 esac
 
 KRNL=$(uname -r | cut -f1,2 -d'.')

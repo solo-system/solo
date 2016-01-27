@@ -199,7 +199,29 @@ if [ $RJCLAC = "yes" ] ; then
     echo "... installing debs"
     dpkg -i linux-image-3.18.9-v7cludlmmapfll_3.18.9-v7cludlmmapfll-4_armhf.deb
     dpkg -i linux-image-3.18.9cludlmmapfll_3.18.9cludlmmapfll-3_armhf.deb
-    
+
+    # RJ's kernels are now installed as 
+    # /boot/vmlinuz-3.18.9cludlmmapfll
+    # /boot/vmlinuz-3.18.9-v7cludlmmapfll
+
+    # we rename them to kernel.img and kernel7.img so that the
+    # bootstrap code finds them (and chooses magically between them
+    # (it knows - somehow).  We previously put a kernel= line into the
+    # /boot/config.txt, but that can't cater for the pi/pi2
+    # distinction. 
+
+    # NOTE: I worried that all the other things (system.map, initrd,
+    # /lib/modules etc) would not now be found because the kernel's
+    # filename no longer matches it's version, but this is not what's
+    # required.  Once booted a kernel looks for these things according
+    # to it's uname -r, not it's filename.
+
+    # TODO: could save space removing /lib/modules/{3.18.11+,3.18.11-v7+}
+
+    echo "... Copying new CLAC kernels into place..."
+    mv -v /boot/vmlinuz-3.18.9cludlmmapfll /boot/kernel.img
+    mv -v /boot/vmlinuz-3.18.9-v7cludlmmapfll /boot/kernel7.img
+
     # get the older tarball, containing the DTS and the control scripts:
     wget jdmc2.com/rjdebs/kernel_3_18_9_W_CL.tgz # older versino of it all (debs superscede, but don't have dts.)
     tar xfz kernel_3_18_9_W_CL.tgz 
@@ -212,22 +234,11 @@ if [ $RJCLAC = "yes" ] ; then
     popd # done fiddling with the debs and tarfile.  Could delete them here (TODO: PURGE)
     echo "... Done installing debs, dtoverlay and control-scripts"
 
-    # now need to change /boot/config.txt to contain:
-    # kernel=vmlinuz-3.18.9cludlmmapfll
-    # kernel=vmlinuz-3.18.9-v7cludlmmapfll 
-
-    # TODO: this handles only the older RPi versions (not version 2).
-    # But we have installed the kernel and modules for both orig and
-    # v7 architectures, so it's annoying not to be able to auto-boot
-    # the correct one in the same way. Perhaps choosing the same name
-    # as originals?  Anyway - I don't know how that intelligence
-    # works, so leaving it supporting only orig (not v7/rpi2) boards.
-
     echo "... Updating /boot/config.txt"
     cp /boot/config.txt /boot/config.txt.pre-provision
     echo "" >> /boot/config.txt # add a new line
     echo "# Below added by solo's provision.sh" >> /boot/config.txt
-    echo "kernel=vmlinuz-3.18.9cludlmmapfll" >> /boot/config.txt
+    # echo "kernel=vmlinuz-3.18.9cludlmmapfll" >> /boot/config.txt
     # echo "kernel=vmlinuz-3.18.9-v7cludlmmapfll" >> /boot/config.txt
     echo "dtparam=spi=on" >> /boot/config.txt
     echo "dtoverlay=rpi-cirrus-wm5102-overlay" >> /boot/config.txt
@@ -243,31 +254,8 @@ if [ $RJCLAC = "yes" ] ; then
     echo "softdep spi-bcm2708 pre: fixed" >> $bl
     echo "... done updating blacklist with dependencies"
 
-    # now get the overlay.
-    # (crikey, this is a chore...)
-    #echo "Getting the device tree overlay."
-    #mkdir /opt/solo/cirrus-git
-    #pushd /opt/solo/cirrus-git
-    #git clone --depth 1 https://github.com/CirrusLogic/rpi-linux.git
-    #cp rpi-linux/arch/arm/boot/dts/rpi-cirrus-wm5102-overlay.dtb /boot/overlays/
-    # could remove all the kernel sources here TODO PURGE
-    #popd 
-    #echo "Done getting dtoverlay from Cirrus repo."
-
-    # now get the scripts:
-    #echo "...Installing control scripts"
-    #mkdir /opt/solo/clacconf/
-    #mkdir /opt/solo/clacconf/
-    #pushd /opt/solo/clacconf/
-    #git clone --depth 1 https://github.com/CirrusLogic/wiki-content.git
-    #mv wiki-content/scripts /opt/solo/clacconf
-    #chmod +x /opt/solo/clacconf/scripts/*.sh
-    #popd
-    #echo "...Finished with control scripts"
-
     echo "Done Installing CLAC stuff..."
 fi
-
 
 if [ $QPURGE = "yes" ] ; then 
     echo "About to purge if required:"

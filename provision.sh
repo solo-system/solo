@@ -55,7 +55,11 @@ echo "Provisioner is about to install solo with purge=$QPURGE and CLAC=$RJCLAC"
 echo " *** Press return to continue ..."
 read a
 echo "And we're off..."
-
+echo " -----------------------------------"
+echo " -----------------------------------"
+echo " GO AWAY - I can do the rest myself."
+echo " -----------------------------------"
+echo " -----------------------------------"
 
 ### Users:
 echo
@@ -83,12 +87,6 @@ chmod +x /home/amon/amon/amon # gosh - that's silly
 echo "PATH=$PATH:/home/amon/amon/" > /home/amon/.bashrc
 echo "Done downloading our software"
 echo
-
-echo " -----------------------------------"
-echo " -----------------------------------"
-echo " GO AWAY - I can do the rest myself."
-echo " -----------------------------------"
-echo " -----------------------------------"
 
 echo
 echo "Doing raspi-config things... (this could be a boot-time option - rather than provision)"

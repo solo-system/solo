@@ -7,26 +7,8 @@ echo "-----------------------"
 echo
 echo "[solo-boot.sh] Started at: `date` [estimated date/time - RTC not read yet]"
 
-# on raspi model A get: 0008 from /proc/cpuinfo
-# on raspi model A+ get: 0012 (also get Hardware = BCM2708
-# see: http://elinux.org/RPi_HardwareHistory#Board_Revision_History
-# for a full list.
-
-# 2 3 4 5 6 are modelB with 256M Ram
-# 7 8 9     are model A with 256Mb
-# d e f     are B's with 512 Meg Ram
-# 10        Model B+ with 512M ram
-# 11        compute module (not supported here)
-# 12        A+ with 256M Ram.
-# a21041    rev2 model B (newer cpu) with 1G RAM
-# ^^^^^^^  I don't trust this from e-linux.org ... TODO: check.
-
+# what am I?
 REV=`grep Revision /proc/cpuinfo  | awk '{print $3}'`
-#if [ "$REV" = 0002 ] ; then
-#else
-#fi
-
-### NEW!!! properly understand the revision of the board:
 
 case $REV in
 
@@ -59,7 +41,8 @@ case $REV in
         ;;
 
     0011)
-        echo "... rev is $REV: hardware is version 11 = compute module (Not Supported - I wonder what will happen)"
+        echo "... rev is $REV: hardware is version 11 = compute module"
+	echo "... Hardware Not Supported - I wonder what will happen."
 	RPINAME="CM"
 	RPIMEM="512"
 	IICBUS=1
@@ -220,7 +203,7 @@ echo
 echo "=================================================="
 echo "Activating the LEDs [`date`]"
 
-if [ $RPINAME = "B+" -o $RPINAME = "A+" ] ; then
+if [ $RPINAME = "B+" -o $RPINAME = "A+" -o $RPINAME = "PI2B" ] ; then
     echo "Activating LEDs - led0[green] = heartbeat, led1[red] off"
     echo heartbeat > /sys/class/leds/led0/trigger # heartbeat on green LED
     echo none      > /sys/class/leds/led1/trigger # turn off the red LED
@@ -230,13 +213,6 @@ else
     echo "please update solo-boot.sh"
 fi
 
-#for ledpath in /sys/class/leds/ACT/trigger /sys/class/leds/led0/trigger ; do
-#    if [ -f $ledpath ] ; then
-#	echo "... Enabling led=$ledpath to be a heartbeat."
-#	echo heartbeat > $ledpath
-#	led_done=$((led_done+1))
-#    fi
-#done
 
 echo "Done - Activating the LEDs [`date`]"
 echo "=================================================="

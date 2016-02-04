@@ -1,20 +1,58 @@
-Comparison of 2 12v -> 5v converters:
+Experiment: Comparison of 2 12v -> 5v converters:
+-------------------------------------------------
+
+Setup: test 3 converters using LED bulbs 
 
 1) CIGGY: a cigarette -> USB converter (maplin>) with silver half hoop
    on front (and green LED)
 
 2) Fulree 12-5vdc with 2 USB outputs.  codename FULREE (from ebay)
 
+3) CPT ebay 
+
 Both connected directly to Halfords car battery (@12.9V - measured by
 volt meter across battery terminals. Current out of battery measured
-by fluke meter.
+by fluke meter.  Load is a pair of USB LEDs attached to the "spider"
+(a USB hub).
 
-LOAD: pair of USB LEDs attached to the "spider" (a USB hub).
-
+Results:
      	 Unloaded      Spider+2LED    (diff - ie used on load)
 CIGGY: 	  25mA         105mA	      80mA
 FULREE:   10mA	        89mA	      79mA
+CPT:	  10mA		86mA	      76mA
 
 So looks like they both do roughly same job on conversion, but the
 CIGGY wastes lots of current on itself (lighting it's led?)
+
+===================================================================
+Experiment: poweroff quiescent power consumption:
+-------------------------------------------------
+
+Setup: fluke measures amps at car battery terminal.  DC-DC is the
+fulree from above.
+
+Results:	fulree	fulree	  fulree      CPT      CPT	  CPT (barreled to CLAC)
+		B+-clac  A+-clac  A+-noclac  A+-clac  A+-noclac  A+-clac
+unconnected	 10mA	  10mA	    10mA      9.3mA     9.3mA	  9.3mA
+running 	112mA	 44-67mA    44mA     44.0mA    44.0mA	 44.0mA
+poweroff	 37mA	  23mA	    25mA     21.5mA    25.2	 21.2mA
+
+This is odd - the clac seems to REDUCE the poweroff consumption. Try
+feeding 5v into the CLAC directly using the barrel connector.
+
+Conclusion: 
+raspi consumes 11-15mA on top of the 10mA of the DC-DC. 
+
+--------
+
+Discussion.  When idle (poweroff), the total draw is 10mA + 11mA (120mW + 132mW = 252mW)
+	          running              total draw is 10mA + 34mA (120mW + 408mW = 528mW)
+
+
+So we save only 1/2 of the power by being poweredoff.  So, given
+we want recording for 4 hours a day, all that standby time
+is a TERRIBLE waste.  So shut down fully - and Disconnect.  Therefore
+we need a timer/switch
+
+at 528mw, we use 12Wh per day. which is 1Ah per day.
 

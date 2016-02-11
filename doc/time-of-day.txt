@@ -1,0 +1,39 @@
+Sometimes we will be networked, and if so, the RTC is not the only
+source of time.  So:
+
+1) if time.nist.gov is available, we MUST use it (would we _ever_ prefer our RTC over time.nist.gov?)
+
+2) if we find nist we always set system time from it, and then the RTC (if it exists).
+
+3) if nist (networking) not present -: set from rtc (if present)
+
+4) if !nist and !rtc - it's 1970.
+
+if we get 1970 behaviour, we should be careful that reboots don't
+cause overlap/overwrite.  Perhaps pushd previous directories.
+
+
+This is NOT an amon thing, so I am reluctant to put it in the watchdog
+(which handles time changes under it's feet without giving it any
+thought).  Nice.
+
+So what does the system do about (eg) a RTC that we can't read (keep trying, or give up at boot time).
+
+How about noticing when we have tried the RTC (many times?) and failed
+to get a time from it (or it gave us a time of zero - is that
+different).
+
+WAIT.
+
+The possibilities are (at boot):
+if (NETWORKING) -> get network time - set systime()  set RTC (if exists).
+else (No networking)
+     if (RTC)
+       set time claimed by RTC
+     else
+
+
+
+At Boot time we must setup RTC agressively, and waste time on it - loop 5 times adding RTC and checking RTC.
+
+If we have an RTC that keeps reporting time=0. ignore it, and set it if we can.

@@ -294,7 +294,7 @@ fi
 DEBUG=yes
 if [ $DEBUG = "yes" ] ; then
     echo "Generating some debug files..."
-    debug_dir=/opt/solo/debug/
+    debug_dir=/opt/solo/provision-debuglog/
     mkdir $debug_dir
     find  / -ls 2> /dev/null | sort -n -k7 > $debug_dir/filelist.txt
     dpkg -l > $debug_dir/installed-packages.txt
@@ -307,22 +307,16 @@ if [ $DEBUG = "yes" ] ; then
     echo "Done generating debug files - see $debug_dir"
 fi
 
-
-
-# do this last cos we unmount /boot 
+# do this last cos we need to unmount /boot to label it.
 echo
 echo "Labeling file system partitions nicely..."
-# fatlabel /dev/mmcblk0p1 soloboot
-sync ; sync ; sync # old habits
+sync ; sync # old habits
 umount /boot 
 dosfslabel /dev/mmcblk0p1 soloboot
 e2label /dev/mmcblk0p2 solo-sys
-sync
+sync ; sync;
 echo "Done Labeling file system partitions nicely..."
 echo
-
-sync
-sync
 
 ### All done.
 echo

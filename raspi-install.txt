@@ -19,5 +19,6 @@ sudo poweroff
 ## Move card back to pc, and copy image to HDD.
 sudo dd bs=512 count=6400000 if=/dev/sdX of=~/raspi/images/solo-xxx-`fdate`-bloated.img ; sync
 
-### and you now have a file which can be flashed to an SD card for use in a Solo
-### or you can feed it to shrinkImage.sh to make it more compact.
+### and you now have a file which can be flashed to an SD card for use
+### in a Solo or you can feed it to shrinkImage.sh to make it more
+### compact.

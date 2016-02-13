@@ -5,7 +5,7 @@ echo "-----------------------"
 echo "Welcome to solo-boot.sh"
 echo "-----------------------"
 echo
-echo "[solo-boot.sh] Started at: `date` [estimated date/time - RTC not read yet]"
+echo "[solo-boot.sh] Started at: `date`"
 
 # what am I ?
 # This helps: http://www.raspberrypi-spy.co.uk/2012/09/checking-your-raspberry-pi-board-version/
@@ -205,7 +205,6 @@ echo
 echo
 echo "=================================================="
 echo "Activating the LEDs [`date`]"
-
 if [ $RPINAME = "B+" -o $RPINAME = "A+" -o $RPINAME = "PI2B" ] ; then
     echo "Activating LEDs - led0[green] = heartbeat, led1[red] off"
     echo heartbeat > /sys/class/leds/led0/trigger # heartbeat on green LED
@@ -215,67 +214,65 @@ else
     ls -l /sys/class/leds/
     echo "please update solo-boot.sh"
 fi
-
-
 echo "Done - Activating the LEDs [`date`]"
 echo "=================================================="
 echo
 
 # now set up the RTC clock (should we not do this WAY before now?)
-echo
-echo "=================================================="
-echo "Activating the RTC clock at [`date`]"
-modprobe i2c-dev
-echo "... inserted module i2c-dev (so i2c bus appears in /dev)"
-REGPATH=/sys/class/i2c-adapter/i2c-${IICBUS}/new_device # where to register new devices
+#echo
+#echo "=================================================="
+#echo "Activating the RTC clock at [`date`]"
+#modprobe i2c-dev
+#echo "... inserted module i2c-dev (so i2c bus appears in /dev)"
+#REGPATH=/sys/class/i2c-adapter/i2c-${IICBUS}/new_device # where to register new devices
 
-echo "... we don't know which clock is attached, so add all (both) types"
-echo "... adding lshaped clock"
-echo "... informing kernel of rtc (DS-1307 L-shaped) device"
-echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-${IICBUS}/new_device
-echo "... Done adding lshaped clock"
-echo "... Adding second clock - piface shim"
-modprobe i2c:mcp7941x # why don't we need a modprobe for the l-shaped?
-echo "... loaded mcp7941x module"
-echo "... informing kernel of rtc (piface shim) device"
-echo mcp7941x 0x6f > /sys/class/i2c-dev/i2c-${IICBUS}/device/new_device
-echo "... Done adding piface-shim clock"
-echo "... Did it work?"
+#echo "... we don't know which clock is attached, so add all (both) types"
+#echo "... adding lshaped clock"
+#echo "... informing kernel of rtc (DS-1307 L-shaped) device"
+#echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-${IICBUS}/new_device
+#echo "... Done adding lshaped clock"
+#echo "... Adding second clock - piface shim"
+#modprobe i2c:mcp7941x # why don't we need a modprobe for the l-shaped?
+#echo "... loaded mcp7941x module"
+#echo "... informing kernel of rtc (piface shim) device"
+#echo mcp7941x 0x6f > /sys/class/i2c-dev/i2c-${IICBUS}/device/new_device
+#echo "... Done adding piface-shim clock"
+#echo "... Did it work?"
 
-sleep 2 # let the above setup settle. TODO: get rid of this ??? if DT handled it, kernel loaded RTC ages ago.
+#sleep 2 # let the above setup settle. TODO: get rid of this ??? if DT handled it, kernel loaded RTC ages ago.
 
-if [ -e /dev/rtc0 ] ; then
-    echo "... I see a clock - good."
-else
-    echo "... WARNING - I see NO RTC clock"
-fi
+#if [ -e /dev/rtc0 ] ; then
+#    echo "... I see a clock - good."
+#else
+#    echo "... WARNING - I see NO RTC clock"
+#fi
 
-echo "Done ... Activating the RTC clock(s) at [`date`]"
-echo "=================================================="
-echo
+#echo "Done ... Activating the RTC clock(s) at [`date`]"
+#echo "=================================================="
+#echo
 
 # now interrogate the clock and set system time from it.  Should really use test-rtc.sh for this???
-echo
-echo "=================================================="
-echo "Setting the time... [`date`]"
+#echo
+#echo "=================================================="
+#echo "Setting the time... [`date`]"
 
-echo "... Reading rtc..."
-rtctime=`/sbin/hwclock -r`  # read time on rtc
-rtctime=`/sbin/hwclock -r`  # read time a second time, incase first fails.
-echo "... RTC reports time is $rtctime"
+#echo "... Reading rtc..."
+#rtctime=`/sbin/hwclock -r`  # read time on rtc
+#rtctime=`/sbin/hwclock -r`  # read time a second time, incase first fails.
+#echo "... RTC reports time is $rtctime"
 
-if [ "$rtctime" ] ; then # this test should check that rtctime is > 2015-01-01
-    echo "... setting system time from rtc at `date`"
-    /sbin/hwclock -s  # set system time from it
-    echo "... ZOOM into the future..."
-    echo "... system time is now: `date`"
-else
-    echo "NOT setting system time, cos rtc didn't give a good answer"
-fi
+#if [ "$rtctime" ] ; then # this test should check that rtctime is > 2015-01-01
+#    echo "... setting system time from rtc at `date`"
+#    /sbin/hwclock -s  # set system time from it
+#    echo "... ZOOM into the future..."
+#    echo "... system time is now: `date`"
+#else
+#    echo "NOT setting system time, cos rtc didn't give a good answer"
+#fi
 
-echo "Done ... Setting the time at  [`date`]"
-echo "=================================================="
-echo
+#echo "Done ... Setting the time at  [`date`]"
+#echo "=================================================="
+#echo
 
 if [ $DEBUG = "on" ] ; then
     echo "DEBUG mode is on - so doing lots of lsusb stuff"

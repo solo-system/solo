@@ -1,0 +1,52 @@
+Notes on adding RTC reading support to Solo.
+--------------------------------------------
+
+tl;dr: having trouble with your RTC?  See /var/log/setup-rtc.sh
+
+Adding rtc loading support to /etc/rc.local is too late for my liking.
+Most RTCs (eg my desktop's) get read very early on in the boot
+sequence - before fsck's and modules are loaded.  I particularly don't
+like that crond starts before rc.local, so cron will (for a time at
+least) see the time as 1970.  
+
+However - we need some modules loaded (i2c_arm?, rtc_1350?, i2c_dev?).
+
+Best solution is to get rid of fake-hwclock.sh (apt-get purge), then
+reinstate hwclock.sh (update-rc.d enable) then add a clause to the top
+of /etc/init.d/hwclock.sh to call setup-rtc.sh
+(/opt/solo/setup-rtc.sh) which we control.  Users can potentially set
+/boot/solo.conf options in the future which will describe their RTC
+(driver loadable module name) AND which i2c address it has (0x68) - so
+we can support other RTCs.  For the moment it's the piface shim
+through:
+
+echo mcp7941x 0x6f > /sys/class/i2c-dev/i2c-1/device/new_device
+
+The /etc/init.d/hwclock.sh script _assumes_ that /dev/rtc0 is
+available.  This is not the case during normal boot of the pi.  So add
+a call (to setup-rtc.sh) to it, making /dev/rtc0 available to
+the remainder of /etc/init.d/hwclock.sh script before it proceeds.
+
+setup-rtc.sh needs to enable i2c_dev (for i2c devices to appear in
+/dev), and the driver for the particular RTC (mcp7941x for the piface
+shim) (although, it's an alias for rtc_1307, I think).
+
+Note that / is mounted readonly at this stage, and can't assume any
+sensible services are running.
+
+Note about logging.  apt-get install bootlogd keeps track of all boot
+messages from init (not kernel, but all the /etc/init.d/* scripts)
+during boot.  The log appears in /var/log/boot.  It _retrospectively_ adds
+the date correctly (which is both confusing and helpful).
+
+So you'll notice that /var/log/boot holds a little "calling
+setup-rtc.sh" statement, and that's all.  HOWEVER, the main log output
+of setup-rtc.sh goes to /var/log/setup-rtc.log.  This is HARD, cos at
+the time it's called '/' is read-only (irrelevant, actually) and
+/var/log (a tmpfs filesystem) isn't mounted.  Therefore, we use
+'logsave' which saves (in RAM) all the log output of setup-rtc.sh
+until /var/log is writable.  logsave was written exactly for this
+situation.  See /etc/init.d/hwclock.sh | grep logsave for how
+setup-rtc.sh is invoked in this way.
+
+Written Jan 1st 1970.

@@ -155,6 +155,14 @@ chmod +x /opt/solo/solo-boot.sh
 echo "Done updating rc.local"
 echo
 
+# we got rid of fake-hwclock, so now enable hwclock at boot time:
+echo "Enabling early boot support for RTC..."
+echo "copying over our version of hwclock.sh (with call to setup_rtc.sh)"
+cp -v /opt/solo/hwclock.sh /etc/init.d/hwclock.sh
+
+update-rc.d hwclock.sh enable
+echo "Done enabling hwclock.sh"
+
 # enable i2c in kernel (see raspi-config for more details)
 echo "Enabling i2c (for rtc (and clac)) in /boot/config.txt"
 printf "dtparam=i2c_arm=on\n" >> /boot/config.txt

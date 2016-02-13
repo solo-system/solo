@@ -159,7 +159,7 @@ echo
 echo "Enabling early boot support for RTC..."
 echo "copying over our version of hwclock.sh (with call to setup_rtc.sh)"
 cp -v /opt/solo/hwclock.sh /etc/init.d/hwclock.sh
-
+echo "now running update-rc.d to enable good old hwclock.sh"
 update-rc.d hwclock.sh enable
 echo "Done enabling hwclock.sh"
 
@@ -168,14 +168,6 @@ echo "Enabling i2c (for rtc (and clac)) in /boot/config.txt"
 printf "dtparam=i2c_arm=on\n" >> /boot/config.txt
 echo "Done enabling i2c"
 echo 
-
-#echo
-#echo "Adding heartbeat module..."
-#echo "... updating /etc/modules with modprobe ledtrig_heartbeat"
-#echo "ledtrig_heartbeat" >> /etc/modules
-#echo "Done adding heartbeat module."
-#echo
-
 
 # OK - I just wrote the below code to install the CLAC support:
 # comments:
@@ -332,7 +324,7 @@ echo "----------------------------------------------------------"
 echo " provision.sh finished successfully."
 echo " # poweroff"
 echo " then carry this SD card to PC and:"
-echo " sudo dd bs=512 count=6400000 if=/dev/sdX of=solo-`fdate`-bloated.img ; sync"
+echo " sudo dd bs=512 count=6400000 if=/dev/sdX of=solo-fdate-bloated.img ; sync"
 echo " where the count=XXX you can get from fdisk -l"
 echo "----------------------------------------------------------"
 echo

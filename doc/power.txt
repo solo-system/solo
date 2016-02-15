@@ -21,8 +21,20 @@ CIGGY: 	  25mA         105mA	      80mA
 FULREE:   10mA	        89mA	      79mA
 CPT:	  10mA		86mA	      76mA
 
-So looks like they both do roughly same job on conversion, but the
-CIGGY wastes lots of current on itself (lighting it's led?)
+RESULT: So looks like they both do roughly same job on conversion, but the
+CIGGY wastes lots of current on itself (lighting it's led?). Actually,
+the CPT turns out to be just that bit better.
+
+ADDITION: later bought CARCHET model (looks identical to FULREE and
+CPT).  When attached to battery it wastes only 2mA - which initially
+is good.  But then load it, and it must "Turn On" because when you
+then unload it again, it wastes 20mA (unloaded).  So bad for this
+application.  TODO: find out what's gonig on inside ?.  I've noticed
+some converters (eg LM2596 chip) have an "enable" pin, that turns
+on/off the circuitry of the converter.
+
+Should spend some proper money on RS/Farnell and get a _proper_ DCDC
+converter that is _good_ at doing ~= 1W. (all these are 15W).
 
 ===================================================================
 Experiment: poweroff quiescent power consumption:

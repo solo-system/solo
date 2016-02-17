@@ -6,7 +6,7 @@ the tools to build a "solo.img", which is written to the SD card prior
 to deploying the Solo.
 
 If you just want to run a Solo (rather than develop better software
-for the solo), then you are in the _wrong_ place.
+for the solo), then you are in the _wrong_ place. Instead, download the image from here (http://jdmc2.com/e14forum).
 
 ## To build your own solo.img
 

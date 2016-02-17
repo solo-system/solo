@@ -1,4 +1,4 @@
-Howto build a solo .img (SSI) from a raspbian img.
+Howto build a solo.img from a raspbian img.
 --------------------------------------------------
  
 # get recent raspbian release (raspbian.img) and flash to a card:
@@ -13,7 +13,7 @@ cd /opt
 git clone https://github.com/solosystem/solo.git
 cd solo
 chmod +x /opt/solo/provision.sh
-./provision.sh   # this does a lot
+./provision.sh   # this does a lot so have a cup of tea.
 sudo poweroff
 
 ## Move card back to pc, and copy image to HDD.

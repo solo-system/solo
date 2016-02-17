@@ -6,13 +6,13 @@
 # partition
 #
 # Algorthm is in 3 bits:
-# First:  the ext fs - minimize then add a bit for free space
+# First:  the ext fs - minimize then add-a-bit-of-free-space
 # Second: is the MBR/partition table.
 # Third:  is the truncation of the img file itself.
 ######################################################################
 
 # resize2fs doesn't give you the free space you might think:
-# (and all this is WITHOUT rebuilding the journal, which takes 32786 (1k) = 32Mb.
+# (and all this is WITHOUT rebuilding the journal, which takes 32786 * (1k) = 32Mb.
 # Asked  fs-size (df)	free(1k)	Difference.
 # 400M   1350852          332436	68M less than asked-for <- 332Mb free - choose as dflt)
 # 200M   1154964          147312   	53M less than asked-for
@@ -20,7 +20,7 @@
 # 64M    1021016           20164   	44M less than asked-for
 # 48M    1005016            4964 	43M less than asked-for
 # 40M     997016               0 	40M less than asked-for
-# SEE MORE BELOW on what we actually use.
+# SEE BELOW on what we actually use.
 
 if [ $# -ne 1 ] ; then
     echo "Error: must prescribe img file on command line"
@@ -46,7 +46,7 @@ fi
 
 echo "About to shrink: $img"
 echo "WARNING *** This program changes the input file !!! ***"
-echo "press return to continue ... WAITING"
+echo "press return to continue ... WAITING (or ctrl-c to bail out)"
 read
 
 # how many extra 4k blocks to add to the FS: (see info at top of file)
@@ -61,7 +61,7 @@ function log() {
     echo "$out"
 }
 
-# It's only partition 2 we want (for the moment)
+# We only need access to partiton 2 (root):
 rootoffset=`fdisk -l $img | grep ${img}2 | awk '{print $2}';`
 log "root partition starts at: $rootoffset"
 
@@ -72,7 +72,7 @@ log "fscking filesystem..."
 sudo e2fsck -f /dev/loop0  # do this a lot to keep sane.
 
 log "removing journal..."
-sudo tune2fs -O ^has_journal /dev/loop0 #get rid ofjournal prior to resize.
+sudo tune2fs -O ^has_journal /dev/loop0 #get rid of journal prior to resize.
 
 log "fscking again to be paranoid"
 sudo e2fsck -f /dev/loop0 
@@ -130,14 +130,13 @@ truncate -s $truncatesize $img
 log "truncate done - ls -l $img:"
 ls -l $img
 
-#log "now zipping... (not really)"
-
+#log "now zipping..."
+# zip $img.zip $img
 
 echo "-------------------------------------------------------"
 echo "examine new ext2 contents with:"
-echo "sudo mount -o loop,offset=\$((122880*512)) $img p1"
+echo "mkdir p1 && sudo mount -o loop,offset=\$((122880*512)) $img p1"
 echo "Or check for stray dev/loops with losetup -a"
-echo "TODO ***** should check df of / and /boot so ensure we're notfull - the free-space isn't what you think it is"
 echo "--------------------------------------------------------"
 echo "Finished shrinking $img into $img.zip"
 echo "zip it with: zip $img.zip $img"

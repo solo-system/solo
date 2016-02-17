@@ -1,21 +1,21 @@
 #!/bin/bash
 
+# called from /etc/init.d/hwclock.sh
+# it sets up the RTC on your system.  
+# written in a hurry - there is no error checking and no scope to support different clocks.
+# it does only the piface-shim at address 0x6f
+# use logsave utility to keep output, since / is readonly.
+
 # TODO: don't set up /dev/rtc0 if it already exists
 # This could happen if this script is ever called from command line (ie NOT at boot time)
 # that might happen if this script gets used (by me or by the system) to SET the RTC somehow...
 
-# WARNING = root filesystem is mounted read-only, so can't output to any logs (or perhaps /var/log is writable - dunno)
+# WARNING = root filesystem is mounted read-only, so can't output to
+# any logs (or perhaps /var/log is writable - dunno)
 
 ME=setup-rtc.sh
 LOG=/var/log/${ME}.log
 
-# put all output into the logfile. NO! can't cos slash is root only.
-# actually, this is odd.  I get an error in /var/log/boot when I "touch /var/log/setup-rtc.log" but it works anyway.  (buffered until "remount -rw" or something?)
-#exec > $LOG 2>&1
-
-# for the moment, the output of this must go to stdout (captured by bootlogd and ending up in /var/log/boot).
-
-# a wee local logging functin (uses echo/stdout, so honors the exec redirect above)
 llog() { echo "$ME [ $(date +'%Y-%m-%d %H-%M-%S') ]: $@" ; } #DONT forget the semicolon
 
 llog "Starting..."
@@ -59,4 +59,3 @@ hwclock --hctosys
 llog "Done setting system time from RTC"
 
 exit 0
-

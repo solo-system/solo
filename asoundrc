@@ -1,8 +1,7 @@
 # .asoundrc for "amon"'s home directory.  
 
-
 # CLAC - Cirrus Logic Audio Card.
-# the plug needs this:
+# the plug below needs this:
 pcm.clachw {
     type hw
     card sndrpiwsp

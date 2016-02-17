@@ -1,4 +1,9 @@
 #!/bin/sh
+
+# SOLO: hacked to work with solo.  There's an extra call at the top of
+# this script that sets up the RTC = 'setup-rtc.sh'.  That's the only
+# difference over the stock raspbian version of this file.
+
 # hwclock.sh	Set and adjust the CMOS clock.
 #
 # Version:	@(#)hwclock.sh  2.00  14-Dec-1998  miquels@cistron.nl

@@ -190,17 +190,6 @@ echo "Done - Starting the switchoff monitor script"
 echo "=================================================="
 echo
 
-### LEDs - set them up.
-# on RJ's img we have two leds (/sys/class/leds/led{0,1}.
-# led0    GREEN    (originally "activity")
-# led1    RED      (originally power)
-# We how have control of the RED one (which
-# is good).. TODO - should do something clever with these two.  NOTE
-# BOTH of these are on the rpi board NOT the CLAC.  Don't know how to
-# control the CLAC leds.
-# On the rpi version B - we had either led0 or (with newer kernels) ACT.
-# It seems with Ragnar Jensens' image, and a CLAC on rpi
-# version B+, the ACT is no longer, and it's back to led0 and led1.
 
 echo
 echo "=================================================="
@@ -217,6 +206,9 @@ fi
 echo "Done - Activating the LEDs [`date`]"
 echo "=================================================="
 echo
+
+# rtc setup is now handled in setup-rtc.sh (called from /etc/init.d/hwclock)
+# so it gets done WAY earlier in the boot process.  All this is now disabled:
 
 # now set up the RTC clock (should we not do this WAY before now?)
 #echo
@@ -274,8 +266,14 @@ echo
 #echo "=================================================="
 #echo
 
+# TODO: tidy up all the debug stuff below.  some is conditional on
+# DEBUG.  SOLOLOGDIR clutters up p3, distracting normal people looking
+# for their audio.
+
 if [ $DEBUG = "on" ] ; then
     echo "DEBUG mode is on - so doing lots of lsusb stuff"
+    # echo "DEBUG mode is on in solo-boot.sh so copying files to here.  It's just at the end of boot-time when these copies are made" > $SOLOLOGDIR/README.txt
+
     echo "lsusb ..."
     lsusb > $SOLOLOGDIR/lsusb.txt
     echo "lsusb -t"

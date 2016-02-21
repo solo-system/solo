@@ -17,6 +17,68 @@ what is DEBUG (it's in 3 files)
 rename kernels (but where do we put modules?)
 default to DMIC / linein. (and gains?) CHOOSE
 
+All stuff below is dumped here from various email / notes Feb 2016:
+-------------------------------------------------------------------
+
+echo 0 > /sys/devices/platform/bcm2708_usb/buspower;
+
+find /sys/devices/ -name `dmesg -t | grep dwc_otg | grep “DWC OTG Controller” | awk ‘{print $2}’ | cut -d”:” -f1`
+
+
+f you downclock your core, i think you consume less power too.
+Adding this lines to your config.txt
+arm_freq_min=250
+core_freq_min=100
+sdram_freq_min=150
+over_voltage_min=0 or 4 if you have overclocked your rasppi
+
+------------------------
+Notes on witty pi usage and DC-DC converter efficiency based on 6
+hours per day ON.
+
+All amp measurements are @ 12V
+
+should work in maH/day as an average consumption.  Then know a 50Ah
+batery will last N days.
+
+
+Assume RPI uses 40mA when running. (44 on screen, flash to 65 => ave 50, minus \
+10 of converter).
+
+nowitty + converterBasic = (40+10)mA * 24hrs = 1200 mAh / day
+nowitty + converterExtra = (40+ 1)mA * 24hrs =  984 mAh / day
+
+WITH WITTY:
+
+witty + converterBasic = (40+10)mA * 6hrs + (10)mA * 18hrs = 480 mAh / day
+witty + converterPlus  = (40+ 1)mA * 6hrs + (1)mA * 18hrs  = 264 mAh / day
+
+-------------------------------------------
+Solo Questions (for a FAQ?)
+cost
+how soon can I get one
+do I have to buy a battery what type
+can I plug it into the mains
+how long record
+how do I download the data
+how do I store the data
+can I have special microphone
+is it portable - how heavy is it.
+is itfragile
+is it water proof
+how do I find how many tawny owls call there are?
+can I use it indoors?
+where can I buy the components
+how much tech knowledge do I need to assemble it
+are the components available in the UK.
+what happens if it doesn't work
+can I use it on mac
+windows
+linux
+--------------------------
+
+
+
 
 All stuff below here is pre the Jan-2016 work:
 ----------------------------------------------

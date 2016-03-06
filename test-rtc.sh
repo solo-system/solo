@@ -1,14 +1,17 @@
 #!/bin/bash
 
-echo 
-echo 
-echo "*** Welcome to test-rtc.sh - inspect, test and set the rtc (real time clock)"
-echo
+# script to manage the clocks on SOLO.
 
 if [ $USER != "root" ] ; then
     echo "Error: must be root.  Use sudo ..."
     exit -1
 fi
+
+echo 
+echo 
+echo "*** Welcome to test-rtc.sh - inspect, test and set the rtc (real time clock)"
+echo
+
 
 echo "Looking for RTC... ( checking /dev/rtc0)"
 

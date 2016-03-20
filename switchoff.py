@@ -27,9 +27,9 @@ while (GPIO.input(POWERPIN) == True):
 # if we fall through the above, the pin has been pushed!
 
 print "switchoff.py: detected pin is high - so rebooting... "
-os.system("echo mmc0 > /sys/class/leds/ACT/trigger")
-os.system("sudo shutdown -h now &")
+#os.system("echo mmc0 > /sys/class/leds/ACT/trigger")
+#os.system("sudo shutdown -h now &")
 
-while True:
-  print "rebooting..."
-  time.sleep(1)
+#while True:
+#  print "rebooting..."
+#  time.sleep(1)

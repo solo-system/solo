@@ -31,7 +31,7 @@ fi
 
 # check we have enough disk free... (in Mbytes)
 diskfree=`df -BM / | tail -1 | awk '{print $4}' | sed 's:M::g'`
-if [ $diskfree -lt 200 ] ; then
+if [ $diskfree -lt 100 ] ; then
     df -h /
     echo "Error - not enough free disk space - exiting (try rm -rf /home/pi/Music)"
     exit -1

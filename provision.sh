@@ -172,11 +172,13 @@ echo
 
 # setup software for Cirrus Logic Audio Card
 if [ $RJCLAC = "yes" ] ; then
-    echo "sourcing setup-clac.sh"
-    if [ -r setup-clac.sh ] ; then
-      . setup-clac.sh
+    #f=setup-clac.sh
+    f=setup-clac-HiassofT.sh
+    echo "sourcing $f"
+    if [ -r $f ] ; then
+      . $f
     else
-	echo "WARNING Can't source setup-clac.sh - no such readable file"
+	echo "WARNING Can't source $f - no such readable file"
     fi
 else
     echo "RJCLAC=$RJCLAC => so not sourcing setup.clac.sh"

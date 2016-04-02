@@ -1,13 +1,13 @@
-Howto build a solo.img from a raspbian img.
---------------------------------------------------
- 
-# get recent raspbian release (raspbian.img) and flash to a card:
+Howto build a solo.img from a raspbian.img.
+-------------------------------------------
+
+### get recent raspbian release (raspbian.img) and flash to a card:
 sudo dd bs=4M if=~/solo/images/2015-05-05-raspbian-wheezy.img of=/dev/sdX ; sync ; sync
 
-## Move to raspi:
+### Boot it on raspi hardware, and log in:
 ssh raspberrypi -l pi
 
-# then type (on the raspberry pi):
+### then type (on the raspberry pi):
 sudo su
 cd /opt
 git clone https://github.com/solosystem/solo.git
@@ -16,7 +16,7 @@ chmod +x /opt/solo/provision.sh
 ./provision.sh   # this does a lot so have a cup of tea.
 sudo poweroff
 
-## Move card back to pc, and copy image to HDD.
+### Move card back to pc, and copy image to HDD.
 sudo dd bs=512 count=6400000 if=/dev/sdX of=~/raspi/images/solo-xxx-`fdate`-bloated.img ; sync
 
 ### and you now have a file which can be flashed to an SD card for use

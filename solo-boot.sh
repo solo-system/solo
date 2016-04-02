@@ -49,14 +49,14 @@ case $REV in
 	IICBUS=1
         ;;
 
-    0012)
+    0012 | 0015)
         echo "... rev is $REV: hardware is version 12 = model A+ with 256M RAM"
 	RPINAME="A+"
 	RPIMEM="256"
 	IICBUS=1
 	;;
 
-    a01041 | a21041 )
+    a01041 | a21041)
 	echo "... rev is $REV: hardware is pi2 B with 1G RAM"
 	RPINAME="PI2B"
 	RPIMEM="1024"

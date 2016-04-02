@@ -10,6 +10,11 @@
 # can we rm -rf $origmoldules.  Too excited to do this cleanup work
 # right now - want to try tem out.
 
+# DEBUG: get info from the bootloader? on it's reading of the dtbs and
+# overlays: sudo vcdbg log msg
+# note it claims: " dtparam: pwr_led_gpio=35"
+# - can I control CLAC led's on this pin?
+
 echo "Installing Support for HiassofT's CLAC..."
 
 WORKDIR=/tmp/Hiassoft/

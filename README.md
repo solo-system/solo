@@ -6,7 +6,8 @@ the tools to build a "solo.img", which is written to the SD card prior
 to deploying the Solo.
 
 If you just want to run a Solo (rather than develop better software
-for the solo), then you are in the _wrong_ place. Instead, download the image from here (http://jdmc2.com/e14forum).
+for the solo), then you are in the _wrong_ place. Instead, download
+the image from here (http://jdmc2.com/e14forum).
 
 ## To build your own solo.img
 
@@ -25,8 +26,8 @@ This image is now an SRI (Solo Recorder Image), and can be flashed
 onto SD-cards to be deployed in the Solo.
 
 Nobody else has ever done it except me and it's messy.  You should
-probably get in touch before trying.  Have a look at
-raspi-install.txt.  And then look at provision.sh.
+probably get in touch before trying (on the element14 forum).  Have a
+look at raspi-install.txt.  And then look at provision.sh.
 
 ## Shrinking an .img
 
@@ -36,5 +37,5 @@ Do this by running shrinkImage.sh, which reduces the size of the "img"
 by removing un-necessary space from the p2 (root) partition (left by
 purging unneeded packages, and clearing out other un-necessary stuff).
 Beware: shrinkImage.sh changes the "img" it's given (on the command
-line).  It leaves a certain (few hundred) Mb of space in root for logs
-and comfort if you log in.
+line).  It leaves a certain (few hundred) Mb of space in root
+partition for comfort (logs and working space).

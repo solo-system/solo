@@ -109,7 +109,8 @@ sudo losetup -d /dev/loop0
 log "done with all the stuff at fs level - now doing MBR/partition stuff..."
 log "Doing the partition table shrink..."
 # now we want to resize the partition in the MBR
-fcmd="d\n2\nn\np\n2\n122880\n+${newsizehalfk}\nw\n"
+#fcmd="d\n2\nn\np\n2\n${rootoffset}\n+${newsizehalfk}\nw\n"
+fcmd="d\n2\nn\np\n2\n ${rootoffset}\n+${newsizehalfk}\nw\n" # the space matters (otherwise $ var not noticed)
 echo "about to put this into fdisk: $fcmd..."
 echo -e $fcmd | fdisk $img
 
@@ -136,7 +137,7 @@ ls -l $img
 echo "-------------------------------------------------------"
 echo "examine new ext2 contents with:"
 echo "mkdir p1 && sudo mount -o loop,offset=\$((  8192*512)) $img p1"
-echo "mkdir p2 && sudo mount -o loop,offset=\$((122880*512)) $img p2"
+echo "mkdir p2 && sudo mount -o loop,offset=\$(($rootoffset*512)) $img p2"
 echo "Or check for stray dev/loops with losetup -a"
 echo "--------------------------------------------------------"
 echo "Finished shrinking $img into $img.zip"

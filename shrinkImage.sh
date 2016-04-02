@@ -109,8 +109,8 @@ sudo losetup -d /dev/loop0
 log "done with all the stuff at fs level - now doing MBR/partition stuff..."
 log "Doing the partition table shrink..."
 # now we want to resize the partition in the MBR
-#fcmd="d\n2\nn\np\n2\n${rootoffset}\n+${newsizehalfk}\nw\n"
-fcmd="d\n2\nn\np\n2\n ${rootoffset}\n+${newsizehalfk}\nw\n" # the space matters (otherwise $ var not noticed)
+# "delete partn,  2, new, 2, primary, rootoffset, +size, w"
+fcmd="d\n2\nn\np\n2\n$rootoffset\n+${newsizehalfk}\nw\n"
 echo "about to put this into fdisk: $fcmd..."
 echo -e $fcmd | fdisk $img
 

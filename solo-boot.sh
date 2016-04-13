@@ -63,6 +63,13 @@ case $REV in
 	IICBUS=1
 	;;
 
+    a02082)
+	echo "... rev is $REV: hardware is pi3 B with 1G RAM"
+	RPINAME="PI3B"
+	RPIMEM="1024"
+	IICBUS=1
+	;;
+
     *)
 	echo "... rev is $REV: hardware NOT RECOGNISED (please update solo-boot.sh)"
 	echo "... ASSUMING hardware is pi2"

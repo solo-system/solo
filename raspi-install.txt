@@ -9,7 +9,7 @@ ssh raspberrypi -l pi
 
 ### then type (on the raspberry pi):
 sudo su
-apt install git
+apt update ; apt install git # needed for the "lite" editions of raspbian.
 cd /opt
 git clone https://github.com/solosystem/solo.git
 cd solo

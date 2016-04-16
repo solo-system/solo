@@ -22,6 +22,9 @@ mkdir $WORKDIR
 pushd $WORKDIR
 
 # see: https://www.element14.com/community/message/194540/l/re-driver-fixes-and-updates-to-kernel-31816-and-405#194540
+echo "need to install rpi-update"
+apt-get install rpi-update
+
 echo "before we start, need to do an rpi-update ..."
 SKIP_KERNEL=1 rpi-update
 

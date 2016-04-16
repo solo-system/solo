@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # provision.sh: turn a stock raspbian img into a bootable "Solo
-# Software Image".  see raspi-install.txt in . for more info.
+# Software Image".  see raspi-install.txt for more info.
 
 # Notes:
 # There should be NO mention of p3 here. It doesn't exist
@@ -37,10 +37,10 @@ if [ $diskfree -lt 100 ] ; then
     exit -1
 fi
 
-RJCLAC=unk
-while [ $RJCLAC != "yes" -a $RJCLAC != "no" ] ; do
-  echo "Include Ragnar Jensen's debs for CLAC (Cirrus Logic Audio Card) support?"
-  read RJCLAC
+CLAC=unk
+while [ $CLAC != "yes" -a $CLAC != "no" ] ; do
+  echo "Include support for Cirrus Logic Audio Card?"
+  read CLAC
 done
 
 QPURGE=unk
@@ -51,7 +51,7 @@ done
 echo "PURGE is $QPURGE"
 
 echo "====================================================================="
-echo "Provisioner is about to install solo with purge=$QPURGE and CLAC=$RJCLAC"
+echo "Provisioner is about to install solo with purge=$QPURGE and CLAC=$CLAC"
 echo " *** Press return to continue ..."
 read a
 echo "And we're off..."
@@ -65,10 +65,8 @@ echo " -----------------------------------"
 echo
 echo "Adding user amon..."
 useradd -m amon
-usermod -a -G adm,dialout,cdrom,kmem,sudo,audio,video,plugdev,games,users,netdev,input,gpio amon 
 echo "amon:amon" | chpasswd
-# used to do this  - but it was interactive.
-# passwd amon
+usermod -a -G adm,dialout,cdrom,kmem,sudo,audio,video,plugdev,games,users,netdev,input,gpio amon
 echo "amon ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 echo "Done adding user amon (with groups and sudo powers)"
 echo
@@ -84,7 +82,7 @@ cp /opt/solo/bootamon.conf /boot/amon.conf    # need this on /boot partition
 cp /opt/solo/bootsolo.conf /boot/solo.conf    # need this on /boot partition
 chown -R amon.amon /home/amon
 chmod +x /home/amon/amon/amon # gosh - that's silly
-echo "PATH=$PATH:/home/amon/amon/" > /home/amon/.bashrc
+echo "PATH=$PATH:/home/amon/amon/" >> /home/amon/.bashrc
 echo "Done downloading our software"
 echo
 
@@ -171,7 +169,7 @@ echo
 
 
 # setup software for Cirrus Logic Audio Card
-if [ $RJCLAC = "yes" ] ; then
+if [ $CLAC = "yes" ] ; then
     #f=setup-clac.sh
     f=setup-clac-HiassofT.sh
     echo "sourcing $f"
@@ -181,7 +179,7 @@ if [ $RJCLAC = "yes" ] ; then
 	echo "WARNING Can't source $f - no such readable file"
     fi
 else
-    echo "RJCLAC=$RJCLAC => so not sourcing setup.clac.sh"
+    echo "CLAC=$CLAC => so not sourcing setup-clac.sh"
 fi
 
 if [ $QPURGE = "yes" ] ; then

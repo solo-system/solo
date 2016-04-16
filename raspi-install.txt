@@ -1,5 +1,8 @@
-Howto build a solo.img from a raspbian.img.
--------------------------------------------
+Howto build a Solo Software Image
+---------------------------------
+
+We start with a stock raspbian image and modify it to produce an image
+which will run a Solo.  
 
 ### get recent raspbian release (raspbian.img) and flash to a card:
 sudo dd bs=4M if=~/solo/images/2015-05-05-raspbian-wheezy.img of=/dev/sdX ; sync ; sync
@@ -9,7 +12,7 @@ ssh raspberrypi -l pi
 
 ### then type (on the raspberry pi):
 sudo su
-apt update ; apt-get install -y git # needed for the "lite" editions of raspbian.
+apt update ; apt-get install -y git # needed for raspbian "lite" editions.
 cd /opt
 git clone https://github.com/solosystem/solo.git
 cd solo

@@ -98,6 +98,11 @@ echo
 # a place to copy logs on the p3 partition
 SOLOLOGDIR=/mnt/sdcard/solo-logs
 
+if [ ! -r /opt/solo/functions.sh ] ; then
+    echo "Error: can't read /opt/solo/functions.sh - this is probably bad news!"
+fi
+source /opt/solo/functions.sh
+
 # read the user-supplied config file, if it exists
 if [ -f /boot/solo.conf ] ; then
     source /boot/solo.conf
@@ -182,20 +187,22 @@ echo "Done Disabling tvservice to save power"
 echo "=================================================="
 echo
 
+# forget this, nobody uses the  off-switch.
 # only start switchoff if this is NOT a wolfson/cirrus install
 # since don't know how to do GPIO with wolfson/cirrus.
-echo
-echo "=================================================="
-echo "Starting the switchoff.py monitor script"
-if [ $CLAC = "no" ] ; then
-    echo "... starting switchoff.py"
-    /opt/solo/switchoff.py &
-else
-    echo "... NOT starting switchoff.py, cos it's a cirrus install and I don't know the pins"
-fi
-echo "Done - Starting the switchoff monitor script"
-echo "=================================================="
-echo
+#echo
+#echo "=================================================="
+#echo "Starting the switchoff.py monitor script"
+#if [ $CLAC = "no" ] ; then
+#    echo "... starting switchoff.py"
+#    /opt/solo/switchoff.py &
+#else
+#    echo "... NOT starting switchoff.py, cos it's a cirrus install and I don't know the pins"
+#fi
+#echo "Done - Starting the switchoff monitor script"
+#echo "=================================================="
+#echo
+
 
 
 echo
@@ -214,68 +221,9 @@ echo "Done - Activating the LEDs [`date`]"
 echo "=================================================="
 echo
 
-# rtc setup is now handled in setup-rtc.sh (called from /etc/init.d/hwclock)
-# so it gets done WAY earlier in the boot process.  All this is now disabled:
 
-# now set up the RTC clock (should we not do this WAY before now?)
-#echo
-#echo "=================================================="
-#echo "Activating the RTC clock at [`date`]"
-#modprobe i2c-dev
-#echo "... inserted module i2c-dev (so i2c bus appears in /dev)"
-#REGPATH=/sys/class/i2c-adapter/i2c-${IICBUS}/new_device # where to register new devices
+set_timezone()   # from functions.sh
 
-#echo "... we don't know which clock is attached, so add all (both) types"
-#echo "... adding lshaped clock"
-#echo "... informing kernel of rtc (DS-1307 L-shaped) device"
-#echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-${IICBUS}/new_device
-#echo "... Done adding lshaped clock"
-#echo "... Adding second clock - piface shim"
-#modprobe i2c:mcp7941x # why don't we need a modprobe for the l-shaped?
-#echo "... loaded mcp7941x module"
-#echo "... informing kernel of rtc (piface shim) device"
-#echo mcp7941x 0x6f > /sys/class/i2c-dev/i2c-${IICBUS}/device/new_device
-#echo "... Done adding piface-shim clock"
-#echo "... Did it work?"
-
-#sleep 2 # let the above setup settle. TODO: get rid of this ??? if DT handled it, kernel loaded RTC ages ago.
-
-#if [ -e /dev/rtc0 ] ; then
-#    echo "... I see a clock - good."
-#else
-#    echo "... WARNING - I see NO RTC clock"
-#fi
-
-#echo "Done ... Activating the RTC clock(s) at [`date`]"
-#echo "=================================================="
-#echo
-
-# now interrogate the clock and set system time from it.  Should really use test-rtc.sh for this???
-#echo
-#echo "=================================================="
-#echo "Setting the time... [`date`]"
-
-#echo "... Reading rtc..."
-#rtctime=`/sbin/hwclock -r`  # read time on rtc
-#rtctime=`/sbin/hwclock -r`  # read time a second time, incase first fails.
-#echo "... RTC reports time is $rtctime"
-
-#if [ "$rtctime" ] ; then # this test should check that rtctime is > 2015-01-01
-#    echo "... setting system time from rtc at `date`"
-#    /sbin/hwclock -s  # set system time from it
-#    echo "... ZOOM into the future..."
-#    echo "... system time is now: `date`"
-#else
-#    echo "NOT setting system time, cos rtc didn't give a good answer"
-#fi
-
-#echo "Done ... Setting the time at  [`date`]"
-#echo "=================================================="
-#echo
-
-# TODO: tidy up all the debug stuff below.  some is conditional on
-# DEBUG.  SOLOLOGDIR clutters up p3, distracting normal people looking
-# for their audio.
 
 if [ $DEBUG = "on" ] ; then
     echo "DEBUG mode is on - so doing lots of lsusb stuff"

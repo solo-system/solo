@@ -11,6 +11,12 @@ echo "[solo-boot.sh] Started at: `date`"
 # This helps: http://www.raspberrypi-spy.co.uk/2012/09/checking-your-raspberry-pi-board-version/
 REV=`grep Revision /proc/cpuinfo  | awk '{print $3}'`
 
+if [ ! -r /opt/solo/utils.sh ] ; then
+    echo "Error: can't read /opt/solo/utils.sh - this is probably bad news!"
+fi
+source /opt/solo/utils.sh
+
+# find out which hardware platform we are on:
 case $REV in
 
     0002 | 0003 | 0004 | 0005 | 0006)
@@ -97,11 +103,6 @@ echo
 
 # a place to copy logs on the p3 partition
 SOLOLOGDIR=/mnt/sdcard/solo-logs
-
-if [ ! -r /opt/solo/utils.sh ] ; then
-    echo "Error: can't read /opt/solo/utils.sh - this is probably bad news!"
-fi
-source /opt/solo/utils.sh
 
 # read the user-supplied config file, if it exists
 if [ -f /boot/solo.conf ] ; then

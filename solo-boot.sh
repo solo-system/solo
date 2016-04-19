@@ -179,13 +179,7 @@ else
   echo "FIRSTBOOT: p3 is already there - great. Not activating FIRSTBOOT code."
 fi
 
-echo
-echo "=================================================="
-echo "Disabling tvservice to save power"
-/opt/vc/bin/tvservice -off
-echo "Done Disabling tvservice to save power"
-echo "=================================================="
-echo
+
 
 # forget this, nobody uses the  off-switch.
 # only start switchoff if this is NOT a wolfson/cirrus install
@@ -203,8 +197,8 @@ echo
 #echo "=================================================="
 #echo
 
-
-setup_leds()     # set up the leds 
+minimize_power() # ensure low power (tvservice off)
+setup_leds()     # set up the leds
 set_timezone()   # set timezone to SOLO_TZ (from solo.conf)
 
 

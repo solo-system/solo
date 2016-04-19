@@ -12,8 +12,15 @@ function footer() {
     echo ""
 }
 
-functino logit() {
+function logit() {
     echo "... $* [at $(date)]"
+}
+
+function minimize_power() {
+    header "Minimizing power usage..."
+    echo "... disabling tvservice to save power [/opt/vc/bin/tvservice off]"
+    /opt/vc/bin/tvservice -off
+    footer "Minimizing power usage..."
 }
 
 function set_timezone() {

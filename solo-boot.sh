@@ -98,10 +98,10 @@ echo
 # a place to copy logs on the p3 partition
 SOLOLOGDIR=/mnt/sdcard/solo-logs
 
-if [ ! -r /opt/solo/functions.sh ] ; then
-    echo "Error: can't read /opt/solo/functions.sh - this is probably bad news!"
+if [ ! -r /opt/solo/utils.sh ] ; then
+    echo "Error: can't read /opt/solo/utils.sh - this is probably bad news!"
 fi
-source /opt/solo/functions.sh
+source /opt/solo/utils.sh
 
 # read the user-supplied config file, if it exists
 if [ -f /boot/solo.conf ] ; then
@@ -204,25 +204,8 @@ echo
 #echo
 
 
-
-echo
-echo "=================================================="
-echo "Activating the LEDs [`date`]"
-if [ $RPINAME = "B+" -o $RPINAME = "A+" -o $RPINAME = "PI2B" ] ; then
-    echo "Activating LEDs - led0[green] = heartbeat, led1[red] off"
-    echo heartbeat > /sys/class/leds/led0/trigger # heartbeat on green LED
-    echo none      > /sys/class/leds/led1/trigger # turn off the red LED
-else
-    echo "don't know how to set LEDs on this hardware: $RPINAME"
-    ls -l /sys/class/leds/
-    echo "please update solo-boot.sh"
-fi
-echo "Done - Activating the LEDs [`date`]"
-echo "=================================================="
-echo
-
-
-set_timezone()   # from functions.sh
+setup_leds()     # set up the leds 
+set_timezone()   # set timezone to SOLO_TZ (from solo.conf)
 
 
 if [ $DEBUG = "on" ] ; then

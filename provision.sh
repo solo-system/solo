@@ -62,7 +62,7 @@ echo " -----------------------------------"
 echo " -----------------------------------"
 
 
-add_user() # add user amon, add to groups, enable sudo
+add_user # add user amon, add to groups, enable sudo
 
 
 ### Download and Install our code:

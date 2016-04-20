@@ -152,8 +152,8 @@ chmod +x /opt/solo/solo-boot.sh
 echo "Done updating rc.local"
 echo
 
-setup_rtc()
-enable_i2c()
+setup_rtc
+enable_i2c
 
 
 # setup software for Cirrus Logic Audio Card

@@ -29,6 +29,11 @@ fi
 
 [ $PWD != '/opt/solo' ] && { echo "must be in /opt/solo, not $PWD. Stopping."; exit -1; }
 
+if [ ! -r /opt/solo/utils.sh ] ; then
+    echo "Error: can't read /opt/solo/utils.sh - this is probably bad news!"
+fi
+source /opt/solo/utils.sh
+
 # check we have enough disk free... (in Mbytes)
 diskfree=`df -BM / | tail -1 | awk '{print $4}' | sed 's:M::g'`
 if [ $diskfree -lt 100 ] ; then

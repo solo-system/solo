@@ -156,7 +156,6 @@ echo
 setup_rtc
 enable_i2c
 
-
 # setup software for Cirrus Logic Audio Card
 if [ $CLAC = "yes" ] ; then
     #f=setup-clac.sh
@@ -207,7 +206,6 @@ else
     echo "Not purging"
 fi
 
-DEBUG=yes
 if [ $DEBUG = "yes" ] ; then
     echo "Generating some debug files..."
     debug_dir=/opt/solo/provision-debuglog/
@@ -221,6 +219,8 @@ if [ $DEBUG = "yes" ] ; then
     dpkg-query -Wf '${Installed-Size}\t${Package}\n' | sort -n > $debug_dir/biggest-packages.txt
     echo "copy all debug: scp -prv $debug_dir jdmc2@t510j:solo-debug"
     echo "Done generating debug files - see $debug_dir"
+else
+    echo "DEBIG is not set, so not generating debug files"
 fi
 
 # do this last cos we need to unmount /boot to label it.
@@ -240,7 +240,7 @@ echo "----------------------------------------------------------"
 echo " provision.sh finished successfully."
 echo " # poweroff"
 echo " then carry this SD card to PC and:"
-echo " sudo dd bs=512 count=6400000 if=/dev/sdX of=solo-fdate-bloated.img ; sync"
+echo " sudo dd bs=512 count=XXXX if=/dev/sdX of=solo-fdate-bloated.img ; sync"
 echo " where the count=XXX you can get from fdisk -l"
 echo "----------------------------------------------------------"
 echo

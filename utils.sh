@@ -3,11 +3,11 @@
 function header() {
     echo ""
     echo "============================================="
-    echo " Started:  $1 [at $(date)]"
+    echo "=== Started:  $1 [at $(date)]"
 }
 
 function footer() {
-    echo " Finised:  $1 [at $(date)]"
+    echo "=== Finised:  $1 [at $(date)]"
     echo "============================================="
     echo ""
 }
@@ -17,10 +17,23 @@ function logit() {
 }
 
 function minimize_power() {
-    header "Minimizing power usage..."
+    header "Minimizing power usage"
     echo "... disabling tvservice to save power [/opt/vc/bin/tvservice off]"
     /opt/vc/bin/tvservice -off
-    footer "Minimizing power usage..."
+    footer "Minimizing power usage"
+}
+
+function add_user() {
+    header "Adding users"
+    echo "... adding user amon..."
+    useradd -m amon
+    echo "... setting password"
+    echo "amon:amon" | chpasswd
+    echo "... adding amon to groups"
+    usermod -a -G adm,dialout,cdrom,kmem,sudo,audio,video,plugdev,games,users,netdev,input,gpio amon
+    echo "... enabling password-less sudo"
+    echo "amon ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+    footer "Adding users"
 }
 
 function set_timezone() {
@@ -55,4 +68,22 @@ function setup_leds() {
 	echo "... please update github.com/solosystem/solo/utils.sh"
     fi
     footer "Setting up the leds"
+}
+
+function setup_rtc() {
+    header "Setting up the RTC clock"
+    # we got rid of fake-hwclock, so now enable hwclock at boot time:
+    echo "... enabling early boot support for RTC..."
+    echo "... copying over our version of hwclock.sh (with call to setup_rtc.sh)"
+    cp -v /opt/solo/hwclock.sh /etc/init.d/hwclock.sh
+    echo "... now running update-rc.d to enable good old hwclock.sh"
+    update-rc.d hwclock.sh enable
+    footer "Setting up the RTC clock"
+}
+
+function enable_i2c() {
+    header "Enabling i2c in kernel"
+    echo "... adding dtparm=i2c_arm=on to /boot/config.txt"
+    printf "dtparam=i2c_arm=on\n" >> /boot/config.txt
+    footer "Enabling i2c in kernel"
 }

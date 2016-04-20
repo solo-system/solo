@@ -61,15 +61,9 @@ echo " GO AWAY - I can do the rest myself."
 echo " -----------------------------------"
 echo " -----------------------------------"
 
-### Users:
-echo
-echo "Adding user amon..."
-useradd -m amon
-echo "amon:amon" | chpasswd
-usermod -a -G adm,dialout,cdrom,kmem,sudo,audio,video,plugdev,games,users,netdev,input,gpio amon
-echo "amon ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-echo "Done adding user amon (with groups and sudo powers)"
-echo
+
+add_user() # add user amon, add to groups, enable sudo
+
 
 ### Download and Install our code:
 echo 
@@ -153,19 +147,8 @@ chmod +x /opt/solo/solo-boot.sh
 echo "Done updating rc.local"
 echo
 
-# we got rid of fake-hwclock, so now enable hwclock at boot time:
-echo "Enabling early boot support for RTC..."
-echo "copying over our version of hwclock.sh (with call to setup_rtc.sh)"
-cp -v /opt/solo/hwclock.sh /etc/init.d/hwclock.sh
-echo "now running update-rc.d to enable good old hwclock.sh"
-update-rc.d hwclock.sh enable
-echo "Done enabling hwclock.sh"
-
-# enable i2c in kernel (see raspi-config for more details)
-echo "Enabling i2c (for rtc (and clac)) in /boot/config.txt"
-printf "dtparam=i2c_arm=on\n" >> /boot/config.txt
-echo "Done enabling i2c"
-echo 
+setup_rtc()
+enable_i2c()
 
 
 # setup software for Cirrus Logic Audio Card

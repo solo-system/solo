@@ -12,7 +12,6 @@
 # log to console AND to logfile.
 exec > >(tee "/opt/solo/provision.log") 2>&1
 
-echo "exec'd so log is kept in /opt/solo/provision.log"
 
 echo
 echo "------------------------------------------------"
@@ -20,6 +19,7 @@ echo " Welcome to the provisioner. Running at $(date)"
 echo " This is run by hand on a freshly installed SBC"
 echo " to add solo functionality."
 echo " See accompanying raspi-install.txt for more"
+echo " exec'd so log is kept in /opt/solo/provision.log"
 echo "------------------------------------------------"
 echo
 
@@ -76,7 +76,7 @@ add_user # add user amon, add to groups, enable sudo
 echo 
 echo "Preparing our boot scripts"
 chmod +x /opt/solo/solo-boot.sh /opt/solo/switchoff.py
-echo "Downloading and Installing amon ..."
+echo "Installing amon ..."
 ( cd /home/amon/ ; git clone https://github.com/solosystem/amon.git )
 cp /opt/solo/asoundrc /home/amon/.asoundrc    # copy asoundrc into amon's home
 cp /opt/solo/boot/amon.conf /boot/amon.conf    # need this on /boot partition
@@ -84,21 +84,19 @@ cp /opt/solo/boot/solo.conf /boot/solo.conf    # need this on /boot partition
 chown -R amon.amon /home/amon
 chmod +x /home/amon/amon/amon # gosh - that's silly
 echo "PATH=$PATH:/home/amon/amon/" >> /home/amon/.bashrc
-echo "Done downloading our software"
+echo "Done Installing amon"
 echo
 
 echo
-echo "Doing raspi-config things... (this could be a boot-time option - rather than provision)"
-echo " --- I like that-it would allow users to give different names to the units (and therefore the audio files)"
-echo "  setting hostname..."
+echo "Doing raspi-config things"
+echo "... setting hostname..."
 CURRENT_HOSTNAME=`cat /etc/hostname | tr -d " \t\n\r"`
 NEW_HOSTNAME="solo"
 echo $NEW_HOSTNAME > /etc/hostname
 sed -i "s/127.0.1.1.*$CURRENT_HOSTNAME/127.0.1.1\t$NEW_HOSTNAME/g" /etc/hosts
 
-### Set a default here, for provisioning only.
-### At boot time, the solo will read /boot/solo.conf and set the user's desired timezone
-echo "Setting timezone ... (to London just for provisioning - in solo.conf with SOLO_TZ)"
+echo 
+echo "Setting timezone to Etc/UTC - it will be overridden in solo.conf with SOLO_TZ)"
 echo "Etc/UTC" > /etc/timezone
 dpkg-reconfigure -f noninteractive tzdata
 echo "Done doing raspi-config-like things."
@@ -147,6 +145,7 @@ apt-get --yes autoremove
 apt-get --yes autoclean
 apt-get --yes clean
 echo "APT: done installing new packages..."
+echo
 
 echo
 echo "Adding solo-boot.sh to rc.local"
@@ -160,13 +159,16 @@ enable_i2c
 
 # setup software for Cirrus Logic Audio Card
 if [ $CLAC = "yes" ] ; then
+    echo "Installing support for CLAC..."
     #f=setup-clac.sh
     f=setup-clac-HiassofT.sh
     echo "sourcing $f"
     if [ -r $f ] ; then
-      . $f
+	. $f
+	echo "Done installing CLAC software"
     else
 	echo "WARNING Can't source $f - no such readable file"
+	exit -1
     fi
 else
     echo "CLAC=$CLAC => so not sourcing setup-clac.sh"

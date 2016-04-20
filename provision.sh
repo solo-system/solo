@@ -94,12 +94,13 @@ NEW_HOSTNAME="solo"
 echo $NEW_HOSTNAME > /etc/hostname
 sed -i "s/127.0.1.1.*$CURRENT_HOSTNAME/127.0.1.1\t$NEW_HOSTNAME/g" /etc/hosts
 
-### TODO: This is NOT in the right place.  Should be a boot-time thing, so it can be in /boot/solo.conf
-echo "Setting timezone ..."
-echo "Europe/London" > /etc/timezone
+### Set a default here, for provisioning only.
+### At boot time, the solo will read /boot/solo.conf and set the user's desired timezone
+echo "Setting timezone ... (to London just for provisioning - in solo.conf with SOLO_TZ)"
+echo "Etc/UTC" > /etc/timezone
 dpkg-reconfigure -f noninteractive tzdata
 echo "Done doing raspi-config-like things."
-echo 
+
 
 ### Package management:
 PURGE="fake-hwclock wolfram-engine xserver.* x11-.* xarchiver xauth xkb-data console-setup xinit lightdm lxde.* python-tk python3-tk scratch gtk.* libgtk.* openbox libxt.* lxpanel gnome.* libqt.* gvfs.* xdg-.* desktop.* freepats smbclient"

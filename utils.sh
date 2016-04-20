@@ -36,6 +36,15 @@ function add_user() {
     footer "Adding users"
 }
 
+
+function _really_set_timezone() {
+    echo "... setting /etc/timezone to new tz: $1... "
+    echo $1 > /etc/timezone
+    echo "... and updating system via dpdk-reconfigure tzdata..."
+    dpkg-reconfigure -f noninteractive tzdata
+    echo "... done."
+}
+
 function set_timezone() {
     header "Setting the timezone"
     SYS_TZ=$(cat /etc/timezone)
@@ -43,18 +52,17 @@ function set_timezone() {
     if [ -n "$SOLO_TZ" ] ; then
 	echo "... SOLO_TZ is set to $SOLO_TZ (in solo.conf)"
 	if [ "$SOLO_TZ" != "SYS_TZ" ] ; then
-	    echo "... setting /etc/timezone to new tz: $SOLO_TZ ... "
-	    echo $SOLO_TZ > /etc/timezone
-	    echo "... and updating system via dpdk-reconfigure tzdata..."
-	    dpkg-reconfigure -f noninteractive tzdata
+	    _really_set_timezone $SOLO_TZ
 	else
 	    echo "... system timezone already matches SOLO_TZ, so doing nothing"
 	fi
     else
-	echo "... SOLO_TZ not set in solo.conf so doing nothing about /etc/timezone = $SYS_TZ"
+	echo "... SOLO_TZ not set in solo.conf so setting timezone to Europe/London..."
+	_really_set_timezone "Europe/London"
     fi
     footer "Setting the timezone"
 }
+
 
 function setup_leds() {
     header "Setting up the leds"

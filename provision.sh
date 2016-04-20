@@ -12,9 +12,11 @@
 # log to console AND to logfile.
 exec > >(tee "/opt/solo/provision.log") 2>&1
 
+echo "exec'd so log is kept in /opt/solo/provision.log"
+
 echo
 echo "------------------------------------------------"
-echo " Welcome to the provisioner."
+echo " Welcome to the provisioner. Running at $(date)"
 echo " This is run by hand on a freshly installed SBC"
 echo " to add solo functionality."
 echo " See accompanying raspi-install.txt for more"

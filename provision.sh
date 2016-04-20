@@ -208,7 +208,7 @@ else
     echo "Not purging"
 fi
 
-if [ $DEBUG = "yes" ] ; then
+if [ "$DEBUG" = "yes" ] ; then
     echo "Generating some debug files..."
     debug_dir=/opt/solo/provision-debuglog/
     mkdir $debug_dir

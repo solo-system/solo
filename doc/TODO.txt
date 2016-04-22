@@ -1,3 +1,9 @@
+just got this whilst mounting a filled sdcard on linux:
+[388016.533423] FAT-fs (sdd3): utf8 is not a recommended IO charset for FAT filesystems, filesystem will be case sensitive!
+The mkfs.fat line in solo-boot/FIRSTBOOT should probably be changed.  
+
+
+
 TODO: for the Solo Software (Image)
 ===================================
 

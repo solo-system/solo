@@ -1,0 +1,33 @@
+running
+
+sudo apt-get install nfs-kernel-server
+then fill /etc/exports with:
+/mnt/sdcard/       *(rw,sync,no_root_squash,no_subtree_check)
+[all the above is provision ]
+
+then...
+systemctl start rpcbind nfs-common nfs-kernel-server
+[at boot]
+
+means the solo serves file on p3 over nfs.  So do this (on your PC)
+
+mkdir solomnt
+mount 192.168.1.XX:/mnt/sdcard solomnt
+
+and browse away.
+
+... actually it's better than that - you can create and change files.
+This is very odd - probably because p3 is a fat partition with no
+concept of ownership.  Better to have (ro) than (rw) in above probably.
+
+--- If we add this to general solo stuff, it's unlikely to help anyone
+except me, but the usefulness is high.  Need provision to do apt-get
+install, and to fill /etc/exports.  The remainder should just
+work. (prehaps check systemd starts all the services).
+
+It's tempting to serve stuff up through nginx (or apache). with php we
+have control too, which is tempting, particularly for new pi3.
+
+But should all this stuff clutter up the SSI - making it longer to
+flash.  (space is negligible).  So it SHOULD all be installed (how big
+is nginx+PHP).  should it all run all the time?  no (pi A+ has tiny ram and will fall over.  

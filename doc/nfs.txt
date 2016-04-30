@@ -1,15 +1,30 @@
-running
+NFS - how to add NFS export of /mnt/sdcard
+------------------------------------------
+
+[ Just tested this on 2016-04-30 and it works.]
+
+1) Don't use /etc/exports, rather make file /etc/exports.d/solo.export
+(see man exports).  This is easier to create in provision.sh
+
+2) make it a "ro" export.
+
+3) There is a 90 second "Grace Time" at nfs restart (or boot) - see
+dmesg after sysctl restart.  This is annoying - either switch to nfs3
+somehow (which probably doesn't have it), or reduce the grace time
+somehow (fiddle with /proc/fs/nfs/nfsv4gracetime)
+
+
+To add to solo: Add this to provision.sh:
 
 sudo apt-get install nfs-kernel-server
 then fill /etc/exports with:
 /mnt/sdcard/       *(rw,sync,no_root_squash,no_subtree_check)
-[all the above is provision ]
 
 then...
 systemctl start rpcbind nfs-common nfs-kernel-server
-[at boot]
+[at boot - ensure systemd does it]
 
-means the solo serves file on p3 over nfs.  So do this (on your PC)
+means the solo serves file on p3 over nfs.  So do this (on your PC):
 
 mkdir solomnt
 mount 192.168.1.XX:/mnt/sdcard solomnt
@@ -30,4 +45,5 @@ have control too, which is tempting, particularly for new pi3.
 
 But should all this stuff clutter up the SSI - making it longer to
 flash.  (space is negligible).  So it SHOULD all be installed (how big
-is nginx+PHP).  should it all run all the time?  no (pi A+ has tiny ram and will fall over.  
+is nginx+PHP).  should it all run all the time?  no (pi A+ has tiny
+ram and will fall over.

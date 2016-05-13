@@ -7,5 +7,7 @@ cd /opt
 git clone https://github.com/solosystem/solo.git
 cd solo
 chmod +x /opt/solo/provision.sh
-./provision.sh   # this does a lot so have a cup of tea.
+echo "about to run ./provision.sh..."
+./provision.sh
+echo "Finished running provision.sh"
 echo "Done it all - exit to leave the chroot"

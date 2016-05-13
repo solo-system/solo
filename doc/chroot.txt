@@ -1,32 +1,32 @@
-/bin/bash -e
+qemu/chroot for mounting/provisioning images.
+---------------------------------------------
 
-# this is NOT ready to be run...
-exit 0
+Until now, the process of building a SSI has been:
 
-img=first.img
+flash an SD card on PC, move it to physical rpi, find networking kit
+for that pi, boot it up, log in, run provision.sh, poweroff, move
+SDcard back to PC, dd to PC, and shrinkImage.sh.
 
-mkdir vroot
-sudo mount first.img -o loop,offset=$((512*131072)) vroot/
-sudo mount first.img -o loop,offset=$((512*8192)) vroot/boot/
+Now I just run chroot-img.sh (with image in pwd) and it provisions it.
+Hallelujah. (still need to add shrinkImage.sh, but it's not really
+worth it now that we are using the raspbian lite images).
 
-# remove ld.so.preload:
-sudo mv vroot/etc/ld.so.preload vroot/etc/ld.so.preload.dist
+This is an enormous time saver.
 
-# get statically linked version of qemu-arm installed in vroot (so we can emulate arm on x86).
-sudo cp /usr/bin/qemu-arm-static vroot/usr/bin/
+So how does it work.
 
-# do the chroot:
-sudo chroot . bin/bash
+chroot-img.sh mounts the / and /boot partitions of the raspbian.img,
+copies in qemu-user-static, and chroots you into it.  (not before
+coopying in "pre-provision.sh" from solo.git).  The chroot
+automatically starts pre-provision.sh, which installs git (that is why
+it is needed), and then git-clone's the solo.git repo, and then calls
+the standard "provision.sh", which provisions the raspbian lite
+installation with solo functionality (amon etc...).
 
-[and we are IN!]
-... follow raspi-install.txt
-./provision.sh
-exit
-[ and we are OUT! ]
+it then exits the chroot, replaces a few niggles (ld.so.conf),
+unmounts the two partitions.
 
-# move the ld.so.preload back:
-mv  vroot/etc/ld.so.preload.dist vroot/etc/ld.so.preload
-sudo umount vroot/boot
-sudo umount vroot
+Done.  copy.img is now flashable as a SSI.
 
-And the img (first) is now a provisioned solo image.
+I'm still amazed this can be done.
+

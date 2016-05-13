@@ -1,3 +1,10 @@
+
+tl;dr:
+> wget raspbian.com/image.img
+> cp image.img copy.img
+> chroot-img.sh
+output (copy.img) is flashable SSI.
+
 qemu/chroot for mounting/provisioning images.
 ---------------------------------------------
 

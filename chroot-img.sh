@@ -33,5 +33,11 @@ sudo cp /usr/bin/qemu-arm-static vroot/usr/bin/
 # do the chroot:
 echo "would now do : sudo chroot vroot /bin/bash /opt/prov.sh"
 
-#umount vroot/boot
-#umount vroot
+# reinstate ld.so.preload:
+sudo mv vroot/etc/ld.so.preload.dist vroot/etc/ld.so.preload
+
+# and remove the qemu-arm-static
+sudo rm vroot/usr/bin/qemu-arm-static
+
+sudo umount vroot/boot
+sudo umount vroot

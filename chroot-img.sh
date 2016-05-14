@@ -1,62 +1,89 @@
 #!/bin/bash
 
-# check we've got what we need:
-if [ ! -x /usr/bin/qemu-arm-static ] ; then
-    echo "Error: need to install qemu-user-static"
-    echo "Use: sudo apt-get install qemu-user-static"
-    exit -1
-fi
+# mount a "img" and run commands within a chrooted quemu-user-static environment"
+# WARNING - this works for me.  Use at your own risk.
 
-if [ -d vroot ] ; then
-    echo "Error: directory vroot already exists.  Refusing to overwrite"
+function die(){
+    echo $*
     exit -1
-fi
+}
+
+function mount_image() {
+    if [ $# -ne 2 ] ; then
+	echo "Error: mount_image() requires 2 arguments - Exiting (got $*)"
+	exit -1
+    fi
+    
+    img=$1
+    if [ ! -w $img ] ; then
+	echo "Error: mount_image(): no such writable image file: $img. Exiting."
+	exit -1
+    fi
+    
+    dir=$2
+    if [ -e $dir ] ; then
+	echo "Error: mount_image(): output $dir already exists - refusing to overwrite. Exiting."
+	exit -1
+    fi
+
+    # get the offsets from fdisk -l
+    p1offset=$(fdisk -l $img | grep ${img}1 | awk '{print $2}')
+    p2offset=$(fdisk -l $img | grep ${img}2 | awk '{print $2}')
+
+    mkdir $dir
+    sudo mount $img -o loop,offset=$((512*p2offset)) $dir/
+    sudo mount $img -o loop,offset=$((512*p1offset)) $dir/boot/
+    
+    echo "mount_image(): mounted \"$img\" on \"$dir\" offsets: [p1,$p1offset] [p2,$p2offset]"
+    sleep 1 # let things settle (don't run umount_image immediately, it fails).
+}
+
+function umount_image() {
+    if [ $# -ne 1 ] ; then
+	echo "Error: mount_image() requires 1 argument (directory) - Exiting (got $*)"
+	exit -1
+    fi
+    
+    dir=$1
+    if [ ! -e $dir ] ; then
+	echo "Error: mount_image(): no such directory $dir. Exiting."
+	exit -1
+    fi
+
+    sudo umount $dir/boot/
+    sudo umount $dir/
+    sync
+    rmdir vroot    
+    echo "umount_image(): unmounted both partitions and removed dir \"$dir\"."
+}
+
+# check we've got what we need:
+[ -x /usr/bin/qemu-arm-static ] || die "Error: need to \"sudo apt-get install qemu-user-static\""
+[ -e vroot ] && die "Error: directory vroot already exists.  Refusing to overwrite"
 
 # make sure you copy this before starting - don't point at a master copy.
 img=copy.img
 
-if [ ! -r $img ] ; then echo "Error no such image: $img"; exit -1; fi
+[ -r $img ] || die "Error no such image: $img"
 
+# mount the image:
+mount_image $img vroot
 
-# get the offsets from "start" column of output of fdisk -l img.
-p1offset=8192
-p2offset=137216
-
-# make a dir to mount things in:
-mkdir -v vroot
-echo "doing the mounts..."
-sudo mount $img -o loop,offset=$((512*p2offset)) vroot/
-sudo mount $img -o loop,offset=$((512*p1offset)) vroot/boot/
-echo "Done the mounts"
-
-# remove ld.so.preload:
-sudo mv vroot/etc/ld.so.preload vroot/etc/ld.so.preload.dist
-echo "fiddled ld.so.preload"
-
-# copy qemu-arm-static into the vroot:
-sudo cp /usr/bin/qemu-arm-static vroot/usr/bin/
-echo "installed qemu-arm-static"
-
-echo "copy over the pre-provision.sh script"
+# Do the things we need to set up for the chroot:
+sudo mv -v vroot/etc/ld.so.preload vroot/etc/ld.so.preload.dist
+sudo cp -v /usr/bin/qemu-arm-static vroot/usr/bin/
 sudo cp -v /home/jdmc2/git/solo/pre-provision.sh vroot/opt/
 
-echo "about to start the chroot..."
-# do the chroot:
-sudo chroot vroot /bin/bash /opt/pre-provision.sh
-echo "Closing down the chroot..."
+echo "Starting chroot..."
+#sudo chroot vroot /bin/bash /opt/pre-provision.sh
+sudo chroot vroot /bin/bash 
+echo "... Chroot closed."
 
-# reinstate ld.so.preload:
-echo "reinstating ld.so.preload"
-sudo mv vroot/etc/ld.so.preload.dist vroot/etc/ld.so.preload
+# undo the things we needed
+sudo mv -v vroot/etc/ld.so.preload.dist vroot/etc/ld.so.preload
+sudo rm -v vroot/usr/bin/qemu-arm-static
 
-# and remove the qemu-arm-static
-echo "removing qemu-arm-static"
-sudo rm vroot/usr/bin/qemu-arm-static
+# and unmount everything
+umount_image vroot
 
-echo "unmounting..."
-sudo umount vroot/boot
-sudo umount vroot
-
-rmdir -v vroot
-
-echo "chroot-img exiting HAPPY"
+exit 0

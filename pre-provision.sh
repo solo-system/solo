@@ -7,6 +7,13 @@
 # shrunk (using shrinkImage).  Whilst this is possible (tip: use a
 # small SD card), it's really ugly.
 
+echo
+echo "hello - I am the pre-provisioner.  I run things inside the chroot.  I do things to the mounted p1/p2 partitions, before handing over to provision.sh"
+echo "previously, provision.sh was runnable on a hardware (real) pi, but no it isn't (because of expand_rootfs_once).  Perhaps pre-provision.sh can be merged into provision.sh"
+echo
+
+
+
 # The SOLO _really_ does not want (must not have) auto-resizing. So
 # remove it here:
 

@@ -19,12 +19,16 @@ echo
 
 # take it out of the boot process (removes the link: /etc/rc3.d/S01resize2fs_once)
 # and remove the script, just in case.
+echo "remove resize2fs_once from boot process..."
 update-rc.d resize2fs_once remove
+echo "and remove the script to do it, just in case..."
 rm /etc/init.d/resize2fs_once
 
 # raspbian lite does NOT have git, and a few other little things.
+echo "do a apt-get update and apt-get install -y git."
 apt-get update
 apt-get install -y git # needed for raspbian "lite" editions.
+echo "cloning github.com/solosystem/solo.git into /opt/
 cd /opt
 git clone https://github.com/solosystem/solo.git
 cd solo

@@ -3,59 +3,8 @@
 # mount "img" and run commands within a chrooted quemu-user-static environment"
 # WARNING - this works for me.  Use at your own risk.
 
-function die(){
-    echo $*
-    exit -1
-}
-
-function mount_image() {
-    if [ $# -ne 2 ] ; then
-	echo "Error: mount_image() requires 2 arguments - Exiting (got $*)"
-	exit -1
-    fi
-
-    img=$1
-    if [ ! -w $img ] ; then
-	echo "Error: mount_image(): no such writable image file: $img. Exiting."
-	exit -1
-    fi
-
-    dir=$2
-    if [ -e $dir ] ; then
-	echo "Error: mount_image(): output $dir already exists - refusing to overwrite. Exiting."
-	exit -1
-    fi
-
-    # get the offsets from fdisk -l
-    p1offset=$(fdisk -l $img | grep ${img}1 | awk '{print $2}')
-    p2offset=$(fdisk -l $img | grep ${img}2 | awk '{print $2}')
-
-    mkdir $dir
-    sudo mount $img -o loop,offset=$((512*p2offset)) $dir/
-    sudo mount $img -o loop,offset=$((512*p1offset)) $dir/boot/
-
-    echo "mount_image(): mounted \"$img\" on \"$dir\" offsets: [p1,$p1offset] [p2,$p2offset]"
-    sleep 1 # let things settle (don't run umount_image immediately, it fails).
-}
-
-function umount_image() {
-    if [ $# -ne 1 ] ; then
-	echo "Error: mount_image() requires 1 argument (directory) - Exiting (got $*)"
-	exit -1
-    fi
-
-    dir=$1
-    if [ ! -e $dir ] ; then
-	echo "Error: mount_image(): no such directory $dir. Exiting."
-	exit -1
-    fi
-
-    sudo umount $dir/boot/
-    sudo umount $dir/
-    sync
-    rmdir $dir 
-    echo "umount_image(): unmounted both partitions and removed dir \"$dir\"."
-}
+# include (u)mount_image functions:
+. $(dirname $0)/utils-img.sh
 
 # Parse command line: if $1 exists, it's the command to run inside the chroot.
 [ $# -gt 1 ] && die " -e Error: too many command line params. \nUsage: $0 <script-to-run.sh>"

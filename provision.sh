@@ -231,13 +231,20 @@ else
 fi
 
 # do this last cos we need to unmount /boot to label it.
+# provisioning in a chroot doesn't allow this.  So make it conditional.
+# how do we detect a chroot environment?  look in /proc - there's nothing there if it's a chroot:
+
 echo
 echo "Labeling file system partitions nicely..."
-sync ; sync # old habits
-umount /boot 
-dosfslabel /dev/mmcblk0p1 soloboot
-e2label /dev/mmcblk0p2 solo-sys
-sync ; sync;
+if [ $(ls /proc | wc -l) -gt 0 ] ; then
+    sync ; sync # old habits
+    umount /boot
+    dosfslabel /dev/mmcblk0p1 soloboot
+    e2label /dev/mmcblk0p2 solo-sys
+    sync ; sync;
+else
+    echo "NOT labeling file systems, because we are in a chroot"
+fi
 echo "Done Labeling file system partitions nicely..."
 echo
 

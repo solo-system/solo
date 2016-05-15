@@ -28,12 +28,12 @@ rm /etc/init.d/resize2fs_once
 echo "do a apt-get update and apt-get install -y git."
 apt-get update
 apt-get install -y git # needed for raspbian "lite" editions.
-echo "cloning github.com/solosystem/solo.git into /opt/
+echo "cloning github.com/solosystem/solo.git into /opt/"
 cd /opt
 git clone https://github.com/solosystem/solo.git
 cd solo
 chmod +x /opt/solo/provision.sh
 echo "about to run ./provision.sh..."
-echo "NOT running ./provision.sh
+./provision.sh # something on stdin eats the input
 echo "Finished running provision.sh"
 echo "Done it all - exit to leave the chroot"

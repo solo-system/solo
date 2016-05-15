@@ -44,13 +44,16 @@ if [ $diskfree -lt 100 ] ; then
     exit -1
 fi
 
-CLAC=unk
+
+# CLAC=unk
+CLAC=yes
 while [ $CLAC != "yes" -a $CLAC != "no" ] ; do
   echo "Include support for Cirrus Logic Audio Card?"
   read CLAC
 done
 
-QPURGE=unk
+# QPURGE=unk
+QPURGE=no
 while [ $QPURGE != "yes" -a $QPURGE != "no" ] ; do
   echo "Minimize img size by purging unnecessary packages? (slower)"
   read QPURGE
@@ -60,7 +63,7 @@ echo "PURGE is $QPURGE"
 echo "====================================================================="
 echo "Provisioner is about to install solo with purge=$QPURGE and CLAC=$CLAC"
 echo " *** Press return to continue ..."
-read a
+# read a
 echo "And we're off..."
 echo " -----------------------------------"
 echo " -----------------------------------"

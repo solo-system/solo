@@ -1,9 +1,14 @@
 
+
+
 tl;dr:
 > wget raspbian.com/image.img
 > cp image.img copy.img
-> chroot-img.sh
-output (copy.img) is flashable SSI.
+> chroot-img.sh <script.sh>
+
+That will mount the img, run the command (or give you a bash shell)
+and then exit and umount the partitons, leaving you with a modified
+.img ( a flashable SSI.)
 
 qemu/chroot for mounting/provisioning images.
 ---------------------------------------------
@@ -35,5 +40,7 @@ unmounts the two partitions.
 
 Done.  copy.img is now flashable as a SSI.
 
-I'm still amazed this can be done.
-
+I'm still amazed this can be done.  All that wasted time looking for
+XECdesign's vanished kernel for qemu...  All those days spent fiddling
+with hardware, and waiting for slow pis to do the work. But we are
+here now.  That's progress.

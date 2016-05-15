@@ -4,7 +4,7 @@
 # then exit.
 
 # include (u)mount_image functions:
-. $(dirname $0)/utils-img.sh
+. $(dirname $0)/img-utils.sh
 
 # Don't put this on the command line, as I'll inevitably point at a
 # "master" copy, screw it up, and not work it out for weeks.  Instead

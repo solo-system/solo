@@ -4,7 +4,7 @@
 # WARNING - this works for me.  Use at your own risk.
 
 # include (u)mount_image functions:
-. $(dirname $0)/utils-img.sh
+. $(dirname $0)/img-utils.sh
 
 # Parse command line: if $1 exists, it's the command to run inside the chroot.
 [ $# -gt 1 ] && die " -e Error: too many command line params. \nUsage: $0 <script-to-run.sh>"

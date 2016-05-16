@@ -16,6 +16,22 @@ function logit() {
     echo "... $* [at $(date)]"
 }
 
+
+# stop the resize done by raspbian (as of 2016-05-ish):
+function disable_auto_resize() {
+    header "Disabling resize2fs in raspbian"
+    echo "Changing /boot/cmdline.txt to remove init_resize.sh."
+    sed -i 's/ quiet init=.*$//' /boot/cmdline.txt
+    
+    echo "updaterc.d - disabling resize2fs_once"
+    update-rc.d resize2fs_once remove
+    
+    echo " And removing the resize script - just to be sure"
+    rm -f /etc/init.d/resize2fs_once
+
+    footer "Disabling resize2fs in raspbian"
+}
+
 function minimize_power() {
     header "Minimizing power usage"
     echo "... disabling tvservice to save power [/opt/vc/bin/tvservice off]"

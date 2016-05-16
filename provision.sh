@@ -160,20 +160,6 @@ echo
 setup_rtc
 enable_i2c
 
-# stop the resize done by raspbian (as of 2016-05-ish):
-function disable_auto_resize() {
-    
-    echo "Changing /boot/cmdline.txt to remove init_resize.sh."
-    sed -i 's/ quiet init=.*$//' /boot/cmdline.txt
-    
-    echo "updaterc.d - disabling resize2fs_once"
-    update-rc.d resize2fs_once remove
-    
-    echo " And removing the resize script - just to be sure"
-    rm /etc/init.d/resize2fs_once
-    echo "Done disable_auto_resize()"
-}
-disable_auto_resize
 
 # setup software for Cirrus Logic Audio Card
 if [ $CLAC = "yes" ] ; then
@@ -192,6 +178,10 @@ else
     echo "CLAC=$CLAC => so not sourcing setup-clac.sh"
 fi
 
+# this must come after setup-clac, since that calls rpi-update, which
+# calls apt-get install raspi.  Which might re-install some of the
+# auto-resize stuff.
+disable_auto_resize
 
 
 if [ $QPURGE = "yes" ] ; then

@@ -12,18 +12,6 @@ echo "hello - I am the pre-provisioner.  I run things inside the chroot.  I do t
 echo "previously, provision.sh was runnable on a hardware (real) pi, but no it isn't (because of expand_rootfs_once).  Perhaps pre-provision.sh can be merged into provision.sh"
 echo
 
-
-
-# The SOLO _really_ does not want (must not have) auto-resizing. So
-# remove it here:
-
-# take it out of the boot process (removes the link: /etc/rc3.d/S01resize2fs_once)
-# and remove the script, just in case.
-echo "remove resize2fs_once from boot process..."
-update-rc.d resize2fs_once remove
-echo "and remove the script to do it, just in case..."
-rm /etc/init.d/resize2fs_once
-
 # raspbian lite does NOT have git, and a few other little things.
 echo "do a apt-get update and apt-get install -y git."
 apt-get update

@@ -12,13 +12,13 @@
 img=copy.img
 dir=vroot
 
-[ -e $dir ] && die "Error: directory $dir exists.  Refusing to overwrite"
-[ -r $img ] || die "Error no such image: $img"
+[ -r $img ] || die "Error: no such image: $img"
+[ -e $dir ] && die "Error: directory $dir exists.  Refusing to overwrite."
 
 # mount the image:
 mount_image $img $dir
 
-echo "filesystem is in: $(pwd)/$dir"
+# echo "filesystem is in: $(pwd)/$dir"
 echo "WAITING: press return to umount"
 read
 

@@ -23,7 +23,7 @@ dirb=./b
 
 # mount the image:
 mount_image $imga $dira
-mount_image $imga $dirb
+mount_image $imgb $dirb
 
 echo "mounted both."
 diff -r $dira $dirb

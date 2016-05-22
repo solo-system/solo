@@ -22,6 +22,7 @@ fi
 img=copy.img
 
 [ -r $img ] || die "Error no such image: $img"
+[ -w $img ] || die "Error \"$img\" not writable."
 
 # mount the image:
 mount_image $img vroot

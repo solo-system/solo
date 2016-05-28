@@ -20,8 +20,8 @@ echo "cloning github.com/solosystem/solo.git into /opt/"
 cd /opt
 git clone https://github.com/solosystem/solo.git
 cd solo
-chmod +x /opt/solo/provision.sh
-echo "about to run ./provision.sh..."
-./provision.sh # something on stdin eats the input
+chmod +x /opt/solo/imgTools/provision.sh
+echo "about to run imgTools/provision.sh..."
+imgTools/provision.sh # something on stdin eats the input
 echo "Finished running provision.sh"
 echo "Done it all - exit to leave the chroot"

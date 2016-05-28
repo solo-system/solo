@@ -53,7 +53,7 @@ while [ $CLAC != "yes" -a $CLAC != "no" ] ; do
 done
 
 # QPURGE=unk
-QPURGE=no
+QPURGE=yes
 while [ $QPURGE != "yes" -a $QPURGE != "no" ] ; do
   echo "Minimize img size by purging unnecessary packages? (slower)"
   read QPURGE

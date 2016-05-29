@@ -112,6 +112,9 @@ function setup_rtc() {
 
     echo "done enabling hwclock.sh by update-rc.d.  Is it there?"
     ls -l /etc/rc2.d/S??hwclock.sh
+
+    echo "and all the instances (find):"
+    find /etc/rc?.d | grep hwclock
     
     footer "Setting up the RTC clock"
 }

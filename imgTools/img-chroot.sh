@@ -7,7 +7,7 @@
 . $(dirname $0)/img-utils.sh
 
 # Parse command line: Usage:$0 img [cmd]
-[ $# -lt 1 || $# -gt 2 ] && die " -e Error: too many command line params. \nUsage: $0 img <script-to-run.sh>"
+[ $# -lt 1 -o $# -gt 2 ] && die " -e Error: too many command line params. \nUsage: $0 img <script-to-run.sh>"
 
 img=$1
 [ -r $img ] || die "Error no such image: $img"

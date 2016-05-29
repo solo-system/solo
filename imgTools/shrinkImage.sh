@@ -22,6 +22,13 @@
 # 40M     997016               0 	40M less than asked-for
 # SEE BELOW on what we actually use.
 
+# -f on command line overrules "are you sure?"
+if [ $# -eq 2 -a "$1" = "-f" ] ; then
+   force=yes
+   echo force is on
+   shift
+fi
+   
 if [ $# -ne 1 ] ; then
     echo "Error: must prescribe img file on command line"
     exit -1
@@ -44,10 +51,13 @@ if [ ! -w $img ] ; then
     exit -1
 fi
 
-echo "About to shrink: $img"
-echo "WARNING *** This program changes the input file !!! ***"
-echo "press return to continue ... WAITING (or ctrl-c to bail out)"
-read
+# pause for user confirmation if not forced
+if [ -z "$force" ] ; then
+    echo "About to shrink: $img"
+    echo "WARNING *** This program changes the input file !!! ***"
+    echo "press return to continue ... WAITING (or ctrl-c to bail out)"
+    read
+fi
 
 # how many extra 4k blocks to add to the FS: (see info at top of file)
 extra4k=100000  # ask for 400M

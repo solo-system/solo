@@ -96,6 +96,11 @@ function setup_leds() {
 
 function setup_rtc() {
     header "Setting up the RTC clock"
+
+    # try removing the script and disabling:
+    rm /etc/init.d/hwclock.sh
+    update-rc.d hwclock.sh remove
+    
     # we got rid of fake-hwclock, so now enable hwclock at boot time:
     echo "... enabling early boot support for RTC..."
     echo "... copying over our version of hwclock.sh (with call to setup_rtc.sh)"
@@ -103,7 +108,6 @@ function setup_rtc() {
     echo "... now running update-rc.d to enable good old hwclock.sh"
 
     # need to remove and reinstall - thats how update-rc.d works:
-    update-rc.d hwclock.sh remove
     update-rc.d hwclock.sh defaults
 
     echo "done enabling hwclock.sh by update-rc.d.  Is it there?"

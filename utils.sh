@@ -101,7 +101,11 @@ function setup_rtc() {
     echo "... copying over our version of hwclock.sh (with call to setup_rtc.sh)"
     cp -v /opt/solo/hwclock.sh /etc/init.d/hwclock.sh
     echo "... now running update-rc.d to enable good old hwclock.sh"
-    update-rc.d hwclock.sh enable
+
+    # need to remove and reinstall - thats how update-rc.d works:
+    update-rc.d hwclock.sh remove
+    update-rc.d hwclock.sh defaults
+
     footer "Setting up the RTC clock"
 }
 

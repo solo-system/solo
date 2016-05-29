@@ -13,6 +13,15 @@
 # WARNING = root filesystem is mounted read-only, so can't output to
 # any logs (or perhaps /var/log is writable - dunno)
 
+# after changing this file we need to do the following, to get the symlinks right:
+# update-rc.d hwclock.sh remove
+# update-rc.d hwclock.sh defaults
+
+# this is because I added runlevel 2 (originally only S), and
+# update-rc.d WONT update, only install.  So remove then set defaults
+# (default refers to the runlevels in the script).  Having been clean
+# a few months ago, this is all a bit of a hack now.  
+
 ME=setup-rtc.sh
 LOG=/var/log/${ME}.log
 

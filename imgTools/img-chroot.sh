@@ -6,10 +6,15 @@
 # include (u)mount_image functions:
 . $(dirname $0)/img-utils.sh
 
-# Parse command line: if $1 exists, it's the command to run inside the chroot.
-[ $# -gt 1 ] && die " -e Error: too many command line params. \nUsage: $0 <script-to-run.sh>"
-if [ $# -eq 1 ] ; then
-    chroot_cmd_cl=$1
+# Parse command line: Usage:$0 img [cmd]
+[ $# -lt 1 || $# -gt 2 ] && die " -e Error: too many command line params. \nUsage: $0 img <script-to-run.sh>"
+
+img=$1
+[ -r $img ] || die "Error no such image: $img"
+[ -w $img ] || die "Error \"$img\" not writable."
+
+if [ $# -eq 2 ] ; then
+    chroot_cmd_cl=$2
     [ -r "$chroot_cmd_cl" ] || die "Error: no such command \"$chroot_cmd_cl\""
     # echo "Parse CMDline: chroot_cmd_cl is now $chroot_cmd_cl"
 fi
@@ -18,11 +23,7 @@ fi
 [ -x /usr/bin/qemu-arm-static ] || die "Error: need to \"sudo apt-get install qemu-user-static\""
 [ -e vroot ] && die "Error: directory vroot already exists.  Refusing to overwrite"
 
-# make sure you copy this before starting - don't point at a master copy.
-img=copy.img
-
-[ -r $img ] || die "Error no such image: $img"
-[ -w $img ] || die "Error \"$img\" not writable."
+# right - get on with it.
 
 # mount the image:
 mount_image $img vroot

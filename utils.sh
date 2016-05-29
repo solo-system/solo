@@ -106,6 +106,9 @@ function setup_rtc() {
     update-rc.d hwclock.sh remove
     update-rc.d hwclock.sh defaults
 
+    echo "done enabling hwclock.sh by update-rc.d.  Is it there?"
+    ls -l /etc/rc2.d/S??hwclock.sh
+    
     footer "Setting up the RTC clock"
 }
 

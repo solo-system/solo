@@ -28,7 +28,7 @@
 # Provides:          hwclock
 # Required-Start:    mountdevsubfs
 # Required-Stop:     $local_fs
-# Default-Start:     S 2
+# Default-Start:     S 2 5
 # X-Start-Before:    checkroot
 # Default-Stop:      0 6
 ### END INIT INFO

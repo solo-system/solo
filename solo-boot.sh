@@ -198,6 +198,7 @@ fi
 #echo "=================================================="
 #echo
 
+setup_rtc_late # late setup of the RTC
 minimize_power # ensure low power (tvservice off)
 setup_leds     # set up the leds
 set_timezone   # set timezone to SOLO_TZ (from solo.conf)

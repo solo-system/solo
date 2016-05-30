@@ -94,6 +94,25 @@ function setup_leds() {
     footer "Setting up the leds"
 }
 
+
+# setup rtc late in the boot process.
+function setup_rtc_late() {
+    header "Setting up the RTC clock (late in boot process)"
+
+    modprobe i2c-dev
+
+    i2cdetect -y 1
+    
+    echo mcp7941x 0x6f > /sys/class/i2c-dev/i2c-1/device/new_device
+    
+    ls -l /dev/rtc0
+
+    hwclock --show
+
+    hwclock --hctosys
+}   
+
+# this is the "proper" way, but rc?.d isn't run any longer, but the look of it...
 function setup_rtc() {
     header "Setting up the RTC clock"
 

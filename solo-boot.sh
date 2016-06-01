@@ -102,7 +102,7 @@ echo
 echo
 
 # a place to copy logs on the p3 partition
-SOLOLOGDIR=/mnt/sdcard/solo-logs
+#SOLOLOGDIR=/mnt/sdcard/solo-logs
 
 # read the user-supplied config file, if it exists
 if [ -f /boot/solo.conf ] ; then
@@ -158,16 +158,16 @@ if ! grep mmcblk0p3 /proc/mounts > /dev/null ; then
   echo "... making directory amondata on new mount point"
   mkdir /mnt/sdcard/amondata
 
-  echo "... making directory $SOLOLOGDIR on new mount point"
-  mkdir $SOLOLOGDIR
+#  echo "... making directory $SOLOLOGDIR on new mount point"
+#  mkdir $SOLOLOGDIR
 
   # chown amon.amon /mnt/sdcard/amondata
   # now build the crontab:
   # add crontabs ... (these should NOT be here - since they overwrite with each boot).
 
-  echo "... placing output of df and mount into logs for inspection"
-  df -h > $SOLOLOGDIR/df.txt
-  mount > $SOLOLOGDIR/mount.txt
+#  echo "... placing output of df and mount into logs for inspection"
+#  df -h > $SOLOLOGDIR/df.txt
+#  mount > $SOLOLOGDIR/mount.txt
 
   echo "... Finished doing new partition stuff, now other chores for FIRSTBOOT:"
   echo "... adding watchdog and playback to amon's crontab:"
@@ -204,28 +204,28 @@ setup_leds     # set up the leds
 set_timezone   # set timezone to SOLO_TZ (from solo.conf)
 
 
-if [ $DEBUG = "on" ] ; then
-    echo "DEBUG mode is on - so doing lots of lsusb stuff"
+#if [ $DEBUG = "on" ] ; then
+#    echo "DEBUG mode is on - so doing lots of lsusb stuff"
     # echo "DEBUG mode is on in solo-boot.sh so copying files to here.  It's just at the end of boot-time when these copies are made" > $SOLOLOGDIR/README.txt
 
-    echo "lsusb ..."
-    lsusb > $SOLOLOGDIR/lsusb.txt
-    echo "lsusb -t"
-    lsusb -t > $SOLOLOGDIR/lsusb-t.txt
-    echo "lsusb -v"
-    lsusb -v > $SOLOLOGDIR/lsusb-v.txt
-    echo "dmesg"
-    dmesg > $SOLOLOGDIR/dmesg.txt.postboot
+#    echo "lsusb ..."
+#    lsusb > $SOLOLOGDIR/lsusb.txt
+#    echo "lsusb -t"
+#    lsusb -t > $SOLOLOGDIR/lsusb-t.txt
+#    echo "lsusb -v"
+#    lsusb -v > $SOLOLOGDIR/lsusb-v.txt
+#    echo "dmesg"
+#    dmesg > $SOLOLOGDIR/dmesg.txt.postboot
 
     # TODO: there are more things in /var/log which we could copy:
     # The problem is that we are just at boot time, and so we end
     # up with only partial copies.
-    echo "end of debug mode"
+#    echo "end of debug mode"
 
-fi
+#fi
 
-echo "about to exit - copying this log output to $SOLOLOGDIR..."
-cp /opt/solo/solo-boot.log $SOLOLOGDIR/solo-boot.log
+#echo "about to exit - copying this log output to $SOLOLOGDIR..."
+#cp /opt/solo/solo-boot.log $SOLOLOGDIR/solo-boot.log
 echo
 echo "that's all folks"
 echo

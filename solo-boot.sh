@@ -105,8 +105,8 @@ echo
 #SOLOLOGDIR=/mnt/sdcard/solo-logs
 
 # read the user-supplied config file, if it exists
-if [ -f /boot/solo.conf ] ; then
-    source /boot/solo.conf
+if [ -f /boot/solo/solo.conf ] ; then
+    source /boot/solo/solo.conf
 fi
 
 ### TODO - this doesn't catch the situation where the partition is

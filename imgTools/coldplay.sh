@@ -34,9 +34,14 @@ numwavs=$(find $tmpdir/p3/amondata/wavs/ -name \*.wav -ls | wc -l)
 sizewavs=$(find $tmpdir/p3/amondata/wavs/ -name \*.wav -ls | awk '{ sum+=$7 } END {print sum / 1000000}')
 echo Recorded $numwavs different wav files totalling $sizewavs MB of audio.
 
+echo "Timezone information:"
+grep "Current default time zone" $tmpdir/p2/opt/solo/solo-boot.log
+
+echo "arecord.log:"
+grep "Recording WAVE" $tmpdir/p3/amondata/logs/arecord.log
+
 #echo WAITING
 #read
-
 
 sudo umount $tmpdir/p1
 sudo umount $tmpdir/p2

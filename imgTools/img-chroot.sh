@@ -48,6 +48,9 @@ echo "Starting chroot ... [cmd=\"$chroot_cmd\"]"
 sudo chroot vroot $chroot_cmd
 echo "... Chroot closed."
 
+# remove the chroot directory:
+rm -rf vroot/opt/chroot
+
 # undo the things we needed
 sudo mv -v vroot/etc/ld.so.preload.dist vroot/etc/ld.so.preload
 sudo rm -v vroot/usr/bin/qemu-arm-static

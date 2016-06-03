@@ -34,8 +34,19 @@ function disable_auto_resize() {
 
 function minimize_power() {
     header "Minimizing power usage"
-    echo "... disabling tvservice to save power [/opt/vc/bin/tvservice off]"
-    /opt/vc/bin/tvservice -off
+    if [ -n "$SOLO_POWERMODE" ] ; then
+	echo "... SOLO_POWERMODE is set to $SOLO_POWERMODE (in solo.conf)"
+	if [ "$SOLO_POWERMODE" = "normal" ] ; then
+	    echo "minimize_power: nothing to do..."
+	else
+	    echo "... disabling tvservice to save power [/opt/vc/bin/tvservice off]"
+	    /opt/vc/bin/tvservice -off
+	fi
+    else
+	echo "... SOLO_POWERMODE not set in solo.conf so assuming minimum power..."
+	echo "... disabling tvservice to save power [/opt/vc/bin/tvservice off]"
+	/opt/vc/bin/tvservice -off
+    fi
     footer "Minimizing power usage"
 }
 

@@ -23,9 +23,9 @@ $bin/img-chroot.sh ./copy.img $bin/pre-provision.sh >& dailyProvision.log
 
 echo "Finished the provision into $workdir"
 
-echo "now shrinking"
+echo "now shrinking..."
 cp copy.img shrunk.img
-$bin/img-shrink.sh -f shrunk.img
+$bin/img-shrink.sh -f shrunk.img >> dailyProvisin.log 2>&1
 
 echo "changing ownership and permissions (from root to jdmc2) of output files"
 sudo chown -R jdmc2.jdmc2  $workdir

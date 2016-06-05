@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 # mount the partitions p1 and p2 (raspbian) from copy.img, then pause,
 # then exit.
 
@@ -11,7 +12,7 @@
 # insist on a local one called copy.img: NO - we can't get away with
 # this - it's too restrictive.
 
-[ $# -eq 1 ] || die "error usage is \"$0 img\"
+[ $# -eq 1 ] || die "error usage is \"$0 img\""
 img=$1
 [ -r $img ] || die "Error: no such image: $img"
 

@@ -105,6 +105,8 @@ echo "Etc/UTC" > /etc/timezone
 dpkg-reconfigure -f noninteractive tzdata
 echo "Done doing raspi-config-like things."
 
+# definetly get rid of this
+apt-get -y purge fake-hwclock
 
 ### Package management:
 PURGE="fake-hwclock wolfram-engine xserver.* x11-.* xarchiver xauth xkb-data console-setup xinit lightdm lxde.* python-tk python3-tk scratch gtk.* libgtk.* openbox libxt.* lxpanel gnome.* libqt.* gvfs.* xdg-.* desktop.* freepats smbclient"
@@ -122,8 +124,8 @@ if [ $QPURGE = "yes" ] ; then
   echo "APT: Done purging unwanted packages..."
 else
   echo "NOT purging unwanted packages (since QPURGE is not yes)"
-  echo "Instead, installing emacs"
-  apt-get -y install emacs23-nox # ARGH this costs 60Mb.
+  #echo "Instead, installing emacs"
+  #apt-get -y install emacs23-nox # ARGH this costs 60Mb.
 fi
 
 ### update and install things we need
@@ -158,9 +160,16 @@ chmod +x /opt/solo/solo-boot.sh
 echo "Done updating rc.local"
 echo
 
-setup_rtc
-enable_i2c
+# setup_rtc - don't need this any more (if we bring it bac, call it provision_rtc())
 
+# enable udef to set the clock at boot time
+sed -i "s:/run/systemd/system:/i/am/nonexistent:g"  /lib/udev/hwclock-set
+
+echo "CHANGED hwclock-set to run"
+cat /lib/udev/hwclock-set
+echo "CHANGED hwclock-set to run"
+
+enable_i2c
 
 # setup software for Cirrus Logic Audio Card
 if [ $CLAC = "yes" ] ; then

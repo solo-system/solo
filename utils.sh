@@ -107,6 +107,17 @@ function setup_leds() {
 
 
 # setup rtc late in the boot process.
+function setup_rtc_udev() {
+    header "Setting up the RTC clock to use udev and systemd"
+
+    echo "enabling ntp time sync"
+    timedatectl set-ntp 1
+    
+    #    echo "" >> /boot/config.txt
+    #    echo "dtoverlay=i2c-rtc,mcp7941x" >> /boot/config.txt
+}   
+
+# setup rtc late in the boot process. ### UNUSED
 function setup_rtc_late() {
     header "Setting up the RTC clock (late in boot process)"
 
@@ -124,7 +135,8 @@ function setup_rtc_late() {
 }   
 
 # this is the "proper" way, but rc?.d isn't run any longer, but the look of it...
-function setup_rtc() {
+
+function setup_rtc() { UNUSED
     header "Setting up the RTC clock"
 
     # try removing the script and disabling:
@@ -149,9 +161,13 @@ function setup_rtc() {
     footer "Setting up the RTC clock"
 }
 
+
+
+
 function enable_i2c() {
     header "Enabling i2c in kernel"
     echo "... adding dtparm=i2c_arm=on to /boot/config.txt"
     printf "dtparam=i2c_arm=on\n" >> /boot/config.txt
+    printf "\ndtoverlay=i2c-rtc,mcp7941x\n" >> /boot/config.txt
     footer "Enabling i2c in kernel"
 }

@@ -1,6 +1,39 @@
 RTC
 ---
 
+Run timedatectl on the solo to find out about time/date.
+
+This is now easier.  To recognise the piface clock module, we just
+need the following in /boot/config.txt:
+
+dtoverlay=i2c-rtc,mcp7941x
+
+This then causes the modlues to all load, and /dev/rtc0 appears
+magically after boot.
+
+Then - to read the clock at boot time - all stuff in /etc/init.d is
+not used anymore, from what I can tell.  We therefore have udev run
+the rtc->sime syncronization through.  /lib/udev/hwclock-set does
+this, but it currently fails to run, due to a check near the top.
+Remove this check (that systemd is not running).  Then the script runs
+as /dev/rtc0 is loaded at boot (early, I think), and the system gets
+the correct time.
+
+We still have a slight worry about /var/lib/systemd/clock, but if the
+RTC seems to dominate, and if the RTC has failed, what do we want?  A
+monotonically increasing time is probably a good thing in that
+situation.
+
+This all started because I couldn't get things in /etc/rc2.d/ to run.
+I think systemd is now fully in charge.  2 systemd things affect us:
+timedatectl.unit, and timesyncd.unit.
+
+Note that we must purge fakehwclock and we no longer need ntp (systemd
+has it build in).
+
+===============================================================
+--- Below is the previous status of things, up until 2016-06-01
+
 The real time clock is an i2c device connected to the gpio pins.
 
 The kernel needs to have i2c enabled.  This is now done by adding it

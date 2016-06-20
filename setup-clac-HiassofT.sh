@@ -41,11 +41,14 @@ tar zxf usecase-scripts.tgz -C /home/amon/clac/
 chown -R amon:amon /home/amon/clac
 chmod +x /home/amon/clac/*.sh
 
+# remove the tarballs
+rm cirrus-linux-latest.tgz usecase-scripts.tgz
+
 popd # go back to where we were (wherever that was - I don't remember why this was important)
 
 # 
 echo "... Updating /boot/config.txt"
-cp /boot/config.txt /boot/config.txt.pre-provision
+cp /boot/config.txt /boot/config.txt.pre-CLAC-config
 cat <<EOF >> /boot/config.txt
 
 # Below lines have been added by solo's setup-clac-HiassofT.sh

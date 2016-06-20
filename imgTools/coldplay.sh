@@ -3,7 +3,12 @@
 # travis CI for solo - so it's called coldplay, coz they is both
 # famous pop bands in the hit parade.  innit?
 
-dev=sdh
+if [ ! $1 ] ; then
+    echo "Usage: coldplay.sh /dev/sdX"
+    exit -1
+fi
+
+dev=$1
 
 if mount | grep sdh ; then
     echo ERROR: something is mounted already.
@@ -18,9 +23,9 @@ mkdir $tmpdir
 
 mkdir $tmpdir/p1 $tmpdir/p2 $tmpdir/p3
 
-sudo mount /dev/sdh1 $tmpdir/p1
-sudo mount /dev/sdh2 $tmpdir/p2
-sudo mount /dev/sdh3 $tmpdir/p3
+sudo mount ${dev}1 $tmpdir/p1
+sudo mount ${dev}2 $tmpdir/p2
+sudo mount ${dev}3 $tmpdir/p3
 
 df -h $tmpdir/{p1,p2,p3}
 

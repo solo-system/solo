@@ -78,20 +78,20 @@ log "root partition starts at: $rootoffset"
 log "setting up loop with offset..."
 sudo losetup -v -o $(($rootoffset*512)) /dev/loop0 $img  # build a device.
 
-log "fscking filesystem..."
-sudo e2fsck -f /dev/loop0  # do this a lot to keep sane.
+log "fscking filesystem before we even start..."
+sudo e2fsck -p -f /dev/loop0  # do this a lot to keep sane.
 
 log "removing journal..."
 sudo tune2fs -O ^has_journal /dev/loop0 #get rid of journal prior to resize.
 
-log "fscking again to be paranoid"
-sudo e2fsck -f /dev/loop0 
+log "fscking again to be paranoid (just after journal removal)"
+sudo e2fsck -p -f /dev/loop0
 
 log "resizing to minimum size [TAKES TIME] ..."
 sudo resize2fs -M /dev/loop0  # do the resize to the minimum sixe
 
-log "checking fs again..."
-sudo e2fsck -f /dev/loop0
+log "checking fs again... (after shrinking to minimum size)"
+sudo e2fsck -p -f /dev/loop0
 
 log "Finding size of minimized fs:"
 minsize4k=$(sudo dumpe2fs /dev/loop0 | grep "Block count:" | awk '{print $3}')
@@ -109,6 +109,9 @@ log "Final size of fs is $newsize4k (4k blocks), or $newsize1k (1k blocks) or $n
 
 log "Rebuilding the journal..."
 sudo tune2fs -j /dev/loop0
+
+log "and a final fsck... (just before we unload /dev/loop0)"
+sudo e2fsck -p -f /dev/loop0      
 
 log "syncing disks..."
 sync # paranoia

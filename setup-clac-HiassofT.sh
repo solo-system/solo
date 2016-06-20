@@ -32,7 +32,9 @@ echo "... fetching [ my copy of ] HiassofT's tar file"
 wget jdmc2.com/solo/HiassofT/cirrus-linux-latest.tgz
 wget jdmc2.com/solo/HiassofT/usecase-scripts.tgz
 
-echo "... and untarring the kernel files"
+echo "Moving old modules out of the way"
+mkdir /lib/oldmodules ; mv /lib/modules* /lib/oldmodules/
+echo "... and untarring the new kernel files from Hiassoft"
 tar zxf cirrus-linux-latest.tgz -C /
 
 echo "... and now untarring the use-case scripts"

@@ -32,8 +32,9 @@ echo "... fetching [ my copy of ] HiassofT's tar file"
 wget jdmc2.com/solo/HiassofT/cirrus-linux-latest.tgz
 wget jdmc2.com/solo/HiassofT/usecase-scripts.tgz
 
-echo "Moving old modules out of the way"
+echo "Moving old modules out of the way - and deleting them"
 mkdir -v /lib/modules-old ; mv -v /lib/modules/* /lib/modules-old/
+rm -rf /lib/modules-old
 echo "... and untarring the new kernel files from Hiassoft"
 tar zxf cirrus-linux-latest.tgz -C /
 

@@ -193,6 +193,12 @@ fi
 # auto-resize stuff.
 disable_auto_resize
 
+echo
+echo"Remove a bunch of silly cron jobs that do pointless things:"
+rm -vf /etc/cron.daily/{dpkg,man-db,apt,passwd,aptitude,bsdmainutils,ntp} /etc/cron.weekly/man-db
+echo "done removing pointelss cronjobs"
+echo
+
 
 if [ $QPURGE = "yes" ] ; then
     echo "About to purge if required:"

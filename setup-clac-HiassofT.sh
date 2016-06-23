@@ -26,7 +26,7 @@ echo "need to install rpi-update"
 apt-get install rpi-update
 
 echo "before we start, need to do an rpi-update ..."
-SKIP_KERNEL=1 rpi-update
+SKIP_KERNEL=1 SKIP_BACKUP=1 rpi-update
 
 echo "... fetching [ my copy of ] HiassofT's tar file"
 wget jdmc2.com/solo/HiassofT/cirrus-linux-latest.tgz

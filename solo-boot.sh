@@ -7,9 +7,6 @@ echo "-----------------------"
 echo
 echo "[solo-boot.sh] Started at: `date`"
 
-# what am I ?
-# This helps: http://www.raspberrypi-spy.co.uk/2012/09/checking-your-raspberry-pi-board-version/
-REV=`grep Revision /proc/cpuinfo  | awk '{print $3}'`
 
 if [ ! -r /opt/solo/utils.sh ] ; then
     echo "Error: can't read /opt/solo/utils.sh - this is probably bad news!"
@@ -17,73 +14,58 @@ fi
 source /opt/solo/utils.sh
 
 # find out which hardware platform we are on:
-case $REV in
 
-    0002 | 0003 | 0004 | 0005 | 0006)
-        echo "... rev is $REV: hardware is version 2,3,4,5,6 - model B with 256M RAM"
-        RPINAME="B"
-	RPIMEM="256"
-	IICBUS=0
-        ;;
+REV=$(grep Revision /proc/cpuinfo  | awk '{print $3}')
 
-    0007 | 0008 | 0009)
-        echo "... rev is $REV: hardware is version 7,8,9 = model A with 256M RAM"
-	RPINAME="A"
-	RPIMEM="256"
-	IICBUS=1
-	;;
+#case $REV in
 
-    000d | 000e | 000f)
-        echo "... rev is $REV: hardware is version d,e,f = model B with 512M RAM"
-	RPINAME="B"
-	RPIMEM="512"
-	IICBUS=1
-        ;;
+#    0002 | 0003 | 0004 | 0005 | 0006)
+#        echo "... rev is $REV: hardware is version 2,3,4,5,6 - model B with 256M RAM"
+#         RPINAME="B"
+#         ;;
 
-    0010)
-        echo "... rev is $REV: hardware is version 10 = model B+ with 512M RAM"
-	RPINAME="B+"
-	RPIMEM="512"
-	IICBUS=1
-        ;;
+#     0007 | 0008 | 0009)
+#         echo "... rev is $REV: hardware is version 7,8,9 = model A with 256M RAM"
+# 	RPINAME="A"
+# 	;;
 
-    0011)
-        echo "... rev is $REV: hardware is version 11 = compute module"
-	echo "... Hardware Not Supported - I wonder what will happen."
-	RPINAME="CM"
-	RPIMEM="512"
-	IICBUS=1
-        ;;
+#     000d | 000e | 000f)
+#         echo "... rev is $REV: hardware is version d,e,f = model B with 512M RAM"
+# 	RPINAME="B"
+#         ;;
 
-    0012 | 0015)
-        echo "... rev is $REV: hardware is version 12 = model A+ with 256M RAM"
-	RPINAME="A+"
-	RPIMEM="256"
-	IICBUS=1
-	;;
+#     0010)
+#         echo "... rev is $REV: hardware is version 10 = model B+ with 512M RAM"
+# 	RPINAME="B+"
+#         ;;
 
-    a01041 | a21041)
-	echo "... rev is $REV: hardware is pi2 B with 1G RAM"
-	RPINAME="PI2B"
-	RPIMEM="1024"
-	IICBUS=1
-	;;
+#     0011)
+#         echo "... rev is $REV: hardware is version 11 = compute module"
+# 	echo "... Hardware Not Supported - I wonder what will happen."
+# 	RPINAME="CM"
+#         ;;
 
-    a02082)
-	echo "... rev is $REV: hardware is pi3 B with 1G RAM"
-	RPINAME="PI3B"
-	RPIMEM="1024"
-	IICBUS=1
-	;;
+#     0012 | 0015)
+#         echo "... rev is $REV: hardware is version 12 = model A+ with 256M RAM"
+# 	RPINAME="A+"
+# 	;;
 
-    *)
-	echo "... rev is $REV: hardware NOT RECOGNISED (please update solo-boot.sh)"
-	echo "... ASSUMING hardware is pi2"
-	RPINAME="PI2B"
-	RPIMEM="1024"
-	IICBUS=1
-	;;
-esac
+#     a01041 | a21041)
+# 	echo "... rev is $REV: hardware is pi2 B with 1G RAM"
+# 	RPINAME="PI2B"
+# 	;;
+
+#     a02082)
+# 	echo "... rev is $REV: hardware is pi3 B with 1G RAM"
+# 	RPINAME="PI3B"
+# 	;;
+
+#     *)
+# 	echo "... rev is $REV: hardware NOT RECOGNISED (please update solo-boot.sh)"
+# 	echo "... ASSUMING hardware is pi2"
+# 	RPINAME="PI2B"
+# 	;;
+# esac
 
 KRNL=$(uname -r | cut -f1,2 -d'.')
 FULL_KERNEL=$(uname -r)
@@ -95,7 +77,7 @@ else
     CLAC=no
 fi
 
-echo "... Finished detecting raspberry pi hardware: RPINAME=$RPINAME, RPIMEM=$RPIMEM IICBUS=$IICBUS"
+echo "... Finished detecting raspberry pi hardware: REV=$REV RPINAME=$RPINAME"
 echo "... Detected KRNL version $KRNL ($FULL_KERNEL)"
 echo "... Is Cirrus Logic Audio Card installed?  CLAC=$CLAC"
 echo

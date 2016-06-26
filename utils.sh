@@ -93,15 +93,19 @@ function set_timezone() {
 
 function setup_leds() {
     header "Setting up the leds"
-    if [ $RPINAME = "B+" -o $RPINAME = "A+" -o $RPINAME = "PI2B" ] ; then
+#    if [ $RPINAME = "B+" -o $RPINAME = "A+" -o $RPINAME = "PI2B" -o $RPINAME = "PIZERO" ] ; then
 	echo "... activating LEDs - led0[green] = heartbeat, led1[red] off"
 	echo heartbeat > /sys/class/leds/led0/trigger # heartbeat on green LED
 	echo none      > /sys/class/leds/led1/trigger # turn off the red LED
-    else
-	echo "... don't know how to set LEDs on this hardware: $RPINAME"
-	ls -l /sys/class/leds/
-	echo "... please update github.com/solosystem/solo/utils.sh"
-    fi
+	if is_pizero; then
+	    echo "Detected we are on pizero, so inverting heartbeat on led0"
+	    echo 1 > /sys/class/leds/led0/invert # this is active opposite on pi0.
+	fi
+#    else
+#	echo "... don't know how to set LEDs on this hardware: $RPINAME"
+#	ls -l /sys/class/leds/
+#	echo "... please update github.com/solosystem/solo/utils.sh"
+#    fi
     footer "Setting up the leds"
 }
 
@@ -170,4 +174,38 @@ function enable_i2c() {
     printf "dtparam=i2c_arm=on\n" >> /boot/config.txt
     printf "\ndtoverlay=i2c-rtc,mcp7941x\n" >> /boot/config.txt
     footer "Enabling i2c in kernel"
+}
+
+# copied from: (but not confident even that is up to date - no mention of pi3.)
+# https://github.com/RPi-Distro/raspi-config/blob/master/raspi-config
+is_pione() {
+    if grep -q "^Revision\s*:\s*00[0-9a-fA-F][0-9a-fA-F]$" /proc/cpuinfo; then
+	return 0
+    elif  grep -q "^Revision\s*:\s*[ 123][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]0[0-36][0-9a-fA-F]$" /proc/cpuinfo ; then
+	return 0
+    else
+	return 1
+    fi
+}
+
+is_pitwo() {
+    grep -q "^Revision\s*:\s*[ 123][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]04[0-9a-fA-F]$" /proc/cpuinfo
+    return $?
+}
+
+is_pizero() {
+    grep -q "^Revision\s*:\s*[ 123][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]09[0-9a-fA-F]$" /proc/cpuinfo
+    return $?
+}
+
+get_pi_type() {
+    if is_pione; then
+	echo 1
+    elif is_pitwo; then
+	echo 2
+    elif is_pizero; then
+	echo 0
+    else
+	echo Unknown
+    fi
 }

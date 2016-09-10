@@ -85,6 +85,7 @@ cp /opt/solo/asoundrc /home/amon/.asoundrc    # copy asoundrc into amon's home
 mkdir /boot/solo/
 cp /opt/solo/boot/amon.conf /boot/solo/amon.conf    # need this on /boot partition
 cp /opt/solo/boot/solo.conf /boot/solo/solo.conf    # need this on /boot partition
+cp -prv /home/amon/calendar /mnt/solo/ # copy over all the calendar files from amon into /boot/
 chown -R amon.amon /home/amon
 chmod +x /home/amon/amon/amon # gosh - that's silly
 echo "PATH=$PATH:/home/amon/amon/" >> /home/amon/.bashrc

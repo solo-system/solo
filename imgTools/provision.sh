@@ -87,7 +87,7 @@ echo "Installing amon ..."
 cp /opt/solo/asoundrc /home/amon/.asoundrc    # copy asoundrc into amon's home
 mkdir -v /boot/solo/
 cp /opt/solo/boot/solo.conf /boot/solo/solo.conf # copy solo.conf into /boot/solo/
-cp -prv /home/amon/boot/* /boot/solo/ # copy amon's boot stuff into /boot/solo/
+cp -prv /home/amon/amon/boot/* /boot/solo/ # copy amon's boot stuff into /boot/solo/
 chown -R amon.amon /home/amon
 chmod +x /home/amon/amon/amon # gosh - that's silly
 echo "PATH=$PATH:/home/amon/amon/" >> /home/amon/.bashrc

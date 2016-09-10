@@ -10,6 +10,9 @@
 # Install base is : directory = /opt/solo/
 
 # log to console AND to logfile.
+# when run in the chroot, this gives error:
+# imgTools/provision.sh: line 13: /dev/fd/62: No such file or directory
+# something to do with /proc and /dev/ not having the right stdin/err/out things.
 exec > >(tee "/opt/solo/provision.log") 2>&1
 
 

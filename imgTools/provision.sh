@@ -82,10 +82,9 @@ chmod +x /opt/solo/solo-boot.sh /opt/solo/switchoff.py
 echo "Installing amon ..."
 ( cd /home/amon/ ; git clone https://github.com/solosystem/amon.git )
 cp /opt/solo/asoundrc /home/amon/.asoundrc    # copy asoundrc into amon's home
-mkdir /boot/solo/
-cp /opt/solo/boot/amon.conf /boot/solo/amon.conf    # need this on /boot partition
-cp /opt/solo/boot/solo.conf /boot/solo/solo.conf    # need this on /boot partition
-cp -prv /home/amon/calendar /mnt/solo/ # copy over all the calendar files from amon into /boot/
+mkdir -v /boot/solo/
+cp /opt/solo/boot/solo.conf /boot/solo/solo.conf # copy solo.conf into /boot/solo/
+cp -prv /home/amon/boot/* /boot/solo/ # copy amon's boot stuff into /boot/solo/
 chown -R amon.amon /home/amon
 chmod +x /home/amon/amon/amon # gosh - that's silly
 echo "PATH=$PATH:/home/amon/amon/" >> /home/amon/.bashrc

@@ -253,7 +253,7 @@ if [ "$DEBUG" = "yes" ] ; then
     echo "copy all debug: scp -prv $debug_dir jdmc2@t510j:solo-debug"
     echo "Done generating debug files - see $debug_dir"
 else
-    echo "DEBIG is not set, so not generating debug files"
+    echo "DEBUG is not set, so not generating debug files"
 fi
 
 # do this last cos we need to unmount /boot to label it.

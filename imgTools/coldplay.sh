@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# travis CI for solo - so it's called coldplay, coz they is both
-# famous pop bands in the hit parade.  innit?
+# travis CI for solo - so it's called coldplay
 
 if [ ! $1 ] ; then
     echo "Usage: coldplay.sh /dev/sdX"

@@ -6,7 +6,7 @@
 # it now optionally copies the data to somewhere too.
 
 if [ ! $1 ] ; then
-    echo "Usage: coldplay.sh /dev/sdX"
+    echo "Usage: coldplay.sh /dev/sdX [savedir]"
     exit -1
 fi
 dev=$1

@@ -17,7 +17,8 @@ mkdir $workdir
 pushd $workdir > /dev/null
 
 #cp /home/jdmc2/solo/foundation-images/2016-05-10-raspbian-jessie-lite.img ./copy.img
-cp /home/jdmc2/solo/foundation-images/2016-05-27-raspbian-jessie-lite.img ./copy.img
+#cp /home/jdmc2/solo/foundation-images/2016-05-27-raspbian-jessie-lite.img ./copy.img
+cp /home/jdmc2/solo/foundation-images/2016-09-23-raspbian-jessie-lite.img  ./copy.img
 
 echo "running: $bin/img-chroot.sh $bin/pre-provision.sh"
 

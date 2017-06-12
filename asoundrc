@@ -10,9 +10,28 @@ pcm.clachw {
 
 # The "plug" type does #channel and samplerate conversion on demand.
 pcm.clac {
-        type plug
+       type plug
         slave.pcm "clachw"
 
         # http://www.alsa-project.org/alsa-doc/alsa-lib/pcm_plugins.html
         route_policy copy
 }
+
+#######################################################
+# Support for the USB dongle: Sound Blaster Play 2
+
+pcm.soundblasterplayhw {
+    type hw
+    card S2
+    device 0
+}
+
+# The "plug" type does #channel and samplerate conversion on demand.
+pcm.soundblasterplay {
+        type plug
+        slave.pcm "soundblasterplayhw"
+
+        # http://www.alsa-project.org/alsa-doc/alsa-lib/pcm_plugins.html
+        route_policy copy
+}
+

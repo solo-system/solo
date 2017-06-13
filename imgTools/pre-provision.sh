@@ -22,9 +22,11 @@ echo
 echo "do a apt-get update and apt-get install -y git."
 apt-get update
 apt-get install -y git # needed for raspbian "lite" editions.
-echo "cloning github.com/solosystem/solo.git into /opt/"
+echo
+echo "Now cloning github.com/solosystem/solo.git into /opt/"
 cd /opt
-git clone https://github.com/solosystem/solo.git
+git clone http://github.com/solosystem/solo.git
+#git clone https://github.com/solosystem/solo.git
 cd solo
 chmod +x /opt/solo/imgTools/provision.sh
 echo "about to run imgTools/provision.sh..."

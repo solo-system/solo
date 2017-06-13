@@ -8,18 +8,18 @@ bin=/home/jdmc2/git/solo/imgTools
 daystamp=$(date +"%Y-%m-%d")
 stamp=$(date +"%Y-%m-%d.%H-%M-%S")
 workdir=/mnt/a/solo/dailyProvision/$stamp
-#workdir=/home/jdmc2/solo/chroot/dailyProvision/$stamp
+workdir=.
 
 echo "dailyProvision.sh: building an image at $stamp"
 echo "workdir: $workdir"
-mkdir $workdir
+mkdir -p $workdir
 
 pushd $workdir > /dev/null
 
 #cp /home/jdmc2/solo/foundation-images/2016-05-10-raspbian-jessie-lite.img ./copy.img
-#cp /home/jdmc2/solo/foundation-images/2016-05-27-raspbian-jessie-lite.img ./copy.img
+cp /home/jdmc2/solo/foundation-images/2016-05-27-raspbian-jessie-lite.img ./copy.img
 #cp /home/jdmc2/solo/foundation-images/2016-09-23-raspbian-jessie-lite.img ./copy.img
-cp /home/jdmc2/solo/foundation-images/2017-04-10-raspbian-jessie-lite.img ./copy.img
+#cp /home/jdmc2/solo/foundation-images/2017-04-10-raspbian-jessie-lite.img ./copy.img
 
 echo "running: $bin/img-chroot.sh $bin/pre-provision.sh"
 

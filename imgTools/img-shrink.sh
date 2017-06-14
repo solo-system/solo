@@ -120,10 +120,16 @@ log  "removing /dev/loop0"
 sudo losetup -d /dev/loop0
 
 log "done with all the stuff at fs level - now doing MBR/partition stuff..."
+
 log "Doing the partition table shrink..."
+log "BUG: if we hand fdisk a +XXX partition size for p2, it does less.  So we need to add"
+log ".... a bit on to compensate.  Currently (2017-06-14) we are adding 70 4-k blocks (560 halfk-blocks)."
+newsizehalfk2=$((newsizehalfk + 560))
+log " so rather than using $newsizehalfk, we're gonna use $newsizehalfk2"
+
 # now we want to resize the partition in the MBR
 # "delete partn,  2, new, 2, primary, rootoffset, +size, w"
-fcmd="d\n2\nn\np\n2\n$rootoffset\n+${newsizehalfk}\nw\n"
+fcmd="d\n2\nn\np\n2\n$rootoffset\n+${newsizehalfk2}\nw\n"
 echo "about to put this into fdisk: $fcmd..."
 echo -e $fcmd | fdisk $img
 
@@ -134,6 +140,11 @@ sudo fdisk -l $img
 # EXT4-fs (loop0): bad geometry: block count 285148 exceeds size of device (285147 blocks)
 # so add one 512k block - and that fixes it - Yay!
 # BUT then found another bug (months later), and this could be unnecessary now (haven't checked)
+# And now I am back again about a year after all that... (2017-06-14), and I get this:
+# EXT4-fs (loop0): bad geometry: block count 211782 exceeds size of device (211712 blocks)
+# Note that this took AGES to find (since I trusted shring-img and thought it was a kernel-not-booting issue).
+# This maths is 70 4-k blocks away from being correct (280kbytes = 560 half-k blocks off.) 
+
 
 log "now done with the MBR/partition table level stuff - now truncate the .img file"
 lastpartoffset=`fdisk -l $img | grep ${img}2 | awk '{print $3}';`

@@ -37,13 +37,11 @@ pcm.soundblasterplay {
 
 ############################################################
 # Support for: Creative Technology Ltd Sound Blaster Play! 3
-pcm.sbplay3hw {
-      type hw
-      card S3
-      device 0
-}
-pcm.sbplay3plug {
+#
+# This is the first one where the "hw" is embedded in the plug.
+
+pcm.S3plug {
       type plug
-      slave.pcm "sbplay3hw"
+      slave.pcm { type hw card S3 device 0 }
       route_policy copy
 }

@@ -35,3 +35,15 @@ pcm.soundblasterplay {
         route_policy copy
 }
 
+############################################################
+# Support for: Creative Technology Ltd Sound Blaster Play! 3
+pcm.sbplay3hw {
+      type hw
+      card S3
+      device 0
+}
+pcm.sbplay3plug {
+      type plug
+      slave.pcm "sbplay3hw"
+      route_policy copy
+}

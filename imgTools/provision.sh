@@ -40,7 +40,7 @@ fi
 source /opt/solo/utils.sh
 
 # check we have enough disk free... (in Mbytes)
-diskfree=`df -BM / | tail -1 | awk '{print $4}' | sed 's:M::g'`
+diskfree=`df -BM . | tail -1 | awk '{print $4}' | sed 's:M::g'`
 if [ $diskfree -lt 100 ] ; then
     df -h /
     echo "Error - not enough free disk space - exiting (try rm -rf /home/pi/Music)"
@@ -108,8 +108,10 @@ echo "Etc/UTC" > /etc/timezone
 dpkg-reconfigure -f noninteractive tzdata
 echo "Done doing raspi-config-like things."
 
-# definetly get rid of this
-apt-get -y purge fake-hwclock
+APTLOG=/opt/solo/apt-operations.log #probably better if I move this somewhere less visible
+
+# definetly get rid of fake-hwclock
+apt-get -y purge fake-hwclock > $APTLOG
 
 ### Package management:
 PURGE="fake-hwclock wolfram-engine xserver.* x11-.* xarchiver xauth xkb-data console-setup xinit lightdm lxde.* python-tk python3-tk scratch gtk.* libgtk.* openbox libxt.* lxpanel gnome.* libqt.* gvfs.* xdg-.* desktop.* freepats smbclient"
@@ -119,11 +121,11 @@ MIGHT_REGRET="libgl1-mesa-dri libflite1 libatlas3-base poppler-data fonts-freefo
 
 if [ $QPURGE = "yes" ] ; then
   echo "APT: purging unwanted packages..."
-  apt-get -y purge $PURGE 
-  apt-get -y purge $MIGHT_REGRET # no reason for different line...
-  apt-get --yes autoremove
-  apt-get --yes autoclean
-  apt-get --yes clean
+  apt-get -y purge $PURGE > $APTLOG
+  apt-get -y purge $MIGHT_REGRET > $APTLOG # no reason for different line...
+  apt-get --yes autoremove > $APTLOG
+  apt-get --yes autoclean > $APTLOG
+  apt-get --yes clean > $APTLOG
   echo "APT: Done purging unwanted packages..."
 else
   echo "NOT purging unwanted packages (since QPURGE is not yes)"
@@ -145,14 +147,14 @@ fi
 
 NEWPKGS="i2c-tools bootlogd ntpdate rdate exfat-utils"
 echo "APT: installing new packages: $NEWPKGS"
-apt-get update
+apt-get update > $APTLOG
 #apt-get -y upgrade
-apt-get -y install $NEWPKGS
+apt-get -y install $NEWPKGS > $APTLOG
 
 # rpi-update #dont do this as it might muck things up
-apt-get --yes autoremove
-apt-get --yes autoclean
-apt-get --yes clean
+apt-get --yes autoremove > $APTLOG
+apt-get --yes autoclean > $APTLOG
+apt-get --yes clean > $APTLOG
 echo "APT: done installing new packages..."
 echo
 

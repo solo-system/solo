@@ -1,19 +1,13 @@
-# .asoundrc for "amon"'s home directory.  
+### This file is part of Solo. (https://www.github.com/solo-system)
+###
+### .asoundrc for "amon"'s home directory.  
+### see: # http://www.alsa-project.org/alsa-doc/alsa-lib/pcm_plugins.html
 
-# CLAC - Cirrus Logic Audio Card.
-# the plug below needs this:
-pcm.clachw {
-    type hw
-    card sndrpiwsp
-    device 0
-}
-
-# The "plug" type does #channel and samplerate conversion on demand.
+######################################################
+# Support for the CLAC - Cirrus Logic Audio Card.
 pcm.clac {
-       type plug
-        slave.pcm "clachw"
-
-        # http://www.alsa-project.org/alsa-doc/alsa-lib/pcm_plugins.html
+	type plug
+        slave.pcm { type hw card RPiCirrus device 0 }
         route_policy copy
 }
 

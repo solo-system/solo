@@ -21,13 +21,23 @@ function logit() {
 function disable_auto_resize() {
     header "Disabling resize2fs in raspbian"
     echo "Changing /boot/cmdline.txt to remove init_resize.sh."
-    sed -i 's/ quiet init=.*$//' /boot/cmdline.txt
+#    sed -i 's/ quiet init=.*$//' /boot/cmdline.txt # this _used to be the way...
+    sed -i 's| init=/usr/lib/raspi-config/init_resize.sh||' /boot/cmdline.txt
+    
+    # note that the script appears to have gone, and the resize itself
+    # is now done inside the "fake init" script in
+    # /usr/lib/raspi-config/init_resize.sh.  so the resize2fs_once
+    # thing doesn't exist (I think).  I'm too scared to remove this,
+    # though, just in case.  (for example, the raspi-config
+    # interactive utility used to offer a resize option, and if it
+    # still does, I can't imagine they've duplicated the "expandfs"
+    # code to be in both places.)
     
     echo "updaterc.d - disabling resize2fs_once"
-    update-rc.d resize2fs_once remove
+    update-rc.d resize2fs_once remove  # probably fails, cos it wasn't there (try removing this line?)
     
     echo " And removing the resize script - just to be sure"
-    rm -f /etc/init.d/resize2fs_once
+    rm -f /etc/init.d/resize2fs_once   # same as above - try removing it?
 
     footer "Disabling resize2fs in raspbian"
 }

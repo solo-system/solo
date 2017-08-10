@@ -178,6 +178,9 @@ echo "CHANGED hwclock-set to run"
 
 enable_i2c
 
+# enable ssh after boot: (per raspban new policy 2017-08-10)
+touch /boot/ssh
+
 # setup software for Cirrus Logic Audio Card
 if [ $CLAC = "yes" ] ; then
     echo "Installing support for CLAC..."

@@ -3,7 +3,6 @@
 # This script automatically builds a SOSI from a raspbian.img
 # It's only ever been run by jdmc2.
 
-
 bin=/home/jdmc2/git/solo/imgTools
 PATH=$PATH:$bin
 
@@ -16,9 +15,10 @@ workdir=/mnt/a/solo/dailyProvision/$stamp
 
 # which version of raspbian to we base this SOSI from?
 #srcimg=/home/jdmc2/solo/foundation-images/2016-05-10-raspbian-jessie-lite.img
-srcimg=/home/jdmc2/solo/foundation-images/2016-05-27-raspbian-jessie-lite.img
+#PREVGOOD srcimg=/home/jdmc2/solo/foundation-images/2016-05-27-raspbian-jessie-lite.img
 #srcimg=/home/jdmc2/solo/foundation-images/2016-09-23-raspbian-jessie-lite.img
 #srcimg=/home/jdmc2/solo/foundation-images/2017-04-10-raspbian-jessie-lite.img
+srcimg=/home/jdmc2/solo/foundation-images/2017-07-05-raspbian-jessie-lite.img
 
 echo "dailyProvision.sh: building a SOSI image at $stamp"
 echo "workdir: $workdir"

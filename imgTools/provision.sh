@@ -50,6 +50,7 @@ fi
 
 # CLAC=unk
 CLAC=yes
+CLAC=no
 while [ $CLAC != "yes" -a $CLAC != "no" ] ; do
   echo "Include support for Cirrus Logic Audio Card?"
   read CLAC

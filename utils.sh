@@ -20,11 +20,12 @@ function logit() {
 # stop the resize done by raspbian (as of 2016-05-ish):
 function disable_auto_resize() {
     header "Disabling resize2fs in raspbian"
+
     echo "Changing /boot/cmdline.txt to remove init_resize.sh."
-#    sed -i 's/ quiet init=.*$//' /boot/cmdline.txt # this _used to be the way...
+    #    sed -i 's/ quiet init=.*$//' /boot/cmdline.txt # this _used to be the way...
     sed -i 's| init=/usr/lib/raspi-config/init_resize.sh||' /boot/cmdline.txt
     
-    # note that the script appears to have gone, and the resize itself
+    # note that the init.d/ script appears to have gone, and the resize itself
     # is now done inside the "fake init" script in
     # /usr/lib/raspi-config/init_resize.sh.  so the resize2fs_once
     # thing doesn't exist (I think).  I'm too scared to remove this,

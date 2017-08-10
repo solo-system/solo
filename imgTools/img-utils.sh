@@ -33,11 +33,15 @@ function mount_image() {
     p1offset=$(fdisk -l $img | grep ${img}1 | awk '{print $2}')
     p2offset=$(fdisk -l $img | grep ${img}2 | awk '{print $2}')
 
+    # updated 2017-08-10 - need #sectors now too, or mount complains of "overlapping loop device"
+    p1size=$(fdisk -l $img | grep ${img}1 | awk '{print $4}')
+    p2size=$(fdisk -l $img | grep ${img}2 | awk '{print $4}')
+    
     mkdir $dir
-    sudo mount $img -o ${mount_opts},offset=$((512*p2offset)) $dir/
-    sudo mount $img -o ${mount_opts},offset=$((512*p1offset)) $dir/boot/
-
-    echo "mount_image(): $img mounted on $dir with [p1,$p1offset] [p2,$p2offset], opts=$mount_opts"
+    sudo mount $img -o ${mount_opts},offset=$((512*p2offset)),sizelimit=$((512*p2size)) $dir/
+    sudo mount $img -o ${mount_opts},offset=$((512*p1offset)),sizelimit=$((512*p1size))  $dir/boot/
+    
+    echo "mount_image(): $img mounted on $dir with [p1,$p1offset,$p1size] [p2,$p2offset,$p2size], opts=$mount_opts"
     sleep 1 # let things settle (don't run umount_image immediately, it fails).
 }
 

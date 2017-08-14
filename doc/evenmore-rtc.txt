@@ -1,0 +1,72 @@
+2017-08-11
+----------
+[remember /boot/ssh for stock raspbian]
+
+Current strategy for clocks:
+Flash stock rapbian
+make 2 changes to config.txt (i2c_arm=on and dtoverlay=i2c-rtc,ds3231)
+Then:
+sudo apt-get -y purge fake-hwclock
+
+
+-------------------------------------------
+HW: to get /dev/rtc0 present:
+ - dtparam=i2c_arm=on (uncomment)
+ - dtoverlay=i2c-rtc,ds3231 (or dtoverlay=i2c-rtc,mcp7941x for piface-shim)
+ - haven't tested what happens if we do both.
+ 
+That's it for hardware
+---------------------------------------------
+
+---------------------------------------------------------------------------
+Software:
+---------
+
+Stock raspbian lite doesn use systemd-timesyncd to sync time.
+
+ - Fake-hwclock is still in use (creating /using /etc/fake-hwclock.data)
+ - confirmed by removing it, rebooting (no net), time correct, file returned.
+ - I am logged in over USB-serial.
+ - so disable fake-hwclock: apt-get purge fake-hwclock
+ - and confirmed it removed /etc/init.d/fake-hwclock and /sbin/fake-hwclock.
+ - and confirm with reboot
+ - yahoo - get 1970.
+
+At tis point we can run hwclock -r, and we see a time of Jan 2000
+
+
+
+Systemd investigations:
+-----------------------
+
+Look - timesyncd is disabled:
+systemctl is-enabled systemd-timesyncd
+
+unit files are in:
+/lib/systemd/system	- the original full unit files.
+/lib/systemd/           - the executables (ELFL systemd-timesyncd)
+
+But whether a service is enabled or not depends on the contents of the
+"wants" directories in: /etc/systemd/system.  I think this is how the
+"tree" of dependencies is built up within systemd.  Through symlinks.
+The "Wants" are got from the "install" sections of the unit files, so
+when you enable a service (via systemctl enable XXX) it checks that
+the unit files (which ones?) and plops the appropriate symlinks into
+the .wants directories.
+
+Note that "systemd-analyze critical-chain" prints the tree of startup jobs.
+
+systemd-analyze -h - for more options.
+systemd-analyze plot >  /tmp/b # is particularly good as it gives a svg plot (for browser)
+
+Note: dhcpcd takes  a long time, and its probably to do with this:
+pi@raspberrypi:/etc/systemd/system $ systemd-delta
+[EXTENDED]   /lib/systemd/system/dhcpcd.service → /etc/systemd/system/dhcpcd.service.d/wait.conf
+[EXTENDED]   /lib/systemd/system/rc-local.service → /etc/systemd/system/rc-local.service.d/ttyoutput.conf
+
+The wait.conf file for dhcpd overrides the normal behaviour to add
+"-w", which "waits for an address on each interface".  Dunno why
+raspbian people did this.  But it's not clock stuff so shouldn't be
+discussed here.
+
+more info about the /boot/ssh is in tbox/notes/systemd-cheatsheet.txt

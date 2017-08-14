@@ -7,7 +7,13 @@ Flash stock rapbian
 make 2 changes to config.txt (i2c_arm=on and dtoverlay=i2c-rtc,ds3231)
 Then:
 sudo apt-get -y purge fake-hwclock
+now system boots and has /dev/rtc0, but doesn't read the time.
+ So: todo:
+     1) sort out _reading_ hctosys on boot (and do it early).  See old method.
+     2) check booting with usb-network-dongle sets botht the time and the hwclock.
+        ... and now long that takes.
 
+     3) 
 
 -------------------------------------------
 HW: to get /dev/rtc0 present:

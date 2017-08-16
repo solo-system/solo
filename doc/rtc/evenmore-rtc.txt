@@ -1,19 +1,35 @@
 2017-08-11
 ----------
-[remember /boot/ssh for stock raspbian]
 
-Current strategy for clocks:
+Provision/install/boot-solo.sh should do this:
+
+From Raspian to SOSI:
 Flash stock rapbian
-make 2 changes to config.txt (i2c_arm=on and dtoverlay=i2c-rtc,ds3231)
-Then:
+touch /boot/ssh
+uncomment: dtparam=i2c_arm=on
+enable both clocks:
+ dtoverlay=i2c-rtc,ds3231
+ dtoverlay=i2c-rtc,mcp7941x
 sudo apt-get -y purge fake-hwclock
-now system boots and has /dev/rtc0, but doesn't read the time.
+
+AND WE GET:
+
+system boots and has /dev/rtc0, but doesn't read the time.
  So: todo:
      1) sort out _reading_ hctosys on boot (and do it early).  See old method.
      2) check booting with usb-network-dongle sets botht the time and the hwclock.
         ... and now long that takes.
 
-     3) 
+     3) /lib/udev/hwclock-set is what the current system now does.  It's called from udev, if we get rid of the exclusionary stanza:
+     sed -i "s:/run/systemd/system:/i/am/nonexistent:g"  /lib/udev/hwclock-set (done in the provision.sh)
+     So something, (udev, I guess) forces this file to run when /dev/rtc0 is created?  Or something?
+
+     NEWINFO:  udev takes action when enabling /dev/rtc0, it runs one of it's "rules" from /lib/udev/rules.d/85-hwclock.rules, which says to run KERNEL=="rtc0", RUN+="/lib/udev/hwclock-set $root/$name".  So /lib/udev/hwclock-set GETS RUN. And this sets the system clock from the hw clock.
+     And That's That.
+     more info probably from enabling more loggin in udev via /etc/udev/udev.conf (err,info,debug)
+     
+
+
 
 -------------------------------------------
 HW: to get /dev/rtc0 present:
@@ -42,8 +58,8 @@ At tis point we can run hwclock -r, and we see a time of Jan 2000
 
 
 
-Systemd investigations:
------------------------
+Systemd investigations (written on 2017-08-16):
+-----------------------------------------------
 
 Look - timesyncd is disabled:
 systemctl is-enabled systemd-timesyncd
@@ -63,7 +79,7 @@ the .wants directories.
 Note that "systemd-analyze critical-chain" prints the tree of startup jobs.
 
 systemd-analyze -h - for more options.
-systemd-analyze plot >  /tmp/b # is particularly good as it gives a svg plot (for browser)
+systemd-analyze plot >  /tmp/b.svg # is particularly good as it gives a svg plot (for browser)
 
 Note: dhcpcd takes  a long time, and its probably to do with this:
 pi@raspberrypi:/etc/systemd/system $ systemd-delta

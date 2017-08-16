@@ -103,13 +103,6 @@ first-boot:  OK (current implementation).  But lacks flexibility of enabling/dis
 provision: No - far too early - don't want crontabs running during install process.
 best is a service based management of all this - using updstar/systemd etc... but leave for now since in flux.
 
-RTC should be enabled before it is.  Do things earlier in boot process
-than we do currently: eg RTC setup.  Wait for raspbian to move to
-systemd (?) - debian does it soon (does that matter - does raspbian
-flow from debian in that way...)
-
-How can we set RTC.
-
 Change /etc/fstab to have proper numbers in columns 5,6 for fsck
 
 /etc/hosts contains a copy of system hostname - ensure we update/set it when we set hostname
@@ -124,8 +117,6 @@ way.  What are the sample rates - does the new alsa-utils
 
 Support audio input dongles. (see recent german article on audio boards for rpi).
 
-bluetooth networking for configuration?  Or setting rtc?  Or webconfig page?
-
 A general API for configuration?
 
 Clacker: it was fragile but did work.  How to do more complex
@@ -136,9 +127,6 @@ playback system with nice interface.
 Refactor switchoff.sh script as GPIOhandler.py/sh and make it interrupt driven so we can have better responsiveness.
 
 What should be done with GPU_split ? in /boot/config.txt
-
-# TODO: should be cleverer in reading hwclock. If < 2014, don't set sys time.
-# also - if `date` is already >=2014, then must be networked - so SET rtc from sys 
 
 =========================================================
 Networking - wirelessly:

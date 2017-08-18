@@ -85,9 +85,12 @@ sed -i "s/127.0.1.1.*$CURRENT_HOSTNAME/127.0.1.1\t$NEW_HOSTNAME/g" /etc/hosts
 
 echo 
 echo "Setting timezone to Etc/UTC - it will be overridden in solo.conf with SOLO_TZ)"
-echo "Etc/UTC" > /etc/timezone
-dpkg-reconfigure -f noninteractive tzdata
-echo "Done doing raspi-config-like things."
+#echo "Etc/UTC" > /etc/timezone
+#dpkg-reconfigure -f noninteractive tzdata
+#echo "Done doing raspi-config-like things."
+
+ln -fs /usr/share/zoneinfo/Etc/UTC /etc/localtime
+dpkg-reconfigure --frontend noninteractive tzdata
 
 
 ### Package management:
@@ -171,6 +174,9 @@ echo  "Done: Enabling i2c in kernel"
 # enable ssh after boot: (per raspban new policy 2017-08-10)
 # still needed on (first stretch) img: 2017-08-16-raspbian-stretch-lite.img)
 touch /boot/ssh
+
+# speed up boot -> don't wait for a dhcpd address:
+rm -fv /etc/systemd/system/dhcpcd.service.d/wait.conf
 
 # setup software for Cirrus Logic Audio Card
 if [ $CLAC = "yes" ] ; then

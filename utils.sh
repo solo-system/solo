@@ -76,19 +76,20 @@ function add_user() {
 
 
 function _really_set_timezone() {
-    echo "... setting /etc/timezone to new tz: $1... "
-    echo $1 > /etc/timezone
-    echo "... and updating system via dpdk-reconfigure tzdata..."
-    dpkg-reconfigure -f noninteractive tzdata
-    echo "... done."
+    echo "... setting timezone to tz: \"$1\" "
+    if [ -f /usr/share/zoneinfo/$1 ] ; then
+	ln -fs /usr/share/zoneinfo/$1 /etc/localtime
+	dpkg-reconfigure --frontend noninteractive tzdata
+    else
+	echo "Timezone not recognised: \"$1\""
+    fi
+
 }
 
 function set_timezone() {
-    header "Setting the timezone"
-    SYS_TZ=$(cat /etc/timezone)
-    echo "... current /etc/timezone is set to $SYS_TZ"
+    header "Setting the timezone ..."
     if [ -n "$SOLO_TZ" ] ; then
-	echo "... SOLO_TZ is set to $SOLO_TZ (in solo.conf)"
+	echo "... solo.conf wants timezone: SOLO_TZ=\"$SOLO_TZ\""
 	if [ "$SOLO_TZ" != "SYS_TZ" ] ; then
 	    _really_set_timezone $SOLO_TZ
 	else
@@ -98,6 +99,7 @@ function set_timezone() {
 	echo "... SOLO_TZ not set in solo.conf so setting timezone to Europe/London..."
 	_really_set_timezone "Europe/London"
     fi
+    cat /etc/timezone
     footer "Setting the timezone"
 }
 
@@ -107,10 +109,10 @@ function setup_leds() {
     echo "... activating LEDs - led0[green] = heartbeat, led1[red] off"
     echo heartbeat > /sys/class/leds/led0/trigger # heartbeat on green LED
     echo none      > /sys/class/leds/led1/trigger # turn off the red LED
-    if is_pizero; then
-	echo "Detected we are on pizero, so inverting heartbeat on led0"
-	echo 1 > /sys/class/leds/led0/invert # this is active opposite on pi0.
-    fi
+#    if is_pizero; then
+#	echo "Detected we are on pizero, so inverting heartbeat on led0"
+#	echo 1 > /sys/class/leds/led0/invert # this is active opposite on pi0.
+#    fi
     footer "Setting up the leds"
 }
 

@@ -17,61 +17,12 @@ source /opt/solo/utils.sh
 
 REV=$(grep Revision /proc/cpuinfo  | awk '{print $3}')
 
-#case $REV in
-
-#    0002 | 0003 | 0004 | 0005 | 0006)
-#        echo "... rev is $REV: hardware is version 2,3,4,5,6 - model B with 256M RAM"
-#         RPINAME="B"
-#         ;;
-
-#     0007 | 0008 | 0009)
-#         echo "... rev is $REV: hardware is version 7,8,9 = model A with 256M RAM"
-# 	RPINAME="A"
-# 	;;
-
-#     000d | 000e | 000f)
-#         echo "... rev is $REV: hardware is version d,e,f = model B with 512M RAM"
-# 	RPINAME="B"
-#         ;;
-
-#     0010)
-#         echo "... rev is $REV: hardware is version 10 = model B+ with 512M RAM"
-# 	RPINAME="B+"
-#         ;;
-
-#     0011)
-#         echo "... rev is $REV: hardware is version 11 = compute module"
-# 	echo "... Hardware Not Supported - I wonder what will happen."
-# 	RPINAME="CM"
-#         ;;
-
-#     0012 | 0015)
-#         echo "... rev is $REV: hardware is version 12 = model A+ with 256M RAM"
-# 	RPINAME="A+"
-# 	;;
-
-#     a01041 | a21041)
-# 	echo "... rev is $REV: hardware is pi2 B with 1G RAM"
-# 	RPINAME="PI2B"
-# 	;;
-
-#     a02082)
-# 	echo "... rev is $REV: hardware is pi3 B with 1G RAM"
-# 	RPINAME="PI3B"
-# 	;;
-
-#     *)
-# 	echo "... rev is $REV: hardware NOT RECOGNISED (please update solo-boot.sh)"
-# 	echo "... ASSUMING hardware is pi2"
-# 	RPINAME="PI2B"
-# 	;;
-# esac
 
 KRNL=$(uname -r | cut -f1,2 -d'.')
 FULL_KERNEL=$(uname -r)
 
 # do we have a CLAC installed?
-if grep sndrpiwsp /proc/asound/cards > /dev/null ; then
+if grep RPiCirrus /proc/asound/cards > /dev/null ; then
     CLAC=yes
 else
     CLAC=no

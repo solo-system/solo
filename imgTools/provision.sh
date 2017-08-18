@@ -1,30 +1,19 @@
 #!/bin/bash
 
 # provision.sh: turn a stock raspbian img into a bootable "Solo
-# Software Image".  see raspi-install.txt for more info.
+# Software Image".
+
+# This used to be run directly on hardware, but is now done in a
+# chroot.
 
 # Notes:
 # There should be NO mention of p3 here. It doesn't exist
-# Anything needing internet access must be done here.
-# Anything slow should be done too
-# Install base is : directory = /opt/solo/
 
 # log to console AND to logfile.
 # when run in the chroot, this gives error:
 # imgTools/provision.sh: line 13: /dev/fd/62: No such file or directory
 # something to do with /proc and /dev/ not having the right stdin/err/out things.
-exec > >(tee "/opt/solo/provision.log") 2>&1
-
-
-echo
-echo "------------------------------------------------"
-echo " Welcome to the provisioner. Running at $(date)"
-echo " This is run by hand on a freshly installed SBC"
-echo " to add solo functionality."
-echo " See accompanying raspi-install.txt for more"
-echo " exec'd so log is kept in /opt/solo/provision.log"
-echo "------------------------------------------------"
-echo
+#exec > >(tee "/opt/solo/provision.log") 2>&1
 
 if [ "$USER" != "root" ] ; then
     echo
@@ -40,45 +29,35 @@ fi
 source /opt/solo/utils.sh
 
 # check we have enough disk free... (in Mbytes)
-diskfree=`df -BM . | tail -1 | awk '{print $4}' | sed 's:M::g'`
-if [ $diskfree -lt 100 ] ; then
-    df -h /
-    echo "Error - not enough free disk space - exiting (try rm -rf /home/pi/Music)"
-    exit -1
-fi
+#diskfree=`df -BM . | tail -1 | awk '{print $4}' | sed 's:M::g'`
+#if [ $diskfree -lt 100 ] ; then
+#    df -h /
+#    echo "Error - not enough free disk space - exiting (try rm -rf /home/pi/Music)"
+#    exit -1
+#fi
 
 
 # CLAC=unk
 CLAC=yes
 #CLAC=no
-while [ $CLAC != "yes" -a $CLAC != "no" ] ; do
-  echo "Include support for Cirrus Logic Audio Card?"
-  read CLAC
-done
+if [ $CLAC != "yes" -a $CLAC != "no" ] ; then
+  echo "provision.sh: ERROR: CLAC must be yes or no - bailing out"
+  exit -1
+fi
 
 # QPURGE=unk
 QPURGE=yes
 QPURGE=no
-while [ $QPURGE != "yes" -a $QPURGE != "no" ] ; do
-  echo "Minimize img size by purging unnecessary packages? (slower)"
-  read QPURGE
-done
-echo "PURGE is $QPURGE"
+if [ $QPURGE != "yes" -a $QPURGE != "no" ] ; then
+  echo "provision.sh: ERROR: QPURGE must be yes or no - bailing out."
+  exit -1
+fi
 
 echo "====================================================================="
 echo "Provisioner is about to install solo with purge=$QPURGE and CLAC=$CLAC"
-echo " *** Press return to continue ..."
-# read a
-echo "And we're off..."
-echo " -----------------------------------"
-echo " -----------------------------------"
-echo " GO AWAY - I can do the rest myself."
-echo " -----------------------------------"
-echo " -----------------------------------"
-
+echo "====================================================================="
 
 add_user # add user amon, add to groups, enable sudo
-
 
 ### Download and Install our code:
 echo 
@@ -110,10 +89,6 @@ echo "Etc/UTC" > /etc/timezone
 dpkg-reconfigure -f noninteractive tzdata
 echo "Done doing raspi-config-like things."
 
-APTLOG=/opt/solo/apt-operations.log #probably better if I move this somewhere less visible
-
-# definetly get rid of fake-hwclock
-apt-get -y purge fake-hwclock > $APTLOG
 
 ### Package management:
 PURGE="fake-hwclock wolfram-engine xserver.* x11-.* xarchiver xauth xkb-data console-setup xinit lightdm lxde.* python-tk python3-tk scratch gtk.* libgtk.* openbox libxt.* lxpanel gnome.* libqt.* gvfs.* xdg-.* desktop.* freepats smbclient"
@@ -123,15 +98,14 @@ MIGHT_REGRET="libgl1-mesa-dri libflite1 libatlas3-base poppler-data fonts-freefo
 
 if [ $QPURGE = "yes" ] ; then
   echo "APT: purging unwanted packages..."
-  apt-get -y purge $PURGE > $APTLOG
-  apt-get -y purge $MIGHT_REGRET > $APTLOG # no reason for different line...
-  apt-get --yes autoremove > $APTLOG
-  apt-get --yes autoclean > $APTLOG
-  apt-get --yes clean > $APTLOG
+  apt-get -y purge $PURGE
+  apt-get -y purge $MIGHT_REGRET
+  apt-get --yes autoremove
+  apt-get --yes autoclean 
+  apt-get --yes clean
   echo "APT: Done purging unwanted packages..."
 else
   echo "NOT purging unwanted packages (since QPURGE is not yes)"
-  #echo "Instead, installing emacs"
   #apt-get -y install emacs23-nox # ARGH this costs 60Mb.
 fi
 
@@ -147,16 +121,19 @@ fi
 
 # need exfat-utils for doslabel command below (not needed on solo, just to rename the partition in the img)
 
-NEWPKGS="i2c-tools bootlogd ntpdate rdate exfat-utils"
+# definetly get rid of fake-hwclock
+apt-get -y purge fake-hwclock
+
+NEWPKGS="ntp i2c-tools bootlogd ntpdate rdate exfat-utils"
 echo "APT: installing new packages: $NEWPKGS"
-apt-get update > $APTLOG
+apt-get update 
 #apt-get -y upgrade
-apt-get -y install $NEWPKGS > $APTLOG
+apt-get -y install $NEWPKGS
 
 # rpi-update #dont do this as it might muck things up
-apt-get --yes autoremove > $APTLOG
-apt-get --yes autoclean > $APTLOG
-apt-get --yes clean > $APTLOG
+apt-get --yes autoremove
+apt-get --yes autoclean
+apt-get --yes clean
 echo "APT: done installing new packages..."
 echo
 
@@ -167,18 +144,32 @@ chmod +x /opt/solo/solo-boot.sh
 echo "Done updating rc.local"
 echo
 
-# setup_rtc - don't need this any more (if we bring it bac, call it provision_rtc())
-
-# enable udef to set the clock at boot time
+# enable udev to set the clock at boot time, when /dev/rtc0 comes to life:
 sed -i "s:/run/systemd/system:/i/am/nonexistent:g"  /lib/udev/hwclock-set
 
-echo "CHANGED hwclock-set to run"
-cat /lib/udev/hwclock-set
-echo "CHANGED hwclock-set to run"
+#echo "CHANGED hwclock-set to run"
+#cat /lib/udev/hwclock-set
+#echo "CHANGED hwclock-set to run"
 
-enable_i2c
+
+echo  "Enabling i2c in kernel"
+
+printf "# lines added by solo's provision.sh:\n" >> /boot/config.txt
+
+echo "... adding dtparm=i2c_arm=on to /boot/config.txt"
+printf "dtparam=i2c_arm=on\n" >> /boot/config.txt
+
+echo "... adding dtoverlay=i2c-rtc,ds3231 to /boot/config.txt"
+printf "\ndtoverlay=i2c-rtc,ds3231\n" >> /boot/config.txt
+
+echo "... adding dtoverlay=i2c-rtc,mcp7941x to /boot/config.txt"
+printf "\ndtoverlay=i2c-rtc,mcp7941x\n" >> /boot/config.txt
+
+echo  "Done: Enabling i2c in kernel"
+
 
 # enable ssh after boot: (per raspban new policy 2017-08-10)
+# still needed on (first stretch) img: 2017-08-16-raspbian-stretch-lite.img)
 touch /boot/ssh
 
 # setup software for Cirrus Logic Audio Card
@@ -213,9 +204,6 @@ echo
 if [ $QPURGE = "yes" ] ; then
     echo "About to purge if required:"
 
-    ### Remove clutter, sync and exit.
-    rm -f /home/amon/pistore.desktop
-
     # this one is quite aggressive...
     find  /var/log -type f -delete 
     
@@ -223,15 +211,6 @@ if [ $QPURGE = "yes" ] ; then
 
     ### Experimental removes - added 2015-02-10 by jdmc2.
     rm -rf /usr/share/{icons,doc,share,scratch,midi,fonts}
-    
-    ### Cirrus logic put example flac files in /home/pi - purge them
-    rm -rf /home/pi/*.flac 
-
-    ### python games in /home/pi should go too:
-    rm -rf /home/pi/python_games 
-
-    ### and Music folder 
-    rm -rf /home/pi/Music
     
     ### an example video:
     rm -rf /opt/vc/src/hello_pi/hello_video/test.h264
@@ -245,6 +224,9 @@ if [ $QPURGE = "yes" ] ; then
 else
     echo "Not purging"
 fi
+
+# turn this on (2017-08-18)
+DEBUG=yes
 
 if [ "$DEBUG" = "yes" ] ; then
     echo "Generating some debug files..."
@@ -285,10 +267,6 @@ echo
 echo
 echo "----------------------------------------------------------"
 echo " provision.sh finished successfully."
-echo " # poweroff"
-echo " then carry this SD card to PC and:"
-echo " sudo dd bs=512 count=XXXX if=/dev/sdX of=solo-fdate-bloated.img ; sync"
-echo " where the count=XXX you can get from fdisk -l"
 echo "----------------------------------------------------------"
 echo
 

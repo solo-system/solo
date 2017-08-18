@@ -1,5 +1,20 @@
+2017-08-18
+----------
+
+There is yet another raspbian release.  Based on Stretch. Need to
+ensure systemd still doesn't use timedatectl / rsynctimed to do ntp
+stuff, and still has /etc/init.d/ntp enabled.
+
+so we need to install ntp during provision.  This (through an override in systemd - see systemd-analyse delta) disables systemd-timesyncd).
+
+
+
+
 2017-08-11
 ----------
+
+
+
 
 Provision/install/boot-solo.sh should do this:
 

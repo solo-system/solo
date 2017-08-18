@@ -154,16 +154,16 @@ sed -i "s:/run/systemd/system:/i/am/nonexistent:g"  /lib/udev/hwclock-set
 
 echo  "Enabling i2c in kernel"
 
-printf "# lines added by solo's provision.sh:\n" >> /boot/config.txt
+printf "\n# lines added by solo's provision.sh:\n" >> /boot/config.txt
 
 echo "... adding dtparm=i2c_arm=on to /boot/config.txt"
 printf "dtparam=i2c_arm=on\n" >> /boot/config.txt
 
 echo "... adding dtoverlay=i2c-rtc,ds3231 to /boot/config.txt"
-printf "\ndtoverlay=i2c-rtc,ds3231\n" >> /boot/config.txt
+printf "dtoverlay=i2c-rtc,ds3231\n" >> /boot/config.txt
 
 echo "... adding dtoverlay=i2c-rtc,mcp7941x to /boot/config.txt"
-printf "\ndtoverlay=i2c-rtc,mcp7941x\n" >> /boot/config.txt
+printf "dtoverlay=i2c-rtc,mcp7941x\n" >> /boot/config.txt
 
 echo  "Done: Enabling i2c in kernel"
 

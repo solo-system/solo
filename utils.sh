@@ -64,7 +64,7 @@ function minimize_power() {
 function add_user() {
     header "Adding users"
     echo "... adding user amon..."
-    useradd -m amon
+    useradd -m amon -s /bin/bash
     echo "... setting password"
     echo "amon:amon" | chpasswd
     echo "... adding amon to groups"

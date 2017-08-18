@@ -18,7 +18,8 @@ workdir=/mnt/a/solo/dailyProvision/$stamp
 #PREVGOOD srcimg=/home/jdmc2/solo/foundation-images/2016-05-27-raspbian-jessie-lite.img
 #srcimg=/home/jdmc2/solo/foundation-images/2016-09-23-raspbian-jessie-lite.img
 #srcimg=/home/jdmc2/solo/foundation-images/2017-04-10-raspbian-jessie-lite.img
-srcimg=/home/jdmc2/solo/foundation-images/2017-07-05-raspbian-jessie-lite.img
+#srcimg=/home/jdmc2/solo/foundation-images/2017-07-05-raspbian-jessie-lite.img
+srcimg=/home/jdmc2/solo/foundation-images/2017-08-16-raspbian-stretch-lite.img
 
 echo "dailyProvision.sh: building a SOSI image at $stamp"
 echo "workdir: $workdir"

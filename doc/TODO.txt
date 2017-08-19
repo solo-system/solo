@@ -1,3 +1,90 @@
+2017-08-19
+----------
+
+TODO's for imminent release
+For the dailyBuild:
+- code cleanups    
+- minimize, debug off. (do this work in slimdown.sh)
+- move asoundrc from solo into amon repo.
+- write a make install for amon.
+  Sudo make install (like a debian package!):
+    - copy all to amon/amon
+    - make amon user
+    - add to groups...
+    - move asoundrc into the right place.
+    - turn on purge
+    - go through big packages (use img-mount / img-chroot).
+    - add watchdog(if uptime < 10 exit) function. what's called en route?
+    - crontab.log has spillover from amix calls?    
+
+
+---------------------------------------------------------------------------
+TESTING:
+--------
+--------
+
+> Networked tests of soundcards with testrec:
+1) CLAC with (line in, dmic, stereo, 192000, various gains).
+2) SB2 with (16000/48000, stereo (not sup), various gains).
+3) SB3 with (16000/48000, stereo (supported), 
+
+
+> Clock testing rig:
+A+ with CLAC and shim.
+A+ with SB? and shim in timezone Pacific/Hawaii (or something).
+A+ with SB? and DS3231
+zero with clac and shim (flashing correct?)
+zero with SB? and shim
+zero with SB? and DS3231
+PiB+ ...
+Pi2 ...
+Pi3 ...
+zerow (do I have one?)
+
+> Finalised Testing rigs:
+CLAC:  Various runs 
+A+ with dodotronic (don't care about clock)
+B+ with dodotronic (don't care aobut clock)
+pi2/3 with dodotronic (don't care about clock)
+pizero with dodotronic (don't care about clock)
+
+
+---------------------------------------------------------------------------
+
+Other soundcards to support: (from /lib/modules sound support):
+---------------------------------------------------------------------------
+amon@solo:/lib/modules/4.9.35+/kernel/sound/soc/bcm $ ls -ltar
+total 352
+-rw-r--r-- 1 root root  8140 Jul  3 11:07 snd-soc-rpi-proto.ko
+-rw-r--r-- 1 root root  7484 Jul  3 11:07 snd-soc-rpi-dac.ko
+-rw-r--r-- 1 root root 23040 Jul  3 11:07 snd-soc-rpi-cirrus.ko
+-rw-r--r-- 1 root root  9260 Jul  3 11:07 snd-soc-raspidac3.ko
+-rw-r--r-- 1 root root 25200 Jul  3 11:07 snd-soc-pisound.ko
+-rw-r--r-- 1 root root  9008 Jul  3 11:07 snd-soc-justboom-digi.ko
+-rw-r--r-- 1 root root  9060 Jul  3 11:07 snd-soc-justboom-dac.ko
+-rw-r--r-- 1 root root 10140 Jul  3 11:07 snd-soc-iqaudio-digi.ko
+-rw-r--r-- 1 root root 10496 Jul  3 11:07 snd-soc-iqaudio-dac.ko
+-rw-r--r-- 1 root root 10652 Jul  3 11:07 snd-soc-hifiberry-digi.ko
+-rw-r--r-- 1 root root 11240 Jul  3 11:07 snd-soc-hifiberry-dacplus.ko
+-rw-r--r-- 1 root root  7852 Jul  3 11:07 snd-soc-hifiberry-dac.ko
+-rw-r--r-- 1 root root  7672 Jul  3 11:07 snd-soc-hifiberry-amp.ko
+-rw-r--r-- 1 root root  8064 Jul  3 11:07 snd-soc-googlevoicehat-soundcard.ko
+-rw-r--r-- 1 root root  9584 Jul  3 11:07 snd-soc-googlevoicehat-codec.ko
+-rw-r--r-- 1 root root  8356 Jul  3 11:07 snd-soc-fe-pi-audio.ko
+-rw-r--r-- 1 root root  8468 Jul  3 11:07 snd-soc-dionaudio-loco-v2.ko
+-rw-r--r-- 1 root root  7696 Jul  3 11:07 snd-soc-dionaudio-loco.ko
+-rw-r--r-- 1 root root 15708 Jul  3 11:07 snd-soc-digidac1-soundcard.ko
+-rw-r--r-- 1 root root 13032 Jul  3 11:07 snd-soc-bcm2835-i2s.ko
+-rw-r--r-- 1 root root  9940 Jul  3 11:07 snd-soc-audioinjector-pi-soundcard.ko
+-rw-r--r-- 1 root root 12872 Jul  3 11:07 snd-soc-audioinjector-octo-soundcard.ko
+-rw-r--r-- 1 root root 17224 Jul  3 11:07 snd-soc-allo-piano-dac-plus.ko
+-rw-r--r-- 1 root root  8384 Jul  3 11:07 snd-soc-allo-piano-dac.ko
+-rw-r--r-- 1 root root 10372 Jul  3 11:07 snd-soc-allo-digione.ko
+-rw-r--r-- 1 root root 12280 Jul  3 11:07 snd-soc-allo-boss-dac.ko
+-rw-r--r-- 1 root root  7540 Jul  3 11:07 snd-soc-adau1977-adc.ko
+---------------------------------------------------------------------------
+
+
 just got this whilst mounting a filled sdcard on linux:
 [388016.533423] FAT-fs (sdd3): utf8 is not a recommended IO charset for FAT filesystems, filesystem will be case sensitive!
 The mkfs.fat line in solo-boot/FIRSTBOOT should probably be changed.  

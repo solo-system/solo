@@ -12,10 +12,6 @@ so we need to install ntp during provision.  This (through an override in system
 
 2017-08-11
 ----------
-
-
-
-
 Provision/install/boot-solo.sh should do this:
 
 From Raspian to SOSI:
@@ -107,3 +103,5 @@ raspbian people did this.  But it's not clock stuff so shouldn't be
 discussed here.
 
 more info about the /boot/ssh is in tbox/notes/systemd-cheatsheet.txt
+
+Note: systemd keeps it's "time cache" in /var/lib/systemd/clock

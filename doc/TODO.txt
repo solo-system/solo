@@ -14,9 +14,22 @@ For the dailyBuild:
     - move asoundrc into the right place.
     - turn on purge
     - go through big packages (use img-mount / img-chroot).
-    - add watchdog(if uptime < 10 exit) function. what's called en route?
+    - add (top of amon.sh - not watchdog).watchdog(if uptime < 10 exit) function. what's called en route?
     - crontab.log has spillover from amix calls?    
 
+- grep for TODO in all code (defs.sh in particular)
+
+-----------
+defs.sh: line 431: /mnt/sdcard/amondata/logs/amon.log: No such file or directory
+    defs.sh: line 431: /mnt/sdcard/amondata/logs/amon.log: No such file or directory
+    cat: /mnt/sdcard/amondata/logs/arecord.pid: No such file or directory
+    '/mnt/sdcard/amondata/logs/arecord.log' -> '/mnt/sdcard/amondata/logs/old/arecord-2016-11-03_17-18-01.log'
+    Simple mixer control 'Mic',0
+      Capabilities: cvolume cvolume-joined cswitch cswitch-joined
+        Capture channels: Mono
+      	  Limits: Capture 0 - 40
+            Mono: Capture 20 [50%] [0.00dB] [on]
+----------------	
 
 ---------------------------------------------------------------------------
 TESTING:
@@ -30,6 +43,7 @@ TESTING:
 
 
 > Clock testing rig:
+Any pi with NO clock and NO network, should boot to 1970.  GOOD CHECK.
 A+ with CLAC and shim.
 A+ with SB? and shim in timezone Pacific/Hawaii (or something).
 A+ with SB? and DS3231

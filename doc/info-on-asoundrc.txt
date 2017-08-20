@@ -1,0 +1,40 @@
+2017-08-19 locating alsa's config files
+---------------------------------------
+
+motivation: I don't want asoundrc to be in the solo.git repo, but rather the amon.git repo.
+Moreover I don't want it in "amon"'s home dir as .asoundrc.  I want it in a system place.
+
+read this:
+----------
+
+https://www.alsa-project.org/main/index.php/Asoundrc
+[ and probably this: http://www.volkerschatz.com/noise/alsa.html ]
+[ and possibly this: http://alsa.opensrc.org/Asoundrc ]
+
+/usr/share/alsa/alsa.conf   <---- main entry point (includes all others)
+includes various configs from /usr/share/alsa/alsa.conf.d/*.conf]
+includes /etc/asound.conf
+~/.asoundrc
+
+/usr/share/alsa/alsa.conf.d/*.conf
+
+-> so try this - call it alsa-solo.conf
+chmod a+r it, (so alsalib can actually read it).
+
+....  Better - we should split up the asoundrc we have into a set of separate ones, one per microphone.  But perhaps do that later, first...
+
+do a testrec test with
+1) asoundrc in normal place in /home/amon/.asoundrc
+2) move this file to tmp place
+3) check the testrec fails.
+4) move it to /usr/share/alsa/alsa.conf.d/alsa-solo.conf
+5) check the testrec works again.
+6) Done - so...
+- cp asoundrc file from solo.git to amon.git repo, and commit it.
+- find the thing that installs amon (provision.sh, I hope)
+- find the thing (in solo.git?) that installs the asoundrc file.
+- change it to install in /usr/share/alsa/alsa.conf.d/alsa-solo.conf
+- git commit push github
+- dailyBuild.sh
+- boot and test it out.
+

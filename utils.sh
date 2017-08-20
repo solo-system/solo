@@ -121,8 +121,9 @@ function setup_leds() {
 function setup_rtc_udev() {
     header "Setting up the RTC clock to use udev and systemd"
 
-    echo "enabling ntp time sync"
-    timedatectl set-ntp 1
+    #echo "enabling ntp time sync"
+    #timedatectl set-ntp 1  # turn this off 2017-08-20
+    echo "doing nothing for rtc setup."
     
     #    echo "" >> /boot/config.txt
     #    echo "dtoverlay=i2c-rtc,mcp7941x" >> /boot/config.txt

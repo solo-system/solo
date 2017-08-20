@@ -18,6 +18,8 @@ For the dailyBuild:
     - crontab.log has spillover from amix calls?    
 
 - grep for TODO in all code (defs.sh in particular)
+- clear out all of /var/log/
+- clear out cirrus-ng-scripts.tgz (wherever they live)
 
 -----------
 defs.sh: line 431: /mnt/sdcard/amondata/logs/amon.log: No such file or directory

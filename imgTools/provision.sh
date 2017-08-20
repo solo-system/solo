@@ -57,21 +57,30 @@ echo "====================================================================="
 echo "Provisioner is about to install solo with purge=$QPURGE and CLAC=$CLAC"
 echo "====================================================================="
 
-add_user # add user amon, add to groups, enable sudo
 
 ### Download and Install our code:
-echo 
-echo "Preparing our boot scripts"
-chmod +x /opt/solo/solo-boot.sh /opt/solo/switchoff.py
-echo "Installing amon ..."
-( cd /home/amon/ ; git clone https://github.com/solosystem/amon.git )
-cp /opt/solo/asoundrc /home/amon/.asoundrc    # copy asoundrc into amon's home
+echo "Moving items from solo.git into correct places..."
+echo "... Preparing our boot scripts (ensure /opt/solo/solo-boot.sh is executable)"
+chmod +x /opt/solo/solo-boot.sh
+echo "... making directory /boot/solo/"
 mkdir -v /boot/solo/
-cp /opt/solo/boot/solo.conf /boot/solo/solo.conf # copy solo.conf into /boot/solo/
-cp -prv /home/amon/amon/boot/* /boot/solo/ # copy amon's boot stuff into /boot/solo/
-chown -R amon.amon /home/amon
-chmod +x /home/amon/amon/amon # gosh - that's silly
-echo "PATH=$PATH:/home/amon/amon/" >> /home/amon/.bashrc
+echo "... Copying /opt/solo/boot/solo.conf into the /boot/solo/solo.conf partition"
+cp -v /opt/solo/boot/solo.conf /boot/solo/solo.conf # copy solo.conf into /boot/solo/
+echo "Done: Moving items from solo.git into correct places..."
+echo
+
+echo
+echo "Installing amon ..."
+add_user # add user amon, add to groups, enable sudo TODO: move this into amon's makefile
+mkdir /opt/git/  # both repos should really go here - we'll fix solo.git's location later...TODO
+git -C /opt/git clone https://github.com/solosystem/amon.git # amon is now in /opt/amon/
+
+make -C /opt/git/amon install # install amon
+
+#cp -prv /home/amon/amon/boot/* /boot/solo/ # copy amon's boot stuff into /boot/solo/
+#chown -R amon.amon /home/amon
+#chmod +x /home/amon/amon/amon # gosh - that's silly
+#echo "PATH=$PATH:/home/amon/amon/" >> /home/amon/.bashrc
 echo "Done Installing amon"
 echo
 

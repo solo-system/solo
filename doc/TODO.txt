@@ -18,7 +18,7 @@ For the dailyBuild:
     - crontab.log has spillover from amix calls?    
 
 - grep for TODO in all code (defs.sh in particular)
-- clear out all of /var/log/
+- clear out all of /var/log/ (do it from pre-provision?)
 - clear out cirrus-ng-scripts.tgz (wherever they live)
 
 -----------

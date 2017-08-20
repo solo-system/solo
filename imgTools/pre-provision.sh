@@ -37,4 +37,8 @@ chmod +x /opt/solo/imgTools/provision.sh
 echo "about to run imgTools/provision.sh..."
 imgTools/provision.sh # something on stdin eats the input
 echo "Finished running provision.sh"
+
+echo "Clearing out /var/log..."
+rm -rfv /var/log/*
+
 echo "Done it all - exit to leave the chroot"

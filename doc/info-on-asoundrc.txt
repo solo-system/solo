@@ -1,8 +1,16 @@
+2017-08-24
+---------------------------------------------------------------------------
+
+The changes proposed below worked.  Although I didn't split up the
+alsa config file into one-per-mic. 
+
+
 2017-08-19 locating alsa's config files
 ---------------------------------------
 
 motivation: I don't want asoundrc to be in the solo.git repo, but rather the amon.git repo.
-Moreover I don't want it in "amon"'s home dir as .asoundrc.  I want it in a system place.
+Moreover I don't want it in "amon"'s home dir as .asoundrc.  I want it in a sys
+tem place.
 
 read this:
 ----------

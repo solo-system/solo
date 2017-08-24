@@ -136,7 +136,9 @@ fi
 # definetly get rid of fake-hwclock
 apt-get -y purge fake-hwclock
 
-NEWPKGS="ntp i2c-tools bootlogd ntpdate rdate exfat-utils"
+#NEWPKGS="ntp i2c-tools bootlogd ntpdate rdate exfat-utils"
+# TODO: newpkgs - do I really use any of these?
+NEWPKGS="i2c-tools bootlogd ntpdate rdate exfat-utils"
 echo "APT: installing new packages: $NEWPKGS"
 apt-get update 
 #apt-get -y upgrade
@@ -163,7 +165,6 @@ sed -i "s:/run/systemd/system:/i/am/nonexistent:g"  /lib/udev/hwclock-set
 #cat /lib/udev/hwclock-set
 #echo "CHANGED hwclock-set to run"
 
-
 echo  "Enabling i2c in kernel"
 
 printf "\n# lines added by solo's provision.sh:\n" >> /boot/config.txt
@@ -178,7 +179,6 @@ echo "... adding dtoverlay=i2c-rtc,mcp7941x to /boot/config.txt"
 printf "dtoverlay=i2c-rtc,mcp7941x\n" >> /boot/config.txt
 
 echo  "Done: Enabling i2c in kernel"
-
 
 # enable ssh after boot: (per raspban new policy 2017-08-10)
 # still needed on (first stretch) img: 2017-08-16-raspbian-stretch-lite.img)
@@ -207,15 +207,17 @@ fi
 # this must come after setup-clac, since that calls rpi-update, which
 # calls apt-get install raspi.  Which might re-install some of the
 # auto-resize stuff.
+# TODO: pull this in from util.sh
 disable_auto_resize
 
 echo
-echo "Remove a bunch of silly cron jobs that do pointless things:"
+echo "Remove a bunch of unnecessary cron jobs that do pointless things:"
 rm -vf /etc/cron.daily/{dpkg,man-db,apt,passwd,aptitude,bsdmainutils,ntp} /etc/cron.weekly/man-db
 echo "done removing pointelss cronjobs"
 echo
 
 
+# TODO: how many of these are still pertinent?
 if [ $QPURGE = "yes" ] ; then
     echo "About to purge if required:"
 
@@ -260,10 +262,7 @@ else
     echo "DEBUG is not set, so not generating debug files"
 fi
 
-# do this last cos we need to unmount /boot to label it.
-# provisioning in a chroot doesn't allow this.  So make it conditional.
-# how do we detect a chroot environment?  look in /proc - there's nothing there if it's a chroot:
-
+# How do we do this in a chroot properly - here we just abandon it. (does it matter?)
 echo
 echo "Labeling file system partitions nicely..."
 if [ $(ls /proc | wc -l) -gt 0 ] ; then

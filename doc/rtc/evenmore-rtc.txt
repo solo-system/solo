@@ -1,3 +1,105 @@
+2017-08-24
+---------------------------------------------------------------------------
+
+Right I am horribly depressed about all this again - I've his this so
+many times over the years, and I'm dreading sorting it all out.
+Moreover, the bad logic is now embedded in systemd, deep in "meson"
+the build environemnt they use.
+
+But I need to get it right.
+
+Summary: There are 2 issues:
+
+1) VERY early in systemd it sets the system time to the date on the
+NEWS file in the systemd source directory - it gets hard wired by
+meson at build time into the ELF of systemd.  There appears to be no
+way to change this unless we edit the meson environment and rebuild
+systemd.  I _really_ don't want to have to do this.
+
+2) Later in the boot, systemd has this date-time.file cache file that
+ensures (initial and?) subsequent boots are monotonically increasing.
+This works like fake=-hwclock.sh on raspbian.
+
+
+Solutions:
+
+*** try hard to work with systemd's default stuff.  Even to the point
+of using timesyncd.
+
+*** problem (1) above - just accept it.  You'll get a _bad_ time on
+    early boot, but that's ok, in normal operation the RTC will
+    overwrite this really soon.
+
+    If the RTC is absent, we'll stick with that bad time, and the
+    operator will have to notice.
+
+    publish time-machine.py for all.
+    Encourage people to speak the time into the microphone.
+
+*** problem (2) above is only a problem after a reboot, and Solo
+    doesn't really do reboots anyway at the moment, so that's a corner
+    case worry.
+
+The conculsion is that we will use all default settings in systemd (and not install ntp).
+
+Plan:
+	1) comment out all timesync stuff from provision, pre-provision and solo-boot.
+	2) leave all the hw RTC /dev/rtc0 stuff, since we still need to see the clock.
+	3) build an image
+
+	TEST: Standard Conditions:
+	      PHASE 1:
+	      - prepare a pi with net and fresh clock (new battery).
+	      - boot with fresh sosi
+	      - login over serial to check that time is set
+	      - also check over serial that hwclock is set.
+	      - GOOD - hwclock is set (how long did it take?)
+
+	      - PHASE 2:
+	      - remove network (keep serial), and boot with FRESH IMAGE
+	      - on serial console - check "amon find" to see if time is correctly set.
+
+	      If the above works, we have covered the MAIN situation - a SOLO with a working clock (it sets and it gets used!).
+
+	      Shout YAY and that's enough.
+
+
+2017-08-20
+----------
+
+I promised I wouldn't get here, but here I am.  Something is setting
+the time, and I don't know what.  a bare a+ with no clock and no
+network boots to a "time" of 3 Nov 2016 at 17:17".  (I'm looking
+thourgh a serial console).
+
+I see from source code of systemd.git/NEWS that new functionality was
+recently added. Of course systemd is to blame, and once again it is
+insanely hard to diagnose.  But read this:
+
+      * On boot-up, when PID 1 detects that the system clock is behind the
+        release date of the systemd version in use, the clock is now set
+        to the latter. Previously, this was already done in timesyncd, in order
+        to avoid running with clocks set to the various clock epochs such as
+        1902, 1938 or 1970. With this change the logic is now done in PID 1
+        in addition to timesyncd during early boot-up, so that it is enforced
+        before the first process is spawned by systemd. Note that the logic
+        in timesyncd remains, as it is more comprehensive and ensures
+        clock monotonicity by maintaining a persistent timestamp file in
+        /var. Since /var is generally not available in earliest boot or the
+        initrd, this part of the logic remains in timesyncd, and is not done
+        by PID 1.
+
+Well, at least that explains it, even if it's really hard to fix.
+The change is shown in git show  021dd87bc055a5bfb2dcef83fc868fe24648b959
+
+the corresponding log message is:
+Nov 03 17:16:42 solo systemd[1]: System time before build time, advancing clock.
+
+File is:  ~/git/remotes/systemd/systemd/src/core/main.c
+
+
+
+
 2017-08-18
 ----------
 

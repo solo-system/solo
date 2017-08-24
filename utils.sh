@@ -61,6 +61,8 @@ function minimize_power() {
     footer "Minimizing power usage"
 }
 
+
+#TODO: move this into the Makefile of amon.git
 function add_user() {
     header "Adding users"
     echo "... adding user amon..."
@@ -121,16 +123,16 @@ function setup_leds() {
 function setup_rtc_udev() {
     header "Setting up the RTC clock to use udev and systemd"
 
-    #echo "enabling ntp time sync"
-    #timedatectl set-ntp 1  # turn this off 2017-08-20
-    echo "doing nothing for rtc setup."
+    echo "... enabling ntp time sync"
+    timedatectl set-ntp 1  # turn this off 2017-08-20
+    echo "... doing nothing for rtc setup."
     
     #    echo "" >> /boot/config.txt
     #    echo "dtoverlay=i2c-rtc,mcp7941x" >> /boot/config.txt
     footer "Setting up the RTC (setup_rtc_udev())"
 }   
 
-# setup rtc late in the boot process. ### UNUSED
+# setup rtc late in the boot process. ### UNUSED TODO: remove me.
 function setup_rtc_late() {
     header "Setting up the RTC clock (late in boot process)"
 
@@ -147,6 +149,7 @@ function setup_rtc_late() {
     hwclock --hctosys
 }   
 
+# TODO remove me.
 # this is the "proper" way, but rc?.d isn't run any longer, by the look of it...
 function setup_rtc() { UNUSED
     header "Setting up the RTC clock"

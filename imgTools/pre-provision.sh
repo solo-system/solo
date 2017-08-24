@@ -12,6 +12,8 @@
 # resize2fs of p1 at boot time throug /etc/init.d/resize2fs_once
 # renders hardware provisioning pretty difficult.
 
+# TODO: move all this into provision.sh - we aren't going back to the
+# hardware days.
 
 echo
 echo "hello - I am the pre-provisioner.  I run things inside the chroot, prior to handing over to provision.sh"
@@ -24,16 +26,17 @@ apt-get update
 apt-get install -y git # needed for raspbian "lite" editions.
 echo
 echo "Now cloning github.com/solosystem/solo.git into /opt/"
-echo "NOTE: the following hangs occasionally - so... do stuff to excercise link to github and to use git..."
-ping -c3 github.com
-git status
-echo "Done - that might help..."
+#echo "NOTE: the following hangs occasionally - so... do stuff to excercise link to github and to use git..."
+#ping -c3 github.com
+#git status
+#echo "Done - that might help..."
 
 cd /opt
 git clone http://github.com/solosystem/solo.git
 #git clone https://github.com/solosystem/solo.git
 cd solo
 chmod +x /opt/solo/imgTools/provision.sh
+
 echo "about to run imgTools/provision.sh..."
 imgTools/provision.sh # something on stdin eats the input
 echo "Finished running provision.sh"

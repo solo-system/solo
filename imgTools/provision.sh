@@ -3,17 +3,11 @@
 # provision.sh: turn a stock raspbian img into a bootable "Solo
 # Software Image".
 
-# This used to be run directly on hardware, but is now done in a
-# chroot.
+# There should be NO mention of p3 here. It doesn't exist at the time
+# of provisioning.
 
-# Notes:
-# There should be NO mention of p3 here. It doesn't exist
-
-# log to console AND to logfile.
-# when run in the chroot, this gives error:
-# imgTools/provision.sh: line 13: /dev/fd/62: No such file or directory
-# something to do with /proc and /dev/ not having the right stdin/err/out things.
-#exec > >(tee "/opt/solo/provision.log") 2>&1
+# show all commands on stdout.
+set -x
 
 if [ "$USER" != "root" ] ; then
     echo
@@ -26,24 +20,8 @@ fi
 if [ ! -r /opt/solo/utils.sh ] ; then
     echo "Error: can't read /opt/solo/utils.sh - this is probably bad news!"
 fi
+
 source /opt/solo/utils.sh
-
-# check we have enough disk free... (in Mbytes)
-#diskfree=`df -BM . | tail -1 | awk '{print $4}' | sed 's:M::g'`
-#if [ $diskfree -lt 100 ] ; then
-#    df -h /
-#    echo "Error - not enough free disk space - exiting (try rm -rf /home/pi/Music)"
-#    exit -1
-#fi
-
-
-# CLAC=unk
-CLAC=yes
-#CLAC=no
-if [ $CLAC != "yes" -a $CLAC != "no" ] ; then
-  echo "provision.sh: ERROR: CLAC must be yes or no - bailing out"
-  exit -1
-fi
 
 # QPURGE=unk
 QPURGE=yes
@@ -54,33 +32,27 @@ if [ $QPURGE != "yes" -a $QPURGE != "no" ] ; then
 fi
 
 echo "====================================================================="
-echo "Provisioner is about to install solo with purge=$QPURGE and CLAC=$CLAC"
+echo "Provisioner is about to install solo with purge=$QPURGE"
 echo "====================================================================="
 
-
-### Download and Install our code:
-echo "Moving items from solo.git into correct places..."
-echo "... Preparing our boot scripts (ensure /opt/solo/solo-boot.sh is executable)"
+### Splat solo.git files to the correct places:
 chmod +x /opt/solo/solo-boot.sh
-echo "... making directory /boot/solo/"
 mkdir -v /boot/solo/
-echo "... Copying /opt/solo/boot/solo.conf into the /boot/solo/solo.conf partition"
 cp -v /opt/solo/boot/solo.conf /boot/solo/solo.conf # copy solo.conf into /boot/solo/
-echo "Done: Moving items from solo.git into correct places..."
-echo
 
-echo
-echo "Installing amon ..."
-add_user # add user amon, add to groups, enable sudo TODO: move this into amon's makefile
-mkdir /opt/git/  # both repos should really go here - we'll fix solo.git's location later...TODO
+### Get and install amon:
+mkdir /opt/git/
 git -C /opt/git clone https://github.com/solosystem/amon.git # amon is now in /opt/amon/
+
+#---------------BEGIN MOVE THIS BLOCK TO Makefile ----------------------
+useradd -m amon -s /bin/bash
+echo "amon:amon" | chpasswd
+usermod -a -G adm,dialout,cdrom,kmem,sudo,audio,video,plugdev,games,users,netdev,input,gpio amon
+echo "amon ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+#---------------ENdD MOVE THIS BLOCK TO Makefile ----------------------
 
 make -C /opt/git/amon install # install amon
 
-#cp -prv /home/amon/amon/boot/* /boot/solo/ # copy amon's boot stuff into /boot/solo/
-#chown -R amon.amon /home/amon
-#chmod +x /home/amon/amon/amon # gosh - that's silly
-#echo "PATH=$PATH:/home/amon/amon/" >> /home/amon/.bashrc
 echo "Done Installing amon"
 echo
 
@@ -92,12 +64,7 @@ NEW_HOSTNAME="solo"
 echo $NEW_HOSTNAME > /etc/hostname
 sed -i "s/127.0.1.1.*$CURRENT_HOSTNAME/127.0.1.1\t$NEW_HOSTNAME/g" /etc/hosts
 
-echo 
-echo "Setting timezone to Etc/UTC - it will be overridden in solo.conf with SOLO_TZ)"
-#echo "Etc/UTC" > /etc/timezone
-#dpkg-reconfigure -f noninteractive tzdata
-#echo "Done doing raspi-config-like things."
-
+# set default timezone to Etc/UTC (overridden by solo.conf with SOLO_TZ)
 ln -fs /usr/share/zoneinfo/Etc/UTC /etc/localtime
 dpkg-reconfigure --frontend noninteractive tzdata
 
@@ -161,10 +128,6 @@ echo
 # enable udev to set the clock at boot time, when /dev/rtc0 comes to life:
 sed -i "s:/run/systemd/system:/i/am/nonexistent:g"  /lib/udev/hwclock-set
 
-#echo "CHANGED hwclock-set to run"
-#cat /lib/udev/hwclock-set
-#echo "CHANGED hwclock-set to run"
-
 echo  "Enabling i2c in kernel"
 
 printf "\n# lines added by solo's provision.sh:\n" >> /boot/config.txt
@@ -188,6 +151,8 @@ touch /boot/ssh
 rm -fv /etc/systemd/system/dhcpcd.service.d/wait.conf
 
 # setup software for Cirrus Logic Audio Card
+#CLAC=no
+CLAC=yes
 if [ $CLAC = "yes" ] ; then
     echo "Installing support for CLAC..."
     #f=setup-clac.sh
@@ -204,11 +169,8 @@ else
     echo "CLAC=$CLAC => so not sourcing setup-clac.sh"
 fi
 
-# this must come after setup-clac, since that calls rpi-update, which
-# calls apt-get install raspi.  Which might re-install some of the
-# auto-resize stuff.
-# TODO: pull this in from util.sh
-disable_auto_resize
+# boot to systemd, not the init_resize nonsense:
+sed -i 's| init=/usr/lib/raspi-config/init_resize.sh||' /boot/cmdline.txt
 
 echo
 echo "Remove a bunch of unnecessary cron jobs that do pointless things:"
@@ -285,3 +247,4 @@ echo "----------------------------------------------------------"
 echo
 
 exit 0
+

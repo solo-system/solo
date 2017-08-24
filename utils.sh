@@ -21,7 +21,7 @@ function logit() {
 function disable_auto_resize() {
     header "Disabling resize2fs in raspbian"
 
-    echo "Changing /boot/cmdline.txt to remove init_resize.sh."
+    echo "Changing /boot/cmdline.txt to remove init_resize.sh." # UNUSED
     #    sed -i 's/ quiet init=.*$//' /boot/cmdline.txt # this _used to be the way...
     sed -i 's| init=/usr/lib/raspi-config/init_resize.sh||' /boot/cmdline.txt
     
@@ -34,11 +34,11 @@ function disable_auto_resize() {
     # still does, I can't imagine they've duplicated the "expandfs"
     # code to be in both places.)
     
-    echo "updaterc.d - disabling resize2fs_once"
-    update-rc.d resize2fs_once remove  # probably fails, cos it wasn't there (try removing this line?)
+    #echo "updaterc.d - disabling resize2fs_once"
+    #update-rc.d resize2fs_once remove  # probably fails, cos it wasn't there (try removing this line?)
     
-    echo " And removing the resize script - just to be sure"
-    rm -f /etc/init.d/resize2fs_once   # same as above - try removing it?
+    #echo " And removing the resize script - just to be sure"
+    #rm -f /etc/init.d/resize2fs_once   # same as above - try removing it?
 
     footer "Disabling resize2fs in raspbian"
 }
@@ -63,7 +63,7 @@ function minimize_power() {
 
 
 #TODO: move this into the Makefile of amon.git
-function add_user() {
+function add_user() {   # unused - moved to amon.git's Makefile.
     header "Adding users"
     echo "... adding user amon..."
     useradd -m amon -s /bin/bash

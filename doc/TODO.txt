@@ -1,26 +1,22 @@
 2017-08-19
 ----------
 
-TODO's for imminent release
-For the dailyBuild:
-- code cleanups    
-- minimize, debug off. (do this work in slimdown.sh)
-- move asoundrc from solo into amon repo.
-- write a make install for amon.
-  Sudo make install (like a debian package!):
-    - copy all to amon/amon
-    - make amon user
-    - add to groups...
-    - move asoundrc into the right place.
-    - turn on purge
-    - go through big packages (use img-mount / img-chroot).
-    - add (top of amon.sh - not watchdog).watchdog(if uptime < 10 exit) function. what's called en route?
-    - crontab.log has spillover from amix calls?    
+---------------------------------------------------------------------------
 
+TODO: for imminent release 2017-08-24
+----------------------------
+- merge pre-provision into provision.
 - grep for TODO in all code (defs.sh in particular)
-- clear out all of /var/log/ (do it from pre-provision?)
-- clear out cirrus-ng-scripts.tgz (wherever they live)
 
+- minimize 
+  - do this work in slimdown.txt, where there is previous expertise.
+  - packages (see the debug log)
+  - files (/opt/mpg  others? clac.tar.gz 
+  - purge and debug.
+  - go through big packages (use img-mount / img-chroot).
+  - clear out all of /var/log/ (do it from pre-provision?)
+
+- crontab.log has spillover from amix calls?    
 -----------
 defs.sh: line 431: /mnt/sdcard/amondata/logs/amon.log: No such file or directory
     defs.sh: line 431: /mnt/sdcard/amondata/logs/amon.log: No such file or directory
@@ -34,28 +30,18 @@ defs.sh: line 431: /mnt/sdcard/amondata/logs/amon.log: No such file or directory
 ----------------	
 
 ---------------------------------------------------------------------------
+
+TODO - perhaps for next release:
+- pizero flash negate.
+
+---------------------------------------------------------------------------
 TESTING:
---------
 --------
 
 > Networked tests of soundcards with testrec:
 1) CLAC with (line in, dmic, stereo, 192000, various gains).
 2) SB2 with (16000/48000, stereo (not sup), various gains).
 3) SB3 with (16000/48000, stereo (supported), 
-
-
-> Clock testing rig:
-Any pi with NO clock and NO network, should boot to 1970.  GOOD CHECK.
-A+ with CLAC and shim.
-A+ with SB? and shim in timezone Pacific/Hawaii (or something).
-A+ with SB? and DS3231
-zero with clac and shim (flashing correct?)
-zero with SB? and shim
-zero with SB? and DS3231
-PiB+ ...
-Pi2 ...
-Pi3 ...
-zerow (do I have one?)
 
 > Finalised Testing rigs:
 CLAC:  Various runs 
@@ -100,288 +86,3 @@ total 352
 -rw-r--r-- 1 root root  7540 Jul  3 11:07 snd-soc-adau1977-adc.ko
 ---------------------------------------------------------------------------
 
-
-just got this whilst mounting a filled sdcard on linux:
-[388016.533423] FAT-fs (sdd3): utf8 is not a recommended IO charset for FAT filesystems, filesystem will be case sensitive!
-The mkfs.fat line in solo-boot/FIRSTBOOT should probably be changed.  
-
-
-
-TODO: for the Solo Software (Image)
-===================================
-
-Release Checklist:
-0) who is the release for.
-1) led flashes DONE
-2) uptime load is low
-3) df / has space
-4) no strange dmesg messages
-5) arecord.log has no xruns.
-6) check it runs on A+ B+ and Pi2
-
-RC bugs:
-provision.sh - leave me alone should be earlier.
-what is solologdir.
-what is DEBUG (it's in 3 files)
-rename kernels (but where do we put modules?)
-default to DMIC / linein. (and gains?) CHOOSE
-
-All stuff below is dumped here from various email / notes Feb 2016:
--------------------------------------------------------------------
-
-echo 0 > /sys/devices/platform/bcm2708_usb/buspower;
-
-find /sys/devices/ -name `dmesg -t | grep dwc_otg | grep “DWC OTG Controller” | awk ‘{print $2}’ | cut -d”:” -f1`
-
-
-f you downclock your core, i think you consume less power too.
-Adding this lines to your config.txt
-arm_freq_min=250
-core_freq_min=100
-sdram_freq_min=150
-over_voltage_min=0 or 4 if you have overclocked your rasppi
-
-------------------------
-Notes on witty pi usage and DC-DC converter efficiency based on 6
-hours per day ON.
-
-All amp measurements are @ 12V
-
-should work in maH/day as an average consumption.  Then know a 50Ah
-batery will last N days.
-
-
-Assume RPI uses 40mA when running. (44 on screen, flash to 65 => ave 50, minus \
-10 of converter).
-
-nowitty + converterBasic = (40+10)mA * 24hrs = 1200 mAh / day
-nowitty + converterExtra = (40+ 1)mA * 24hrs =  984 mAh / day
-
-WITH WITTY:
-
-witty + converterBasic = (40+10)mA * 6hrs + (10)mA * 18hrs = 480 mAh / day
-witty + converterPlus  = (40+ 1)mA * 6hrs + (1)mA * 18hrs  = 264 mAh / day
-
--------------------------------------------
-Solo Questions (for a FAQ?)
-cost
-how soon can I get one
-do I have to buy a battery what type
-can I plug it into the mains
-how long record
-how do I download the data
-how do I store the data
-can I have special microphone
-is it portable - how heavy is it.
-is itfragile
-is it water proof
-how do I find how many tawny owls call there are?
-can I use it indoors?
-where can I buy the components
-how much tech knowledge do I need to assemble it
-are the components available in the UK.
-what happens if it doesn't work
-can I use it on mac
-windows
-linux
---------------------------
-
-
-
-
-All stuff below here is pre the Jan-2016 work:
-----------------------------------------------
-move asoundrc into amon repo
-
-purge .git directories too.  And all RJ's code we inadvertently included.
-
-purge /var/log since it's full of old dmesg and syslog stuff.
-
-switchoff.py is a "service / daemon" and should be interrupt driven (I think).
-
-Crontab: premature cronning:
-ISSUE: where do we fill out the crontab with amon watchdog?
-solo-boot:  No - this means user changes are lost at every reboot
-first-boot:  OK (current implementation).  But lacks flexibility of enabling/disabling packages later.
-provision: No - far too early - don't want crontabs running during install process.
-best is a service based management of all this - using updstar/systemd etc... but leave for now since in flux.
-
-Change /etc/fstab to have proper numbers in columns 5,6 for fsck
-
-/etc/hosts contains a copy of system hostname - ensure we update/set it when we set hostname
-
-Disarm raspi-config warning: "the software on this Raspberry Pi has not been fully configured"
-
-Turn off swap with dphyswap or whatever it's called (and ensure 100Mb file is removed).
-
-Support more microphones (USB) - set volume in a device independent
-way.  What are the sample rates - does the new alsa-utils
---dump-hw-params show this sort of thing?
-
-Support audio input dongles. (see recent german article on audio boards for rpi).
-
-A general API for configuration?
-
-Clacker: it was fragile but did work.  How to do more complex
-playbacks in the field?  Hardware is the difficult bit.
-  Design a
-playback system with nice interface.
-
-Refactor switchoff.sh script as GPIOhandler.py/sh and make it interrupt driven so we can have better responsiveness.
-
-What should be done with GPU_split ? in /boot/config.txt
-
-=========================================================
-Networking - wirelessly:
-==========
-sudo echo "
-network={
-    ssid=\"BTHomeHub2-5QCP\"
-    psk=\"not telling you\"
-    key_mgmt=WPA-PSK
-}
-" >> slash/etc/wpa_supplicant/wpa_supplicant.conf 
-EOF
-
-================================================================
-vmon
-====
-sudo emacs -nw /boot/config.txt [disable_camera_led=1]
-# reboot if you care about the light now.
-mkdir /mnt/sdcard/vmondata/
-cp (from somewhere) takePhoto to /mnt/sdcard/vmondata/
-# run it to test it.
-crontab -e
-*/2 * * * *    /mnt/sdcard/vmondata/takePhoto
-
-# then ensure we have passwordless login to jdmc2.com
-ssh-keygen
-ssh-copy-id jdmc2.com
-
-==============================================================================
-webserver
-=========
-sudo apt-get install apache2 libapache2-mod-suphp
-sudo a2enmod userdir 
-
-sudo emacs -nw /etc/apache2/conf.d/amondata.conf
-
-Alias /amondata /mnt/amondata
-<Directory /mnt/amondata>
-  Options Indexes
-  Order allow,deny
-  Allow from all
-  Require all granted
-  Satisfy Any
-</Directory>
-
-mkdir /home/jdmc2/public_html/
-mkdir /home/jdmc2/public_html/utils/
-#scp -prv jdmc2.com:websites/jdmc2.com/utils public_html
-
-sudo nano /etc/suphp/suphp.conf
-edit it so that 
-* allow_file_group_write true
-* allow_directory_group_writable true
-* change "check vhost tree" to false.
-
-sudo service apache2 restart
-wget localhost
-
-to get suphp going:
-http://www.debiantutorials.com/installing-suphp/
-
-apt-get install libapache2-mod-suphp
-a2dismod php5
-/etc/init.d/apache2 restart
-
-==================================================
-
-Compression
-===========
-
-Just tested lame.  on 1 minute.  lame -f is 5x realtime, and lame (default) is 3.38 realtime.  
-lame	3.38RT	9.0%			
-lame -f 4.96RT  9.0% (sizes are exactly the same since CBR of 64Kbps)
-lame process size is less than 5MB of ram running.
-
-------------------------------
-
-# disable camera led 
-sudo nano /boot/config.txt
-[ disable_camera_led=1
-
------------------------------
-
-develop:
-compress audio
-record video
-pir sensor?
-
-TODO:
-straighten out logic in amoncleanup, with its no-ops and stuff.  think
-we need a are-we-running function which returns yes/no.  if yes, its
-cos everything is running well, if NO its because were not running.
-If there is an error, it should clear out the error and leave things
-NOT running.  I think.  sort out fake-hw clock, which saves / restores
-estimated times over reboots.  Is this worth trying ?  Surely...
-clarify use of local.settings - warn about defaults, how about amon
-config to show what it will do.
-
---------------------
-serial console cable
---------------------
-lsusb:
-ID 067b:2303 Prolific Technology, Inc. PL2303 Serial Port
-wire: black to ground, white to Tx, green to Rx.  on outside row:
-..GTR.........  (ground transmit receive) (black, white, green)
-can also attach red to pins to the left (both 5V) to power the pi from USB.
-
-boot the pi
-then run this on the laptop (you need to be in group dialout)
-screen /dev/ttyUSB0 115200
-
-and you should see the login prompt.  if you can not type, use minicom
-to turn off flow control.  8-N-1 bit arrangement.
-
-PPP: set up pppd to accept point-to-point internet link.
-sudo apt-get install pppd 
-hmmm - ppp not easy...
-
-=============================================
-Bespoke arecord.c :
-sudo apt-get --compile source alsa-utils
-installs and compiles source.  BUT you need to add lots of dependentpackages
-================
-
-Bluetooth networking:
-=====================
-I got bluetooth tethering working between my laptop and andriod phone
-(pc gets internet through phone) via bluetooth by enableing tethering
-on the phone, and then using the gui bluetooth thing in ubuntu to
-conect to the android's network service.
-
-bluetooth:
-sudo apt-get install bluetooth bluez-utils bluez-compat 
-hciconfig dev       # can we see local device
-hciconfig up        # bring up local device
-hciconfig status    # to check
-hcitool scan        # scan for devices with
-sudo bluez-simple-agent hci0 00:1F:E1:E5:C5:A5 # pair with him (pins ensue)
-sudo bluez-test-device list  # list paired devices.
-
-
-sdptool browse local # list services offered by "local" sevice
-
-Then make the master (my pc) listen for 
-
-sudo l2ping 00:1F:81:00:08:30 # run me on laptop
-
-sudo l2ping  00:1F:E1:E5:C5:A5 # run me on pi
-
-# connect from pi:
-sudo pand -c 00:1F:E1:E5:C5:A5 --role PANU --persist 30
-
-# setup PC to listen for connections
-
-==============================

@@ -55,7 +55,7 @@ rm -rf vroot/opt/chroot
 sudo mv -v vroot/etc/ld.so.preload.dist vroot/etc/ld.so.preload
 sudo rm -v vroot/usr/bin/qemu-arm-static
 
-# TODO - could remove the chroot_cmd from the mounted image, but why bother...
+# note: - could remove the chroot_cmd from the mounted image, but why bother...
 # rm -v vroot/opt/chroot/$chroot_cmd
 
 # and unmount everything

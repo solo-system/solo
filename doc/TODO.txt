@@ -5,7 +5,6 @@
 
 TODO: for imminent release 2017-08-24
 ----------------------------
-- merge pre-provision into provision.
 - grep for TODO in all code (defs.sh in particular)
 
 - minimize 

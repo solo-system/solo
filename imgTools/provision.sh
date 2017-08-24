@@ -138,7 +138,7 @@ apt-get -y purge fake-hwclock
 
 #NEWPKGS="ntp i2c-tools bootlogd ntpdate rdate exfat-utils"
 # TODO: newpkgs - do I really use any of these?
-NEWPKGS="i2c-tools bootlogd ntpdate rdate exfat-utils"
+NEWPKGS="i2c-tools bootlogd exfat-utils"
 echo "APT: installing new packages: $NEWPKGS"
 apt-get update 
 #apt-get -y upgrade

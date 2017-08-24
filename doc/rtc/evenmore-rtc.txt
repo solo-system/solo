@@ -1,5 +1,23 @@
-2017-08-24
 ---------------------------------------------------------------------------
+2017-08-24 3pm
+--------------
+
+OK - I'm done with clocks for this round / release
+
+We are using all the systemd tools, with no modifications.  timesyncd
+does network sync really fast (faster than I can log in through serial
+console). It sets the rtc too.
+
+so the "set" phase when the solo is networked works really well.
+And the "read" phase, when we are in the field works really well too.
+
+And that's that.  We now do "no fiddling" with systemd stuff.  This is
+"stock raspbian" (which is (in turn) stock systemd), I think.
+
+
+---------------------------------------------------------------------------
+2017-08-24
+
 
 Right I am horribly depressed about all this again - I've his this so
 many times over the years, and I'm dreading sorting it all out.
@@ -62,6 +80,11 @@ Plan:
 	      If the above works, we have covered the MAIN situation - a SOLO with a working clock (it sets and it gets used!).
 
 	      Shout YAY and that's enough.
+
+	      It worked.
+	      tested with both types of clock.
+	      And tested on both USB microphones.
+
 
 
 2017-08-20

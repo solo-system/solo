@@ -70,6 +70,11 @@ echo "--------------------------------"
 
 cat buildinfo.txt
 
+mount_image sosi-$daystamp.img vroot
+find  vroot -type f -ls | sort -nr -k7 > filelist.txt
+umount_image vroot
+
+
 popd > /dev/null
 
 exit 0

@@ -191,6 +191,7 @@ if [ $QPURGE = "yes" ] ; then
 
     # man pages indexes:
     rm -rf /var/cache/man
+    rm -rf /usr/share/man/
     
     rm -f home/jdmc2/amon/amon.log
 

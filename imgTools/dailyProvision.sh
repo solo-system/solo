@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # This script automatically builds a SOSI from a raspbian.img
-# It's only ever been run by jdmc2.
 
 bin=/home/jdmc2/git/solo/imgTools
 PATH=$PATH:$bin
@@ -31,8 +30,8 @@ pushd $workdir > /dev/null
 echo "running: $bin/img-chroot.sh $bin/pre-provision.sh"
 cp $srcimg ./copy.img
 $bin/img-chroot.sh ./copy.img $bin/pre-provision.sh >& dailyProvision.log
-
 echo "dailyProvision: Finished pre-provision.sh"
+echo
 
 echo "Now shrinking ..."
 cp -v copy.img shrunk.img
@@ -55,6 +54,7 @@ sizeMB=$(echo " $size / (1024*1024) " | bc)
 solohead=$(cd /home/jdmc2/git/solo ; git rev-parse HEAD)
 amonhead=$(cd /home/jdmc2/git/amon ; git rev-parse HEAD)
 
+(
 echo "--------------------------------"
 echo "  name       : sosi-$daystamp.img"
 echo "  raspbian   :  This SOSI is based on $(basename $srcimg)"
@@ -66,6 +66,9 @@ echo "  amon       : git rev-parse HEAD: $amonhead"
 echo "  This release includes:"
 echo "    These things XXXXX"
 echo "--------------------------------"
+) > buildinfo.txt
+
+cat buildinfo.txt
 
 popd > /dev/null
 

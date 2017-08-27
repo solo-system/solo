@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# What happens if we do (TODO)
+# set -x
+
 echo "=========================================================="
 echo "-----------------------"
 echo "Welcome to solo-boot.sh"
@@ -102,10 +105,9 @@ if ! grep mmcblk0p3 /proc/mounts > /dev/null ; then
 #  df -h > $SOLOLOGDIR/df.txt
 #  mount > $SOLOLOGDIR/mount.txt
 
-  echo "... Finished doing new partition stuff, now other chores for FIRSTBOOT:"
-  echo "... adding watchdog and playback to amon's crontab:"
-  echo -e "* * * * * /home/amon/amon/amon watchdog >> /home/amon/amon/cron.log 2>&1\n#0 */2 * * * /home/amon/amon/playback.sh >> /home/amon/amon/playback.log 2>&1" | crontab -u amon -
-  echo "... Done building crontab"
+  # set up the watchdog to run every minute:
+  echo "Adding amon watchdog to crontab every minute"
+  echo -e "* * * * * /home/amon/amon/amon watchdog >> /mnt/sdcard/amondata/logs/cron.log 2>&1\n" | crontab -u amon -
 
   echo "FIRSTBOOT: finished at `date`"
   echo "======================================================"

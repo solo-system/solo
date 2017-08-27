@@ -1,5 +1,71 @@
-2017-08-19
+2017-08-27
 ----------
+have all 5 running simultaneously, and found this problem:
+
+1) raspi3 red led stays on.  Why?
+
+keep it running and push the ethernet cable into it: (it doesn't
+reboot - it's worse with the dongle, but this pi has a eth slot so no
+power drain).
+
+now log in and look at /sys/class/led...
+[ quick look at audio looks fine, amon log looks fine]
+TODO: cron.log is still in /home/amon/amon/cron.log, it should be in
+* * * * * /home/amon/amon/amon watchdog >> /mnt/sdcard/amondata/logs/cron.log 2>&1
+
+LEDS: the red one is led1, and although it claims it is triggered by [none], the light is ON.
+root@solo:/sys/devices/platform/leds/leds/led1# cat trigger
+[none] kbd-scrolllock kbd-numlock kbd-capslock kbd-kanalock kbd-shiftlock kbd-altgrlock kbd-ctrllock kbd-altlock kbd-shiftllock kbd-shiftrlock kbd-ctrlllock kbd-ctrlrlock timer oneshot heartbeat backlight gpio cpu0 cpu1 cpu2 cpu3 default-on input panic mmc0 mmc1 rfkill0 rfkill1
+
+But if we simply re-do the "echo none > trigger", it goes out.
+double checking for a problem in solo-boot.sh...
+This happens only on rpi3 where people don't care about power, so I don't care about the red led staying on.
+
+
+
+
+2017-08-26
+---------------------------------------------------------------------------
+now deep in testing.  Finding problems on raspi zeros.  Unreliable and
+strange failures to boot.  Possibly to do with this:
+
+booted pizero with network dongle AND HDMI connector to see console.
+Noticed it's doing some junk with partitions that it shouldn't.
+[NOTE: YOU HAVE TO TURN OFF LOWPOWER MODE, ELDSE HDMI GETS TURNED OFF]
+
+
+amon@solo:/var/log $ grep mmc syslog
+Nov  3 17:17:03 solo systemd-fsck[104]: /dev/mmcblk0p2: 37118/78880 files (0.1% non-contiguous), 222665/302396 blocks
+Nov  3 17:17:03 solo systemd-fsck[162]: /dev/mmcblk0p1: 154 files, 42966/84272 clusters
+Nov  3 17:17:03 solo kernel: [    1.050707] mmc0: sdhost-bcm2835 loaded - DMA enabled (>1)
+Nov  3 17:17:03 solo kernel: [    1.118407] mmc0: host does not support reading read-only switch, assuming write-enable
+Nov  3 17:17:03 solo kernel: [    1.120535] mmc0: new high speed SDHC card at address 1234
+Nov  3 17:17:03 solo kernel: [    1.121795] mmcblk0: mmc0:1234 SA32G 29.3 GiB
+Nov  3 17:17:03 solo kernel: [    1.124097]  mmcblk0: p1 p2
+Nov  3 17:17:03 solo kernel: [    1.236759] EXT4-fs (mmcblk0p2): mounted filesystem with ordered data mode. Opts: (null)
+Nov  3 17:17:03 solo kernel: [   14.615926] EXT4-fs (mmcblk0p2): re-mounted. Opts: (null)
+Nov  3 17:17:06 solo kernel: [   26.524789] EXT4-fs (mmcblk0p2): resizing filesystem from 302396 to 302466 blocks
+Nov  3 17:17:06 solo kernel: [   26.525228] EXT4-fs (mmcblk0p2): resized filesystem to 302466
+Nov  3 17:17:09 solo resize2fs_once[244]: Filesystem at /dev/mmcblk0p2 is mounted on /; on-line resizing required
+Nov  3 17:17:09 solo resize2fs_once[244]: The filesystem on /dev/mmcblk0p2 is now 302466 (4k) blocks long.
+
+Note that the syslog contains all the interesting messages, so look at the syslog:
+
+Also this:
+
+amon@solo:/var/log $ sudo journalctl -a | grep resize2fs_once
+Nov 03 17:17:06 solo resize2fs_once[244]: Starting resize2fs_once:resize2fs 1.43.4 (31-Jan-2017)
+Nov 03 17:17:09 solo resize2fs_once[244]: Filesystem at /dev/mmcblk0p2 is mounted on /; on-line resizing required
+Nov 03 17:17:09 solo resize2fs_once[244]: old_desc_blocks = 1, new_desc_blocks = 1
+Nov 03 17:17:09 solo resize2fs_once[244]: The filesystem on /dev/mmcblk0p2 is now 302466 (4k) blocks long.
+Nov 03 17:17:15 solo resize2fs_once[244]: .
+
+---------------
+
+However, I think there is a diff between cards.  Trying a different
+physical SD card now.... Yes - it was the memory card (it kept
+failing).  Tried to confirm it had badblocks with "badblocks -w -v
+/dev/sdf" on desktop, but got bored after 20 mins. and turned it off.
 
 ---------------------------------------------------------------------------
 

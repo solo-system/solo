@@ -111,6 +111,9 @@ function setup_leds() {
     echo "... activating LEDs - led0[green] = heartbeat, led1[red] off"
     echo heartbeat > /sys/class/leds/led0/trigger # heartbeat on green LED
     echo none      > /sys/class/leds/led1/trigger # turn off the red LED
+    # the prev line (turn off red) doesn't work on rpi3 (2017-08-27)
+    # but leave this alone, as pi3 users don't care about power.
+
 #    if is_pizero; then
 #	echo "Detected we are on pizero, so inverting heartbeat on led0"
 #	echo 1 > /sys/class/leds/led0/invert # this is active opposite on pi0.

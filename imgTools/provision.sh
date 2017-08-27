@@ -144,6 +144,11 @@ printf "dtoverlay=i2c-rtc,ds3231\n" >> /boot/config.txt
 echo "... adding dtoverlay=i2c-rtc,mcp7941x to /boot/config.txt"
 printf "dtoverlay=i2c-rtc,mcp7941x\n" >> /boot/config.txt
 
+echo "... not quite adding fe-pi-audio and i2s-mmap"
+# see: https://fe-pi.com/p/support-and-setup
+# dtoverlay=fe-pi-audio
+# dtoverlay=i2s-mmap
+
 echo  "Done: Enabling i2c in kernel"
 
 # enable ssh after boot: (per raspban new policy 2017-08-10)

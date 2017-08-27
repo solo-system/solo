@@ -1,4 +1,33 @@
-2017-08-27
+Next Time:
+the pi3 beside shub is where it was working.  I shut it down, to recharge battery.
+boot it again, and continue fiddling with gains.
+Also solve why it didn't run on the pizero - might be conflict with shim clock.
+
+
+2017-08-27 13:40
+----------------
+support fe-pi: Plan
+-- use a pi3, attach the fe-pi to it.
+-- network it
+
+1) flash one of our own images.
+2) add the fe-pi lines to /boot/config.txt
+3) boot it and find on network
+4) arecord -l - is it there?
+5) make a asoundrc file for it
+5) make a mics file for it.
+6) use testrec to get viable output.
+
+Use that guy's script to explore_alsa_settings...
+or use alsamixer.  Use the microphone splitter.
+if it works, use with a piface shim clock on a known-working A+ (there's a zero over there we can use).
+
+
+
+
+
+
+2017-08-27 am
 ----------
 have all 5 running simultaneously, and found this problem:
 
@@ -20,6 +49,16 @@ root@solo:/sys/devices/platform/leds/leds/led1# cat trigger
 But if we simply re-do the "echo none > trigger", it goes out.
 double checking for a problem in solo-boot.sh...
 This happens only on rpi3 where people don't care about power, so I don't care about the red led staying on.
+
+parted -m "$ROOT_DEV" u s resizepart "$ROOT_PART_NUM" "$TARGET_END
+parted -m /dev/mmcblk0 unit s resizepart 2 $NEWEND-in-blocks-of-512.
+TARGET_END=$((ROOT_DEV_SIZE - 1))
+
+-m = machine readable output
+
+So we could simplify the shrink process, and shrink the image we ship by 200M (compressed down to I dunno).
+Might be worth trying. TODO TODO TODO. but leaving for the moment, as I want to move on to fe-pi support instead.
+
 
 
 

@@ -107,8 +107,8 @@ if ! grep mmcblk0p3 /proc/mounts > /dev/null ; then
 
   # set up the watchdog to run every minute:
   echo "Adding amon watchdog to crontab every minute"
-  echo -e "* * * * * /home/amon/amon/amon watchdog >> /mnt/sdcard/amondata/logs/cron.log 2>&1\n" | crontab -u amon -
-
+  echo -e "* * * * * /home/amon/amon/amon watchdog >> /home/amon/amon/cron.log 2>&1\n" | crontab -u amon -
+  
   echo "FIRSTBOOT: finished at `date`"
   echo "======================================================"
 else

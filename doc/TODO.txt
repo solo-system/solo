@@ -1,3 +1,27 @@
+2017-08-28
+----------
+
+OK - the fe-pi support is important, but so is stabilizing and testing
+all the changes to the core.  Not enough testing recently.
+
+So there are 5 systems set up, and I need to run them through.
+
+PLAN:
+1) Add clocks to the 5 systems.
+2) Clac, Snowflake, SB2, SB3, dodotronic, [fe-pi]
+3) build today's image.
+4) flash 5 cards
+5) turn them on and run them.
+----
+
+Cycle through the cards, checking each system.  looking for:
+1) time set right.
+2) no overruns in arecord.log
+3) good sounding audio.
+
+With each cycle, choose a different timezone, samplerate, channels, etc...
+
+----------------------------------
 Next Time:
 the pi3 beside shub is where it was working.  I shut it down, to recharge battery.
 boot it again, and continue fiddling with gains.

@@ -1,6 +1,6 @@
 # Solo
 
-solo is the backbone of the Solo recorder.
+This solo git repository is the backbone of the Solo audio recorder.
 
-See http://www.solo-system.org
-or  http://solo-system.github.io
+http://www.solo-system.org
+http://solo-system.github.io

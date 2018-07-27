@@ -68,6 +68,28 @@ sed -i "s/127.0.1.1.*$CURRENT_HOSTNAME/127.0.1.1\t$NEW_HOSTNAME/g" /etc/hosts
 ln -fs /usr/share/zoneinfo/Etc/UTC /etc/localtime
 dpkg-reconfigure --frontend noninteractive tzdata
 
+############# upgrade alsa ########################
+# we need this upgrade because arecord (pre 1.1.6) limits high sample
+# rates to 192000, which is no good for dodotronic mics.
+# do this before package purge
+
+UPGRADEALSA=yes
+if [ $UPGRADEALSA = "yes" ] ; then
+    echo "Upgrading ALSA support to version 1.1.6 ..."
+    f=upgrade-alsa.sh
+    echo "running $f"
+    if [ -r $f ] ; then
+	$f
+	echo "Done upgrading alsa using $f"
+    else
+	echo "WARNING Can't source $f - no such readable file"
+	exit -1
+    fi
+else
+    echo "UPGRADEALSA=$UPGRADEALSA => so not upgrading using $f"
+fi
+####################### end of upgrading alsa #################
+
 
 ### Package management:
 OLDPURGE="fake-hwclock wolfram-engine xserver.* x11-.* xarchiver xauth xkb-data console-setup xinit lightdm lxde.* python-tk python3-tk scratch gtk.* libgtk.* openbox libxt.* lxpanel gnome.* libqt.* gvfs.* xdg-.* desktop.* freepats smbclient"

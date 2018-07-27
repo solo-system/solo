@@ -75,14 +75,14 @@ dpkg-reconfigure --frontend noninteractive tzdata
 
 UPGRADEALSA=yes
 if [ $UPGRADEALSA = "yes" ] ; then
-    echo "Upgrading ALSA support to version 1.1.6 ..."
+    echo "Upgrading ALSA support to version 1.1.6 ... (i am in $(pwd) )"
     f=upgrade-alsa.sh
-    echo "running $f"
     if [ -r $f ] ; then
-	$f
+	echo "Upgrading alsa using $f"
+	./$f
 	echo "Done upgrading alsa using $f"
     else
-	echo "WARNING Can't source $f - no such readable file"
+	echo "WARNING Can't find $f - no such readable file (I am in $(pwd))"
 	exit -1
     fi
 else

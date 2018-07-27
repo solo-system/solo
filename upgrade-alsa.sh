@@ -8,8 +8,8 @@
 # alsa-utils needs these headers: (for amixer, I think)
 sudo apt-get install libncurses5 libncurses5-dev
 
-# make a directory to do this in (currently choses $pwd)
-localalsadir=/opt/solo/upgrade-alsa/
+# make a directory to work in:
+localalsadir=/opt/upgrade-alsa/
 
 mkdir $localalsadir
 echo localalsadir=$localalsadir

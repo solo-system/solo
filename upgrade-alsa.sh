@@ -6,7 +6,7 @@
 # first tested on 2018-07-27 on desktop by JC. (it works!).
 
 # alsa-utils needs these headers: (for amixer, I think)
-sudo apt-get install libncurses5 libncurses5-dev
+apt-get install libncurses5 libncurses5-dev
 
 # make a directory to work in:
 localalsadir=/opt/upgrade-alsa/

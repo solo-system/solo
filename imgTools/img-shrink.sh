@@ -65,6 +65,9 @@ extra4k=25000   # ask for 100M - only yields 21Mb free.
 extra4k=50000   # ask for 200M - this yeilds 111Mb free (use this).
                 # at 200M, the img size is 1,279,132,160 and zip is 419,739,504
 
+# this is temporary
+extra4k=100000  # ask for 400M
+
 function log() {
     msg="$1"
     out="[SHRINK IMAGE]: $msg"

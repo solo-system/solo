@@ -8,7 +8,7 @@
 # alsa-utils needs these headers:
 # libncurses(-dev) for or amixer, I think.
 # and gettext for i18n within alsa-utils (multilingual stuff).
-apt-get install libncurses5 libncurses5-dev gettext
+apt-get -y install libncurses5 libncurses5-dev gettext
 
 # make a directory to work in:
 localalsadir=/opt/upgrade-alsa/

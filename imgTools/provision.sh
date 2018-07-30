@@ -127,10 +127,10 @@ fi
 # definetly get rid of fake-hwclock
 apt-get -y purge fake-hwclock
 
-
 # i2c-tools needed for clock investigations (although not in normal operation)
 # exfat-utils probably needed to make ext partition on p3 (I think, but it could be a hangover from labelling partitons).
-NEWPKGS="i2c-tools exfat-utils"
+# need wiringpi for wittypi.
+NEWPKGS="i2c-tools exfat-utils wiringpi"
 echo "APT: installing new packages: $NEWPKGS"
 apt-get update 
 #apt-get -y upgrade
@@ -154,6 +154,9 @@ echo
 sed -i "s:/run/systemd/system:/i/am/nonexistent:g"  /lib/udev/hwclock-set
 
 echo  "Enabling i2c in kernel"
+
+echo "adding i2c-dev to modules..." # needed by wittypi (wiringpi)
+echo "i2c-dev" >> /etc/modules
 
 printf "\n# lines added by solo's provision.sh:\n" >> /boot/config.txt
 

@@ -98,8 +98,8 @@ function set_timezone() {
 	    echo "... system timezone already matches SOLO_TZ, so doing nothing"
 	fi
     else
-	echo "... SOLO_TZ not set in solo.conf so setting timezone to Europe/London..."
-	_really_set_timezone "Europe/London"
+	echo "... SOLO_TZ not set in solo.conf so setting timezone to GMT..."
+	_really_set_timezone "GMT"
     fi
     cat /etc/timezone
     footer "Setting the timezone"

@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# What happens if we do (TODO)
 # set -x
 
 echo "=========================================================="
@@ -10,16 +9,18 @@ echo "-----------------------"
 echo
 echo "[solo-boot.sh] Started at: `date`"
 
+# put a runfile.started and runfile.finished into /tmp:
+runfilebase=/var/tmp/tmp/solo-boot-$$
+touch $runfilebase.started
+echo "Created runfile $runfilebase.started"
 
 if [ ! -r /opt/solo/utils.sh ] ; then
     echo "Error: can't read /opt/solo/utils.sh - this is probably bad news!"
 fi
 source /opt/solo/utils.sh
 
-# find out which hardware platform we are on:
-
+# find out which hardware platform we are on: (this doesn't work very well)
 REV=$(grep Revision /proc/cpuinfo  | awk '{print $3}')
-
 
 KRNL=$(uname -r | cut -f1,2 -d'.')
 FULL_KERNEL=$(uname -r)
@@ -161,6 +162,11 @@ set_timezone   # set timezone to SOLO_TZ (from solo.conf)
 
 #echo "about to exit - copying this log output to $SOLOLOGDIR..."
 #cp /opt/solo/solo-boot.log $SOLOLOGDIR/solo-boot.log
+
+# touch the finished pair of the runfiles:
+touch $runfilebase.finished
+echo "Created runfile $runfilebase.finished"
+
 echo
 echo "that's all folks"
 echo

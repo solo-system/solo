@@ -26,7 +26,13 @@ mount_image $imga $dira
 mount_image $imgb $dirb
 
 echo "mounted both."
-diff -r $dira $dirb
+sudo diff --no-dereference -q -r $dira $dirb
+
+echo "---- END OF DIFF OUTPUT ----"
+echo " go to $(pwd)/a or $(pwd)/b to discover more (any key to continue)"
+
+read
+
 
 umount_image $dira
 umount_image $dirb

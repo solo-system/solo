@@ -65,7 +65,7 @@ echo "  size       : ${sizeMB}MB"
 echo "  exact size : $size"
 echo "  solo       : git rev-parse HEAD: $solohead"
 echo "  amon       : git rev-parse HEAD: $amonhead"
-echo "  buildtime  : $stamp
+echo "  buildtime  : $stamp"
 echo "  This release includes:"
 echo "    These things XXXXX"
 echo "--------------------------------"

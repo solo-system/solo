@@ -73,11 +73,12 @@ echo "--------------------------------"
 
 cat sosi-version.txt
 
+echo "remounting to get file list, and add sosi-version.txt.."
 mount_image sosi-$daystamp.img vroot
 find  vroot -type f -ls | sort -nr -k7 > filelist.txt
-cp sosi-version.txt vroot/boot/
+cp sosi-version.txt vroot/boot/solo/
 umount_image vroot
-
+echo "dailyProvision: Completed final umount. Exiting happy."
 popd > /dev/null
 
 exit 0

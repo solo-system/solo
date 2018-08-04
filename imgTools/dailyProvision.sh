@@ -59,23 +59,24 @@ amonhead=$(cd /home/jdmc2/git/amon ; git rev-parse HEAD)
 (
 echo "--------------------------------"
 echo "  name       : sosi-$daystamp.img"
-echo "  raspbian   :  This SOSI is based on $(basename $srcimg)"
+echo "  raspbian   : This SOSI is based on $(basename $srcimg)"
 echo "  sha1sum    : $sha"
 echo "  size       : ${sizeMB}MB"
 echo "  exact size : $size"
 echo "  solo       : git rev-parse HEAD: $solohead"
 echo "  amon       : git rev-parse HEAD: $amonhead"
+echo "  buildtime  : $stamp
 echo "  This release includes:"
 echo "    These things XXXXX"
 echo "--------------------------------"
-) > buildinfo.txt
+) > sosi-version.txt
 
-cat buildinfo.txt
+cat sosi-version.txt
 
 mount_image sosi-$daystamp.img vroot
 find  vroot -type f -ls | sort -nr -k7 > filelist.txt
+cp sosi-version.txt vroot/boot/
 umount_image vroot
-
 
 popd > /dev/null
 

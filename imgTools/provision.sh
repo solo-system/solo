@@ -130,7 +130,8 @@ apt-get -y purge fake-hwclock
 # i2c-tools needed for clock investigations (although not in normal operation)
 # exfat-utils probably needed to make ext partition on p3 (I think, but it could be a hangover from labelling partitons).
 # need wiringpi for wittypi.
-NEWPKGS="i2c-tools exfat-utils wiringpi"
+# need python3-pip for installing pyephem which in turn is needed by duskdawn().
+NEWPKGS="i2c-tools exfat-utils wiringpi python3-pip"
 echo "APT: installing new packages: $NEWPKGS"
 apt-get update 
 #apt-get -y upgrade
@@ -142,6 +143,10 @@ apt-get --yes autoclean
 apt-get --yes clean
 echo "APT: done installing new packages..."
 echo
+
+echo "Installing pip package for python:"
+pip3 install pyephem
+echo "Done:Installing pip package for python."
 
 echo
 echo "Adding solo-boot.sh to rc.local"

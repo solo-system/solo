@@ -236,7 +236,7 @@ if [ $QPURGE = "yes" ] ; then
     ### an example video:
     rm -rf /opt/vc/src/hello_pi/hello_video/test.h264
 
-    rm -rf /var/lib/apt/lists/mirrordirector.raspbian.org_raspbian_dists_stretch_main_binary-armhf_Packages
+    rm -rf /var/lib/apt/lists/*
     
     apt-get -y clean
 

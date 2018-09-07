@@ -10,7 +10,7 @@ echo
 echo "[solo-boot.sh] Started at: `date`"
 
 # put a runfile.started and runfile.finished into /tmp:
-runfilebase=/var/tmp/tmp/solo-boot-$$
+runfilebase=/var/tmp/solo-boot-$$
 touch $runfilebase.started
 echo "Created runfile $runfilebase.started"
 

@@ -10,7 +10,8 @@ echo
 echo "[solo-boot.sh] Started at: `date`"
 
 # put a runfile.started and runfile.finished into /tmp:
-runfilebase=/var/tmp/solo-boot-$$
+#runfilebase=/var/tmp/solo-boot-$$  #/var/tmp survives reboots.
+runfilebase=/tmp/solo-boot #/tmp does not survive reboots.
 touch $runfilebase.started
 echo "Created runfile $runfilebase.started"
 

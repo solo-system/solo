@@ -48,4 +48,6 @@ cat <<EOF > /etc/modprobe.d/cirrus.conf
 softdep arizona-spi pre: arizona-ldo1
 EOF
 
+rm -rf  $WORKDIR
+
 echo "Done Installing CLAC stuff from HiassofT."

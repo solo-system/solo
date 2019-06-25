@@ -30,12 +30,16 @@ function mount_image() {
     fi
 
     # get the offsets from fdisk -l
-    p1offset=$(fdisk -l $img | grep ${img}1 | awk '{print $2}')
+    # added the 'tr' to remove the "*" which indicates "bootable"
+    p1offset=$(fdisk -l $img | grep ${img}1 | tr '*' ' ' | awk '{print $2}')
     p2offset=$(fdisk -l $img | grep ${img}2 | awk '{print $2}')
 
     # updated 2017-08-10 - need #sectors now too, or mount complains of "overlapping loop device"
     p1size=$(fdisk -l $img | grep ${img}1 | awk '{print $4}')
     p2size=$(fdisk -l $img | grep ${img}2 | awk '{print $4}')
+
+    # echo p1offset=$p1offset, p2offset=$p2offset
+    # echo p1size=$p1size, p2size=$p2size
     
     mkdir $dir
     sudo mount $img -o ${mount_opts},offset=$((512*p2offset)),sizelimit=$((512*p2size)) $dir/

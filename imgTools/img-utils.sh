@@ -1,6 +1,9 @@
 # useful functions for handling filesystem images (p1 and p2 of
 # raspbian, for now).
 
+# TODO: could check whether "umount" will fail, but looking for fuser and lsof:
+# https://www.systutorials.com/239761/force-linux-unmount-filesystem-reporting-device-busy/
+
 function die(){
     echo $(basename $0): $*
     exit -1

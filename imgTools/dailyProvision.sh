@@ -23,8 +23,8 @@ workdir=/mnt/a/solo/dailyProvision/$stamp
 #srcimg=/mnt/a/solo/foundation-images/2018-06-27-raspbian-stretch-lite.img
 #srcimg=/mnt/a/solo/foundation-images/2018-10-09-raspbian-stretch-lite.img
 #srcimg=/mnt/a/solo/foundation-images/2018-11-13-raspbian-stretch-lite.img
-srcimg=/mnt/a/solo/foundation-images/2019-04-08-raspbian-stretch-lite.img
-#srcimg=/mnt/a/solo/foundation-images/2019-07-10-raspbian-buster-lite.img
+#srcimg=/mnt/a/solo/foundation-images/2019-04-08-raspbian-stretch-lite.img
+srcimg=/mnt/a/solo/foundation-images/2019-07-10-raspbian-buster-lite.img
 
 echo "dailyProvision.sh: building a SOSI image at $stamp"
 echo "workdir: $workdir"

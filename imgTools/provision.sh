@@ -146,6 +146,7 @@ echo
 
 echo "Installing pip package for python:"
 pip3 install pyephem
+pip3 install pytz
 echo "Done:Installing pip package for python."
 
 echo

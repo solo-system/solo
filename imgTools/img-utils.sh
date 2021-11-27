@@ -19,7 +19,7 @@ function mount_image() {
 
     img=$1
     mount_opts="loop"
-    [ -r $img ] || die "Error: mount_image(): no such image file: $img. Exiting."
+    [ -b $img -o -f $img ] || die "Error: mount_image(): no such image file: $img. Exiting."
 
     if [ ! -w $img ] ; then
 	# echo "image not writable ... mounting read-only"

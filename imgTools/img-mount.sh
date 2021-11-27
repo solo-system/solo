@@ -14,7 +14,8 @@
 
 [ $# -eq 1 ] || die "error usage is \"$0 img\""
 img=$1
-[ -r $img ] || die "Error: no such image: $img"
+# allow it to be a file or a block device (added 2021-11-27)
+[ -b $img -o -f $img] || die "Error: [img-mount] no such image: $img"
 
 dir=vroot
 [ -e $dir ] && die "Error: directory $dir exists.  Refusing to overwrite."

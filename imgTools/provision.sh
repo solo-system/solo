@@ -73,6 +73,9 @@ dpkg-reconfigure --frontend noninteractive tzdata
 # rates to 192000, which is no good for dodotronic mics.
 # do this before package purge
 
+echo "Checking alsa version prior to upgradeing it..."
+arecord --version
+
 UPGRADEALSA=yes
 if [ $UPGRADEALSA = "yes" ] ; then
     echo "Upgrading ALSA support to version 1.1.6 ... (i am in $(pwd) )"
@@ -88,6 +91,11 @@ if [ $UPGRADEALSA = "yes" ] ; then
 else
     echo "UPGRADEALSA=$UPGRADEALSA => so not upgrading using $f"
 fi
+
+echo "Checking alsa version after to upgradeing it..."
+arecord --version
+/opt/upgrade-alsa/installdir/bin/arecord --version
+
 ####################### end of upgrading alsa #################
 
 

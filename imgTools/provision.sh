@@ -131,11 +131,15 @@ apt-get -y purge fake-hwclock
 # exfat-utils probably needed to make ext partition on p3 (I think, but it could be a hangover from labelling partitons).
 # need wiringpi for wittypi.
 # need python3-pip for installing pyephem which in turn is needed by duskdawn().
-NEWPKGS="i2c-tools exfat-utils wiringpi python3-pip"
+# NEWPKGS="i2c-tools exfat-utils wiringpi python3-pip"
+NEWPKGS="i2c-tools exfat-utils python3-pip"
 echo "APT: installing new packages: $NEWPKGS"
 apt-get update 
 #apt-get -y upgrade
 apt-get -y install $NEWPKGS
+
+python3 --version # check python is installed.
+python3 -m pip --version # check python's pip is working.
 
 # rpi-update #dont do this as it might muck things up
 apt-get --yes autoremove

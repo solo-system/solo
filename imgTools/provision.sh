@@ -145,8 +145,8 @@ echo "APT: done installing new packages..."
 echo
 
 echo "Installing pip package for python:"
-pip3 install pyephem
-pip3 install pytz
+pip install pyephem
+pip install pytz
 echo "Done:Installing pip package for python."
 
 echo
